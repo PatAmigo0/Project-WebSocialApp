@@ -18,7 +18,8 @@ export class ChatManager
     {
         const addChatButton = this.chatList.querySelector('.add-chat-button').parentElement;
         this.chatList.innerHTML = '';
-        
+
+        // тест рендера всех пользователей
         this.users.forEach(user => 
         {
             this.chatList.append(this.createUserElement(user));
@@ -34,13 +35,15 @@ export class ChatManager
 
         chatItem.innerHTML = `
             <div class="avatar">
-                <img src="${user.avatar}" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
+                <img src="images/avatars/default/default-avatar.png" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
             </div>
+
             <div class="chat-info">
                 <div class="chat-header">
                     <div class="chat-name"><p>${user.name}</p></div>
                     <div class="chat-time"><p>${user.time}</p></div>
                 </div>
+
                 <div class="chat-preview">
                     <div class="last-message">${user.lastMessage}</div>
                     ${(user.unreadCount > 0) ? `<div class="unread-count"><span>${user.unreadCount}</span></div>` : ''}
@@ -84,7 +87,7 @@ export class ChatManager
         const avatar = chatHeader.querySelector('.avatar');
         const name = chatHeader.querySelector('.chat-name p');
 
-        avatar.innerHTML = `<img src="${user.avatar}" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">`;
+        avatar.innerHTML = `<img src="images/avatars/default/default-avatar.png" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">`;
         name.textContent = user.name;
     }
 

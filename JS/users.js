@@ -2,7 +2,7 @@ const users = [
     {
         id: 1,
         name: "Пользователь 1",
-        avatar: "images/avatars/default/default-avatar.png",
+        avatar: "",
         lastMessage: "Привет! Как дела?",
         time: "12:30",
         unreadCount: 2,
@@ -11,7 +11,7 @@ const users = [
     {
         id: 2,
         name: "Пользователь 2",
-        avatar: "images/avatars/default/default-avatar.png",
+        avatar: "",
         lastMessage: "Давай встретимся завтра?",
         time: "11:45",
         unreadCount: 1,
@@ -20,7 +20,7 @@ const users = [
     {
         id: "group1",
         name: "Группа 1",
-        avatar: "images/avatars/default/default-avatar.png",
+        avatar: "",
         lastMessage: "Готовимся к олимпиаде что проходит в БГУИРе?",
         time: "10:15",
         unreadCount: 5,
