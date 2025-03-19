@@ -6,29 +6,46 @@ export class AvatarManager
         this.avatars = new Map();
         this.avatarsPath = "images/avatars/";
         this.defaultAvatar = "default/default-avatar.png";
+        this.defaultGroupAvatar = "default/default-group.png";
     }
 
     // устанавливаем аватар для пользователя
-    setAvatar(userId, avatarPath) 
+    setAvatar(userId, avatarPath, isGroup = false) 
     {
         if (!avatarPath) 
         {
-            avatarPath = this.avatarsPath + this.defaultAvatar;
+            avatarPath = this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
         }
         this.avatars.set(userId, avatarPath);
-        this.updateAvatarDisplay(userId);
+        
+        // Обновляем все аватары для этого пользователя/группы
+        const avatarElements = document.querySelectorAll(`[data-user-id="${userId}"] .avatar img`);
+        avatarElements.forEach(img => 
+        {
+            img.onerror = () => 
+            {
+                img.src = this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
+            };
+            img.src = avatarPath;
+        });
     }
 
     // получаем путь к аватару пользователя
-    getAvatarPath(userId) 
+    getAvatarPath(userId, isGroup = false) 
     {
-        return this.avatars.get(userId) || this.avatarsPath + this.defaultAvatar;
+        return this.avatars.get(userId) || this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
     }
 
     // обновляем отображение аватара в интерфейсе
     updateAvatarDisplay(userId) 
     {
-        const avatarPath = this.getAvatarPath(userId);
+        // Получаем элемент пользователя для определения, является ли он группой
+        const userElement = document.querySelector(`[data-user-id="${userId}"]`);
+        if (!userElement) return;
+
+        // Определяем, является ли это группой, проверяя alt-текст аватара
+        const isGroup = userElement.querySelector('.avatar img').alt.includes('группы');
+        const avatarPath = this.getAvatarPath(userId, isGroup);
         const avatarElements = document.querySelectorAll(`[data-user-id="${userId}"] .avatar img`);
         
         avatarElements.forEach(img => 
@@ -36,14 +53,14 @@ export class AvatarManager
             // добавляем обработчик ошибок загрузки изображения
             img.onerror = () => 
             {
-                img.src = this.avatarsPath + this.defaultAvatar;
+                img.src = this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
             };
             img.src = avatarPath;
         });
     }
 
-    // загружаем аватар из файла
-    loadAvatarFromFile(userId, file) 
+    // загружаем аватар из файла (НА БУДУЩЕЕ)
+    loadAvatarFromFile(userId, file, isGroup = false) 
     {
         if (!file.type.startsWith('image/')) 
         {
@@ -55,7 +72,7 @@ export class AvatarManager
         reader.onload = (e) => 
         {
             const avatarPath = e.target.result;
-            this.setAvatar(userId, avatarPath);
+            this.setAvatar(userId, avatarPath, isGroup);
         };
         reader.readAsDataURL(file);
     }

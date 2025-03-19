@@ -107,11 +107,6 @@ function initMain()
         });
     });
     
-    elements.addChatButton?.addEventListener("click", () => 
-    {
-        console.log("добавление нового чата");
-    });
-    
     elements.fontSizeSelect?.addEventListener('change', () => 
     {
         const fontSize = elements.fontSizeSelect.value;
@@ -162,7 +157,8 @@ document.addEventListener("DOMContentLoaded", () =>
     // загружаем аватары для всех пользователей
     users.forEach(user => 
     {
-        avatarManager.setAvatar(user.id, user.avatar);
+        console.log(user);
+        avatarManager.setAvatar(user.id, user.avatar, user.isGroup);
     });
 
     // обновляем градиент фона

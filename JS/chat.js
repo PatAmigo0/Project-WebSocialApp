@@ -1,3 +1,5 @@
+import { avatarManager } from './avatars.js';
+
 export class ChatManager 
 {
     constructor(users) 
@@ -14,6 +16,7 @@ export class ChatManager
         this.setupEventListeners();
     }
 
+    // рендер всех пользователей
     renderUsers() 
     {
         const addChatButton = this.chatList.querySelector('.add-chat-button').parentElement;
@@ -23,14 +26,17 @@ export class ChatManager
         this.users.forEach(user => 
         {
             this.chatList.append(this.createUserElement(user));
+            // Устанавливаем аватар через AvatarManager
+            avatarManager.setAvatar(user.id, null, user.isGroup);
         });
         this.chatList.append(addChatButton);
     }
 
+    // создание элемента чата (пользователя или группы)
     createUserElement(user) 
     {
         const chatItem = document.createElement('div');
-        chatItem.className = 'chat-item';
+        chatItem.className = `chat-item ${user.isGroup ? 'group' : 'user'}`;
         chatItem.dataset.userId = user.id;
 
         chatItem.innerHTML = `
@@ -54,26 +60,37 @@ export class ChatManager
         return chatItem;
     }
 
+    // установка слушателей событий (удобно для подписывания на события)
     setupEventListeners() 
     {
+        // ОБРАБОТКА КЛИКА ПО ЧАТУ
         this.chatList.addEventListener('click', (e) => 
         {
             const chatItem = e.target.closest('.chat-item');
             if (chatItem && !chatItem.querySelector('.add-chat-button')) 
             {
-                this.selectUser(parseInt(chatItem.dataset.userId));
+                chatItem.className.includes('group') // если группа то обрабатываем соответствующим образом
+                ? this.selectUser(String(chatItem.dataset.userId)) 
+                : this.selectUser(parseInt(chatItem.dataset.userId));
             }
-        });
-
-        document.querySelector('.add-chat-button')?.addEventListener('click', () => 
-        {
-            this.addNewChat();
+            else if (chatItem && chatItem.querySelector('.add-chat-button'))
+            {
+                this.addNewChat();
+            }
         });
     }
 
+    // выбор пользователя
     selectUser(userId) 
     {
-        const user = this.users.find(u => u.id === userId);
+        const user = this.users.find(u => {
+            if (u.isGroup) {
+                return String(u.id) === String(userId);
+            } else {
+                return Number(u.id) === Number(userId);
+            }
+        });
+        
         if (user) 
         {
             this.currentUser = user;
@@ -81,13 +98,15 @@ export class ChatManager
         }
     }
 
+    // обновление заголовка чата
     updateChatHeader(user) 
     {
         const chatHeader = document.querySelector('.main-chat .chat-header');
         const avatar = chatHeader.querySelector('.avatar');
         const name = chatHeader.querySelector('.chat-name p');
 
-        avatar.innerHTML = `<img src="images/avatars/default/default-avatar.png" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">`;
+        avatar.innerHTML = `<img src="${avatarManager.getAvatarPath(user.id, user.isGroup)}" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">`;
+        console.log(avatarManager.getAvatarPath(user.id, user.isGroup));
         name.textContent = user.name;
     }
 
@@ -96,6 +115,7 @@ export class ChatManager
         console.log('Добавление нового чата');
     }
 
+    // поиск чатов
     searchChats(query) 
     {
         const searchTerm = query.toLowerCase();
