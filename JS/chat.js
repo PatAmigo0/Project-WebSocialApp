@@ -40,8 +40,12 @@ export class ChatManager
         chatItem.dataset.userId = user.id;
 
         chatItem.innerHTML = `
-            <div class="avatar">
-                <img src="images/avatars/default/default-avatar.png" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
+            <div class="profile-info"> 
+                <div class="avatar">
+                    <img src="images/avatars/default/default-avatar.png" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
+                </div>
+                ${!user.isGroup ? '<div class="status"><p>онлайн</p></div>' : ''}
+                
             </div>
 
             <div class="chat-info">
@@ -76,6 +80,10 @@ export class ChatManager
             else if (chatItem && chatItem.querySelector('.add-chat-button'))
             {
                 this.addNewChat();
+            }
+            else
+            {
+                this.disableActiveChat(); // если попал за пределы конактов и кнопки то закрывать чат
             }
         });
     }
@@ -112,16 +120,21 @@ export class ChatManager
     // обновление активного чата
     updateActiveChat(userId) 
     {
-        // Убираем класс active у всех чатов
-        this.chatList.querySelectorAll('.chat-item').forEach(chat => {
-            chat.classList.remove('active');
-        });
+        this.disableActiveChat();
 
         // Добавляем класс active выбранному чату
         const selectedChat = this.chatList.querySelector(`[data-user-id="${userId}"]`);
         if (selectedChat) {
             selectedChat.classList.add('active');
         }
+    }
+
+    disableActiveChat()
+    {
+        // Убираем класс active у всех чатов
+        this.chatList.querySelectorAll('.chat-item').forEach(chat => {
+            chat.classList.remove('active');
+        });
     }
 
     addNewChat() 

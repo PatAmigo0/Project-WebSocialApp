@@ -120,6 +120,11 @@
     color: inherit;
 }
 
+.profile-info
+{
+    display: grid;
+}
+
 /* аватар пользователя */
 .avatar 
 {
@@ -130,8 +135,14 @@
     overflow: hidden;
 }
 
-.avatar img 
+.status
 {
+    justify-content: center;
+    text-align: center;
+}
+
+.avatar img 
+{   
     width: 100%;
     height: 100%;
     object-fit: cover;
