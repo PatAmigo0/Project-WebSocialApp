@@ -25,7 +25,7 @@ const elements =
 //////////////////////////////////////////////////////////////////////////////////////////
 
 import { Message } from './message.js';
-import { changeTheme } from './theme.js';
+import { ThemeManager } from './theme.js';
 import { requestNotificationPermission } from './notifications.js';
 import { ChatManager } from './chat.js';
 import users from './users.js';
@@ -40,6 +40,9 @@ const randomResponses =
     "Умри пожалуйста",
     "Тестовое сообщение"
 ];
+
+// создаем менеджер темы
+const themeManager = new ThemeManager(elements.root);
 
 function init()
 {
@@ -86,6 +89,7 @@ function initMain()
             e.stopPropagation();
             toggleSettings();
         },
+
         sendMessage: () => 
         {
             const messageText = elements.messageInput.value.trim();
@@ -98,6 +102,7 @@ function initMain()
                 }, 1000);
             }
         },
+
         handleKeyPress: (e) => 
         {
             if (e.key === "Enter" && !e.shiftKey) 
@@ -119,7 +124,10 @@ function initMain()
         radio.addEventListener("change", () => 
         {
             if (radio.checked) 
-                changeTheme(radio.value, elements.root);
+            {
+                themeManager.changeTheme(radio.value);
+                localStorage.setItem("savedChecked", radio.value);
+            }
         });
     });
     
@@ -127,7 +135,6 @@ function initMain()
     {
         chatManager.searchChats(e.target.value);
     });
-    
     
     elements.fontSizeSelect?.addEventListener('change', () => 
     {
@@ -139,38 +146,34 @@ function initMain()
 
 function initSaved() 
 {
-    // загружаем сохраненные темы (ДОРАБОТАТЬ)
+    // загружаем сохраненные настройки
     const savedFontSize = localStorage.getItem("fontSize");
-    const savedTheme = localStorage.getItem("theme");
-
+    const savedChecked = localStorage.getItem("savedChecked");
     if (savedFontSize) 
     {
         elements.fontSizeSelect.value = savedFontSize;
         elements.root.style.fontSize = `${savedFontSize}px`;
     }
 
-    if (savedTheme)
+    if (savedChecked)
     {
-        const styles = JSON.parse(savedTheme);
-        Object.keys(styles).forEach((prop) => 
+        elements.themeRadios.forEach(radio => 
         {
-            elements.root.style.setProperty(prop, styles[prop]);
-        })
+            radio.value == savedChecked 
+            ? radio.checked = true 
+            : radio.checked = false;
+        });
     }
+    
+    // загружаем сохраненную тему
+    themeManager.loadTheme();
 }
 
 function initUnload() 
 {
     window.addEventListener("beforeunload", () => 
     {
-        const styles = {};
-
-        Array.from(elements.root.style).forEach((prop) =>
-        {
-            styles[prop] = elements.root.style.getPropertyValue(prop);
-        })
-
-        localStorage.setItem("theme", JSON.stringify(styles));
+        themeManager.saveTheme();
     });
 }
 
@@ -189,7 +192,6 @@ function toggleSettings()
 
 // настраиваем обработчики событий при загрузке страницы
 document.addEventListener("DOMContentLoaded", () => init());
-
 
 // создаем менеджер чата
 const chatManager = new ChatManager(users);
