@@ -41,6 +41,42 @@ const randomResponses =
     "Тестовое сообщение"
 ];
 
+function init()
+{
+    initMain();
+    initSaved();
+    initUnload();
+    
+    // загружаем аватары для всех пользователей
+    users.forEach(user => 
+    {
+        console.log(user);
+        avatarManager.setAvatar(user.id, user.avatar, user.isGroup);
+    });
+
+    // обновляем градиент фона
+    if (elements.messagesContainer) 
+    {
+        const computedStyle = window.getComputedStyle(elements.messagesContainer);
+        const bgImage = computedStyle.backgroundImage;
+        elements.messagesContainer.style.backgroundImage = 'none';
+        elements.messagesContainer.offsetHeight; // принудительно обновляем стили
+        elements.messagesContainer.style.backgroundImage = bgImage;
+    }
+
+    // настраиваем уведомления
+    if (elements.notificationToggle) 
+    {
+        elements.notificationToggle.addEventListener("change", (e) => 
+        {
+            if (e.target.checked) 
+            {
+                requestNotificationPermission();
+            }
+        });
+    }
+}
+
 function initMain() 
 {
     const eventHandlers = 
@@ -83,9 +119,7 @@ function initMain()
         radio.addEventListener("change", () => 
         {
             if (radio.checked) 
-            {
                 changeTheme(radio.value, elements.root);
-            }
         });
     });
     
@@ -94,18 +128,6 @@ function initMain()
         chatManager.searchChats(e.target.value);
     });
     
-    elements.chatItems.forEach(item => 
-    {
-        item.addEventListener("click", () => 
-        {
-            const chatName = item.querySelector(".chat-name");
-            if (!chatName) return;
-    
-            elements.chatItems.forEach(chat => chat.classList.remove("active"));
-            item.classList.add("active");
-            document.querySelector(".chat-header .chat-name").textContent = chatName.textContent;
-        });
-    });
     
     elements.fontSizeSelect?.addEventListener('change', () => 
     {
@@ -117,12 +139,23 @@ function initMain()
 
 function initSaved() 
 {
-    // загружаем сохраненный размер текста
+    // загружаем сохраненные темы (ДОРАБОТАТЬ)
     const savedFontSize = localStorage.getItem("fontSize");
+    const savedTheme = localStorage.getItem("theme");
+
     if (savedFontSize) 
     {
         elements.fontSizeSelect.value = savedFontSize;
         elements.root.style.fontSize = `${savedFontSize}px`;
+    }
+
+    if (savedTheme)
+    {
+        const styles = JSON.parse(savedTheme);
+        Object.keys(styles).forEach((prop) => 
+        {
+            elements.root.style.setProperty(prop, styles[prop]);
+        })
     }
 }
 
@@ -130,7 +163,14 @@ function initUnload()
 {
     window.addEventListener("beforeunload", () => 
     {
-        localStorage.setItem("theme", JSON.stringify(elements.root.style));
+        const styles = {};
+
+        Array.from(elements.root.style).forEach((prop) =>
+        {
+            styles[prop] = elements.root.style.getPropertyValue(prop);
+        })
+
+        localStorage.setItem("theme", JSON.stringify(styles));
     });
 }
 
@@ -148,41 +188,8 @@ function toggleSettings()
 }
 
 // настраиваем обработчики событий при загрузке страницы
-document.addEventListener("DOMContentLoaded", () => 
-{
-    initMain();
-    initSaved();
-    initUnload();
-    
-    // загружаем аватары для всех пользователей
-    users.forEach(user => 
-    {
-        console.log(user);
-        avatarManager.setAvatar(user.id, user.avatar, user.isGroup);
-    });
+document.addEventListener("DOMContentLoaded", () => init());
 
-    // обновляем градиент фона
-    if (elements.messagesContainer) 
-    {
-        const computedStyle = window.getComputedStyle(elements.messagesContainer);
-        const bgImage = computedStyle.backgroundImage;
-        elements.messagesContainer.style.backgroundImage = 'none';
-        elements.messagesContainer.offsetHeight; // принудительно обновляем стили
-        elements.messagesContainer.style.backgroundImage = bgImage;
-    }
-});
-
-// настраиваем уведомления
-if (elements.notificationToggle) 
-{
-    elements.notificationToggle.addEventListener("change", (e) => 
-    {
-        if (e.target.checked) 
-        {
-            requestNotificationPermission();
-        }
-    });
-}
 
 // создаем менеджер чата
 const chatManager = new ChatManager(users);

@@ -84,17 +84,16 @@ export class ChatManager
     selectUser(userId) 
     {
         const user = this.users.find(u => {
-            if (u.isGroup) {
-                return String(u.id) === String(userId);
-            } else {
-                return Number(u.id) === Number(userId);
-            }
+                return u.isGroup 
+                    ? (String(u.id) === String(userId)) 
+                    : (Number(u.id) === Number(userId));
         });
         
         if (user) 
         {
             this.currentUser = user;
             this.updateChatHeader(user);
+            this.updateActiveChat(userId);
         }
     }
 
@@ -108,6 +107,21 @@ export class ChatManager
         avatar.innerHTML = `<img src="${avatarManager.getAvatarPath(user.id, user.isGroup)}" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">`;
         console.log(avatarManager.getAvatarPath(user.id, user.isGroup));
         name.textContent = user.name;
+    }
+
+    // обновление активного чата
+    updateActiveChat(userId) 
+    {
+        // Убираем класс active у всех чатов
+        this.chatList.querySelectorAll('.chat-item').forEach(chat => {
+            chat.classList.remove('active');
+        });
+
+        // Добавляем класс active выбранному чату
+        const selectedChat = this.chatList.querySelector(`[data-user-id="${userId}"]`);
+        if (selectedChat) {
+            selectedChat.classList.add('active');
+        }
     }
 
     addNewChat() 

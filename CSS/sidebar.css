@@ -74,6 +74,12 @@
     background-color: var(--bg-primary);
 }
 
+.chat-item.active 
+{
+    background-color: var(--bg-primary);
+    border-left: 3px solid var(--accent-color);
+}
+
 /* кнопка добавления чата */
 .add-chat-button 
 {
