@@ -135,6 +135,15 @@
     overflow: hidden;
 }
 
+.avatar img 
+{   
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* статус пользователя */
 .status
 {
     justify-content: center;
@@ -151,14 +160,6 @@
 {
     color: red;
     text-transform: capitalize;
-}
-
-.avatar img 
-{   
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
 }
 
 /* информация о чате */
