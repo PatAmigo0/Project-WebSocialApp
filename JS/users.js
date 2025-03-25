@@ -1,6 +1,7 @@
 const users = [
     {
         id: 1,
+        online : true,
         name: "Пользователь 1",
         avatar: "",
         lastMessage: "Привет! Как дела?",
@@ -10,6 +11,7 @@ const users = [
     },
     {
         id: 2,
+        online : false,
         name: "Пользователь 2",
         avatar: "",
         lastMessage: "Давай встретимся завтра?",
@@ -19,6 +21,7 @@ const users = [
     },
     {
         id: "group1",
+        online : false,
         name: "Группа 1",
         avatar: "",
         lastMessage: "Готовимся к олимпиаде что проходит в БГУИРе?",

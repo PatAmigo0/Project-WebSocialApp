@@ -141,6 +141,18 @@
     text-align: center;
 }
 
+.status.online
+{
+    color: green;
+    text-transform: capitalize;
+}
+
+.status.offline
+{
+    color: red;
+    text-transform: capitalize;
+}
+
 .avatar img 
 {   
     width: 100%;

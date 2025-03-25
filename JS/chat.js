@@ -61,6 +61,14 @@ export class ChatManager
             </div>
         `;
 
+        // настройка некоторых элементов
+        if (!user.isGroup)
+        {
+            const status = chatItem.querySelector('.status');
+            status.classList.add(user.online ? 'online' : 'offline');
+            status.querySelector('p').textContent = user.online ? 'онлайн' : 'оффлайн';
+        }
+
         return chatItem;
     }
 
@@ -103,6 +111,12 @@ export class ChatManager
             this.updateChatHeader(user);
             this.updateActiveChat(userId);
         }
+    }
+
+    // обновление главной страницы с чатом
+    updateChatWindow()
+    {
+        
     }
 
     // обновление заголовка чата
