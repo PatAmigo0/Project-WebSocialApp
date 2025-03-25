@@ -64,7 +64,7 @@ export class ThemeManager
         {
             const styles = JSON.parse(savedTheme);
             Object.keys(styles).forEach((prop) =>
-                {
+            {
                 this.root.style.setProperty(prop, styles[prop]);
             });
         }

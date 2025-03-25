@@ -38,6 +38,7 @@ export class AvatarManager
         this._setAvatarsSrc(avatarPath, userId);
     }
 
+    // устанавливаем путь для img
     _setAvatarsSrc(avatarPath, userId)
     {
         // обновляем все аватары для этого пользователя/группы
