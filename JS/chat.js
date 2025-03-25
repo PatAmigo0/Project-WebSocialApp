@@ -6,7 +6,10 @@ export class ChatManager
     {
         this.users = users;
         this.currentUser = null;
+
         this.chatList = document.querySelector('.chat-list');
+        this.chatWindow = document.querySelector('.main-chat');
+
         this.init();
     }
 
@@ -26,7 +29,7 @@ export class ChatManager
         this.users.forEach(user => 
         {
             this.chatList.append(this.createUserElement(user));
-            // Устанавливаем аватар через AvatarManager
+            // устанавливаем аватар через AvatarManager
             avatarManager.setAvatar(user.id, null, user.isGroup);
         });
         this.chatList.append(addChatButton);
@@ -39,6 +42,7 @@ export class ChatManager
         chatItem.className = `chat-item ${user.isGroup ? 'group' : 'user'}`;
         chatItem.dataset.userId = user.id;
 
+        // разметка профиля пользователя
         chatItem.innerHTML = `
             <div class="profile-info"> 
                 <div class="avatar">
@@ -86,13 +90,9 @@ export class ChatManager
                 : this.selectUser(parseInt(chatItem.dataset.userId));
             }
             else if (chatItem && chatItem.querySelector('.add-chat-button'))
-            {
                 this.addNewChat();
-            }
-            else
-            {
+            else 
                 this.disableActiveChat(); // если попал за пределы конактов и кнопки то закрывать чат
-            }
         });
     }
 
@@ -110,13 +110,14 @@ export class ChatManager
             this.currentUser = user;
             this.updateChatHeader(user);
             this.updateActiveChat(userId);
+            document.querySelector('.main-chat').classList.add('chat-selected');
         }
     }
 
     // обновление главной страницы с чатом
     updateChatWindow()
     {
-        
+        /*TODO: получение последних сообщений и обновление страницы */
     }
 
     // обновление заголовка чата
@@ -145,14 +146,17 @@ export class ChatManager
 
     disableActiveChat()
     {
-        // Убираем класс active у всех чатов
+        // Убираем класс active у всех чатов и у окна чата
         this.chatList.querySelectorAll('.chat-item').forEach(chat => {
             chat.classList.remove('active');
         });
+
+        this.chatWindow.classList.remove('chat-selected');
     }
 
     addNewChat() 
     {
+        /*TODO: рамка со всеми онлайн пользователями где можно будет выбрать кого-нибудь */
         console.log('Добавление нового чата');
     }
 

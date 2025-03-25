@@ -46,6 +46,7 @@ const themeManager = new ThemeManager(elements.root);
 
 function init()
 {
+    
     initMain();
     initSaved();
     initUnload();
@@ -82,6 +83,11 @@ function init()
 
 function initMain() 
 {
+
+    // на всякий чтобы при загрузке не было по ошибке никакого выбранного чата
+    elements.mainChat.classList.remove('chat-selected');
+
+    // обработчики событий инициализация
     const eventHandlers = 
     {
         settings: (e) => 
@@ -113,7 +119,7 @@ function initMain()
         }
     };
 
-    // Настройка обработчиков событий
+    // присвойка обработчиков событий
     elements.settingsButton.addEventListener("click", eventHandlers.settings);
     elements.closeSettings.addEventListener("click", eventHandlers.settings);
     elements.sendButton.addEventListener("click", eventHandlers.sendMessage);

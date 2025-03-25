@@ -16,7 +16,7 @@
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 12px;
-    padding: 14px;
+    padding: 18px;
     align-items: center;
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);

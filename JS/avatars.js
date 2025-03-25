@@ -20,7 +20,7 @@ export class AvatarManager
         this._setAvatarsSrc(avatarPath, userId);
     }
 
-    // получаем путь к аватару пользователя
+    // получаем путь к аватару пользователя (на будущее для локальных аватаров)
     getAvatarPath(userId, isGroup = false) 
     {
         return this.avatars.get(userId) || this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
