@@ -26,7 +26,7 @@ const elements =
 
 import { Message } from './message.js';
 import { ThemeManager } from './theme.js';
-import { requestNotificationPermission } from './notifications.js';
+import { NotificationManager } from './notifications.js';
 import { ChatManager } from './chat.js';
 import users from './users.js';
 import { avatarManager } from './avatars.js';
@@ -67,17 +67,6 @@ function init()
         elements.messagesContainer.style.backgroundImage = bgImage;
     }
 
-    // настраиваем уведомления
-    if (elements.notificationToggle) 
-    {
-        elements.notificationToggle.addEventListener("change", (e) => 
-        {
-            if (e.target.checked) 
-            {
-                requestNotificationPermission();
-            }
-        });
-    }
 }
 
 function initMain() 
@@ -151,7 +140,7 @@ function initMain()
 
 function initSaved() 
 {
-    // загружаем сохраненные настройки
+    // загружаем сохраненные настройки для элементов выбора
     const savedFontSize = localStorage.getItem("fontSize");
     const savedChecked = localStorage.getItem("savedChecked");
     if (savedFontSize) 
@@ -198,5 +187,6 @@ function toggleSettings()
 // настраиваем обработчики событий при загрузке страницы
 document.addEventListener("DOMContentLoaded", () => init());
 
-// создаем менеджер чата
+
 const chatManager = new ChatManager(users);
+const notificationManager = new NotificationManager(elements.notificationToggle);

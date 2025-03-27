@@ -1,4 +1,5 @@
 import { avatarManager } from './avatars.js';
+import { Message } from './message.js';
 
 export class ChatManager 
 {
@@ -85,9 +86,17 @@ export class ChatManager
             const chatItem = e.target.closest('.chat-item');
             if (chatItem && !chatItem.querySelector('.add-chat-button')) 
             {
+                if (chatItem.className.includes('active'))
+                {
+                    this.disableActiveChat(); // если дважды тыкнул по активному чату то выключать его
+                    return;
+                }
+
                 chatItem.className.includes('group') // если группа то обрабатываем соответствующим образом
                 ? this.selectUser(String(chatItem.dataset.userId)) 
                 : this.selectUser(parseInt(chatItem.dataset.userId));
+
+                this.updateChatWindow();
             }
             else if (chatItem && chatItem.querySelector('.add-chat-button'))
                 this.addNewChat();
@@ -137,17 +146,17 @@ export class ChatManager
     {
         this.disableActiveChat();
 
-        // Добавляем класс active выбранному чату
+        // добавляем класс active выбранному чату
         const selectedChat = this.chatList.querySelector(`[data-user-id="${userId}"]`);
-        if (selectedChat) {
-            selectedChat.classList.add('active');
-        }
+        if (selectedChat)
+            selectedChat.classList.toggle('active');
     }
 
     disableActiveChat()
     {
-        // Убираем класс active у всех чатов и у окна чата
-        this.chatList.querySelectorAll('.chat-item').forEach(chat => {
+        // убираем класс active у всех чатов и у окна чата
+        this.chatList.querySelectorAll('.chat-item').forEach(chat => 
+        {
             chat.classList.remove('active');
         });
 
@@ -168,7 +177,9 @@ export class ChatManager
         {
             const chatName = item.querySelector(".chat-name").textContent.toLowerCase();
             const lastMessage = item.querySelector(".last-message").textContent.toLowerCase();
-            item.style.display = (chatName.includes(searchTerm) || lastMessage.includes(searchTerm)) ? "grid" : "none";
+
+            item.style.display = (chatName.includes(searchTerm) 
+            || lastMessage.includes(searchTerm)) ? "grid" : "none";
         });
     }
 }

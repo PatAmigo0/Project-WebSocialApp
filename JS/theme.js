@@ -41,9 +41,7 @@ export class ThemeManager
     changeTheme(theme) 
     {
         if (!this.themes[theme]) 
-        {
             theme = 'light';
-        }
 
         const themeStyles = this.themes[theme];
         Object.entries(themeStyles).forEach(([property, value]) => 
