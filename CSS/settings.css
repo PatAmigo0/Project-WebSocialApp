@@ -52,12 +52,14 @@
     cursor: pointer;
     padding: 8px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
-.settings-close:hover .settings-close-icon 
+.settings-close:hover
 {
+    color: var(--close-button-color-hover);
     opacity: 0.8;
 }
 

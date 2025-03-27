@@ -13,7 +13,8 @@ export class ThemeManager
                 "--text-secondary": "#b9bbbe",
                 "--border-color": "#202225",
                 "--bg-message-received": "rgba(64, 68, 75, 0.95)",
-                "--bg-message-sent": "rgba(88, 101, 242, 0.95)"
+                "--bg-message-sent": "rgba(88, 101, 242, 0.95)",
+                "--close-button-color-hover": "rgba(16, 12, 12, 0.95)"
             },
             blue: 
             {
@@ -23,7 +24,8 @@ export class ThemeManager
                 "--text-secondary": "#2196f3",
                 "--border-color": "#90caf9",
                 "--bg-message-received": "rgba(255, 255, 255, 0.95)",
-                "--bg-message-sent": "rgba(33, 150, 243, 0.95)"
+                "--bg-message-sent": "rgba(33, 150, 243, 0.95)",
+                "--close-button-color-hover": "rgba(12, 10, 10, 0.95)"
             },
             light: 
             {
@@ -33,7 +35,8 @@ export class ThemeManager
                 "--text-secondary": "#666",
                 "--border-color": "#e0e0e0",
                 "--bg-message-received": "rgba(255, 255, 255, 0.95)",
-                "--bg-message-sent": "rgba(227, 242, 253, 0.95)"
+                "--bg-message-sent": "rgba(227, 242, 253, 0.95)",
+                "--close-button-color-hover": "rgba(78, 72, 198, 0.95)"
             }
         };
     }
