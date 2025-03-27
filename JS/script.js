@@ -112,11 +112,33 @@ function initMain()
     elements.closeSettings.addEventListener("click", eventHandlers.settings);
     elements.sendButton.addEventListener("click", eventHandlers.sendMessage);
     elements.messageInput.addEventListener("keypress", eventHandlers.handleKeyPress);
+
+    elements.addChatButton.addEventListener("click", eventHandlers.search_chat);
+    const modal = document.getElementById('modal');
+    const closeButton = document.getElementById('closeButton');
+
+    // это закрывает окно на крестик
+    closeButton.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+                
+    // это закрывает окно при нажатии на лубую область вне окна поиска
+    window.addEventListener('click', function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+            }
+    });
+
+    // это открывает окно
+    elements.addChatButton.addEventListener("click", () => 
+        {          
+            modal.style.display = 'block';
+        });
     
     elements.themeRadios.forEach(radio => 
     {
         radio.addEventListener("change", () => 
-        {
+        { 
             if (radio.checked) 
             {
                 themeManager.changeTheme(radio.value);
