@@ -80,12 +80,12 @@
 .messages-container::before 
 {
     content: '';
+    background: linear-gradient(45deg, rgba(66, 134, 244, 0.041), rgba(219, 68, 55, 0.05));
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(66, 134, 244, 0.041), rgba(219, 68, 55, 0.05));
     pointer-events: none;
     z-index: 0;
     mix-blend-mode: multiply;

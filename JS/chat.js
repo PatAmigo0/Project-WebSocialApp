@@ -1,4 +1,5 @@
 import { avatarManager } from './avatars.js';
+import { Message } from './message.js';
 
 export class ChatManager 
 {
@@ -6,9 +7,15 @@ export class ChatManager
     {
         this.users = users;
         this.currentUser = null;
+        this.settingsWereOpened = false;
 
         this.chatList = document.querySelector('.chat-list');
         this.chatWindow = document.querySelector('.main-chat');
+        this.modalWindow = document.querySelector('.modal-window')
+        this.modalCloseButton = this.modalWindow.querySelector('.close-button');
+        this.settingsPanel = document.querySelector('#settingsPanel');
+
+        console.log(this.modalWindow);
 
         this.init();
     }
@@ -85,24 +92,42 @@ export class ChatManager
             const chatItem = e.target.closest('.chat-item');
             if (chatItem && !chatItem.querySelector('.add-chat-button')) 
             {
+                if (chatItem.className.includes('active'))
+                {
+                    this.disableActiveChat(); // если дважды тыкнул по активному чату то выключать его
+                    return;
+                }
+
                 chatItem.className.includes('group') // если группа то обрабатываем соответствующим образом
                 ? this.selectUser(String(chatItem.dataset.userId)) 
                 : this.selectUser(parseInt(chatItem.dataset.userId));
+
+                this.updateChatWindow();
             }
             else if (chatItem && chatItem.querySelector('.add-chat-button'))
-                this.addNewChat();
+                this.toggleModalWindow(); // открываем модальное окно (для выбора онлайн пользователей)
             else 
                 this.disableActiveChat(); // если попал за пределы конактов и кнопки то закрывать чат
         });
+
+
+        // ЗАКРЫТИЕ МОДАЛЬНОГО ОКНА
+        this.modalCloseButton.addEventListener('click', () => 
+        {
+            this.toggleModalWindow();
+        });
+
+
     }
 
     // выбор пользователя
     selectUser(userId) 
     {
-        const user = this.users.find(u => {
-                return u.isGroup 
-                    ? (String(u.id) === String(userId)) 
-                    : (Number(u.id) === Number(userId));
+        const user = this.users.find((u) => 
+        {
+            return u.isGroup 
+                ? (String(u.id) === String(userId)) 
+                : (Number(u.id) === Number(userId));
         });
         
         if (user) 
@@ -137,26 +162,65 @@ export class ChatManager
     {
         this.disableActiveChat();
 
-        // Добавляем класс active выбранному чату
+        // добавляем класс active выбранному чату
         const selectedChat = this.chatList.querySelector(`[data-user-id="${userId}"]`);
-        if (selectedChat) {
-            selectedChat.classList.add('active');
-        }
+        if (selectedChat)
+            selectedChat.classList.toggle('active');
     }
 
+    // функция для безопасного скрытия текущего чата
     disableActiveChat()
     {
-        // Убираем класс active у всех чатов и у окна чата
-        this.chatList.querySelectorAll('.chat-item').forEach(chat => {
+        // убираем класс active у всех чатов и у окна чата
+        this.chatList.querySelectorAll('.chat-item').forEach(chat => 
+        {
             chat.classList.remove('active');
         });
 
         this.chatWindow.classList.remove('chat-selected');
     }
 
+    // включение / выключение окна с текущими пользователями
+    toggleModalWindow()
+    {
+        this.modalWindow.classList.toggle('active');
+        
+        if (this.modalWindow.classList.contains('active'))
+        {
+
+            // на всякий если пользователь нажмет на настройки и на добавление чата
+            if (this.settingsPanel.classList.contains('active'))
+            {
+                this.settingsPanel.classList.remove('active'); 
+                this.settingsWereOpened = true;
+            }
+                
+            document.body.style.overflow = "hidden";
+
+            // подписываемся на событие на клик мимо экрана
+
+            this.fetchOnlineUsers();
+        }
+        else 
+        {
+            if (this.settingsWereOpened) 
+                {
+                    this.settingsPanel.classList.toggle('active'); 
+                    this.settingsWereOpened = false;
+                }
+            else document.body.style.overflow = "";
+        }
+    }
+
+    /*TODO: получаем ВСЕХ онлайн пользователей */
+    fetchOnlineUsers()
+    {
+
+    }
+
+    /*TODO: функция для добавления нового пользователя в список чатов */
     addNewChat() 
     {
-        /*TODO: рамка со всеми онлайн пользователями где можно будет выбрать кого-нибудь */
         console.log('Добавление нового чата');
     }
 
@@ -168,7 +232,14 @@ export class ChatManager
         {
             const chatName = item.querySelector(".chat-name").textContent.toLowerCase();
             const lastMessage = item.querySelector(".last-message").textContent.toLowerCase();
-            item.style.display = (chatName.includes(searchTerm) || lastMessage.includes(searchTerm)) ? "grid" : "none";
+
+            item.style.display = (chatName.includes(searchTerm) 
+            || lastMessage.includes(searchTerm)) ? "grid" : "none";
         });
+    }
+
+    searchUsers()
+    {
+
     }
 }

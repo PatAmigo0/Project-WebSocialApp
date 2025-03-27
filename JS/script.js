@@ -26,7 +26,7 @@ const elements =
 
 import { Message } from './message.js';
 import { ThemeManager } from './theme.js';
-import { requestNotificationPermission } from './notifications.js';
+import { NotificationManager } from './notifications.js';
 import { ChatManager } from './chat.js';
 import users from './users.js';
 import { avatarManager } from './avatars.js';
@@ -67,17 +67,6 @@ function init()
         elements.messagesContainer.style.backgroundImage = bgImage;
     }
 
-    // настраиваем уведомления
-    if (elements.notificationToggle) 
-    {
-        elements.notificationToggle.addEventListener("change", (e) => 
-        {
-            if (e.target.checked) 
-            {
-                requestNotificationPermission();
-            }
-        });
-    }
 }
 
 function initMain() 
@@ -124,27 +113,6 @@ function initMain()
     elements.sendButton.addEventListener("click", eventHandlers.sendMessage);
     elements.messageInput.addEventListener("keypress", eventHandlers.handleKeyPress);
 
-    elements.addChatButton.addEventListener("click", eventHandlers.search_chat);
-    const modal = document.getElementById('modal');
-    const closeButton = document.getElementById('closeButton');
-
-    // это закрывает окно на крестик
-    closeButton.addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
-                
-    // это закрывает окно при нажатии на лубую область вне окна поиска
-    window.addEventListener('click', function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-            }
-    });
-
-    // это открывает окно
-    elements.addChatButton.addEventListener("click", () => 
-        {          
-            modal.style.display = 'block';
-        });
     
     elements.themeRadios.forEach(radio => 
     {
@@ -173,7 +141,7 @@ function initMain()
 
 function initSaved() 
 {
-    // загружаем сохраненные настройки
+    // загружаем сохраненные настройки для элементов выбора
     const savedFontSize = localStorage.getItem("fontSize");
     const savedChecked = localStorage.getItem("savedChecked");
     if (savedFontSize) 
@@ -220,5 +188,6 @@ function toggleSettings()
 // настраиваем обработчики событий при загрузке страницы
 document.addEventListener("DOMContentLoaded", () => init());
 
-// создаем менеджер чата
-const chatManager = new ChatManager(users); 
+
+const chatManager = new ChatManager(users);
+const notificationManager = new NotificationManager(elements.notificationToggle);
