@@ -12,7 +12,6 @@ const elements =
 //////////////////////////////////////////////////////////////////////////////////////////
 
 import { ThemeManager } from './theme.js';
-import { NotificationManager } from './notifications.js';
 import { ChatManager } from './chat.js';
 import { SettingsHandler } from './settings.js';
 import users from './users.js';
@@ -34,13 +33,13 @@ const settingsHandler = new SettingsHandler(elements.root, themeManager);
 
 function init()
 {
-    // Загружаем сохраненные настройки
+    // загружаем сохраненные настройки
     settingsHandler.loadSavedSettings();
     
-    // Загружаем сохраненную тему и градиент
+    // загружаем сохраненную тему и градиент
     themeManager.loadTheme();
     
-    // Настраиваем сохранение при закрытии
+    // настраиваем сохранение при закрытии
     initUnload();
 }
 
@@ -64,13 +63,4 @@ function getRandomResponse()
 const chatManager = new ChatManager(users);
 
 // настраиваем обработчики событий при загрузке страницы
-document.addEventListener("DOMContentLoaded", () => {
-    // Убеждаемся, что все элементы загружены
-    if (elements.messagesContainer) 
-    {
-        init();
-    } 
-    else
-        console.error('Messages container not found');
-    
-});
+document.addEventListener("DOMContentLoaded", () => init());
