@@ -1,8 +1,11 @@
 export class ThemeManager 
 {
-    constructor(root) 
+    constructor(root, messagesContainer) 
     {
         this.root = root;
+        this.messagesContainer = messagesContainer;
+        this.gradientPatternSelector = document.getElementById("gradient-pattern");
+        this.currentPattern = 'blue'; // значение по умолчанию
         this.themes = 
         {
             dark: 
@@ -39,8 +42,22 @@ export class ThemeManager
                 "--close-button-color-hover": "rgba(78, 72, 198, 0.95)"
             }
         };
+
+        this.setupGradientListener();
     }
 
+    setupGradientListener()
+    {
+        // ВЫБОР ГРАДИЕНТА
+        this.gradientPatternSelector?.addEventListener('change', () => 
+        {
+            const pattern = this.gradientPatternSelector.value;
+            this.changeGradientPattern(pattern);
+            localStorage.setItem('gradientPattern', pattern);
+        });
+    }
+
+    // меняем тему (все элементы) согласно новой выбранной теме
     changeTheme(theme) 
     {
         if (!this.themes[theme]) 
@@ -51,13 +68,18 @@ export class ThemeManager
         {
             this.root.style.setProperty(property, value);
         });
+
+        // при смене темы обновляем текущий градиент
+        this.changeGradientPattern(this.currentPattern);
     }
 
+    // сохраняем все стили сайта в куки
     saveTheme()
     {
         localStorage.setItem("theme", JSON.stringify(this.getCurrentTheme()));
     }
 
+    // загружаем сохраненную тему из куки
     loadTheme() 
     {
         const savedTheme = localStorage.getItem("theme");
@@ -69,8 +91,23 @@ export class ThemeManager
                 this.root.style.setProperty(prop, styles[prop]);
             });
         }
+
+        // Загружаем сохраненный градиент
+        const savedGradientPattern = localStorage.getItem("gradientPattern");
+        if (savedGradientPattern)
+        {
+            this.currentPattern = savedGradientPattern;
+            this.gradientPatternSelector.value = savedGradientPattern;
+            this.changeGradientPattern(savedGradientPattern);
+        }
+        else
+        {
+            // по умолчанию используем белый паттерн
+            this.changeGradientPattern('light');
+        }
     }
     
+    // получаем ВЕСЬ текущий стиль сайта
     getCurrentTheme() 
     {
         const styles = {};
@@ -79,5 +116,32 @@ export class ThemeManager
             styles[prop] = this.root.style.getPropertyValue(prop);
         });
         return styles;
+    }
+
+    // обновляем градиент фона
+    updateGradient()
+    {
+        // принудительно обновляем стили (оптимизировал)
+        this.messagesContainer.style.backgroundImage = 'none';
+        this.messagesContainer.offsetHeight; // принудительный reflow
+        this.messagesContainer.style.backgroundImage = '';
+    }
+
+    // меняем паттерн градиента
+    changeGradientPattern(pattern)
+    {
+        this.currentPattern = pattern;
+        
+        // удаляем все классы градиентов
+        this.messagesContainer.classList.remove(
+            'gradient-pattern-blue', 
+            'gradient-pattern-light', 
+            'gradient-pattern-color',
+            'gradient-pattern-rainbow'
+        );
+        
+        // добавляем выбранный класс градиента
+        this.messagesContainer.classList.add(`gradient-pattern-${pattern}`);
+        this.updateGradient();
     }
 } 
