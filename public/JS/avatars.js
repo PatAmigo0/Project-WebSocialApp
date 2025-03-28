@@ -20,8 +20,6 @@ export class AvatarManager
             this.currentStyle = avatarPath.split('/')[0];
             avatarPath = this.avatarsPath + avatarPath;
         }
-        console.log(this.currentStyle);
-        console.log(avatarPath);
         this.avatars.set(userId, avatarPath);
         this._setAvatarsSrc(avatarPath, userId, isGroup);
     }
@@ -34,7 +32,6 @@ export class AvatarManager
 
     getCurrentAvatarsStyle()
     {
-        console.log(`GETTING THEME... ${this.currentStyle}`);
         return this.currentStyle;
     }
 
@@ -45,7 +42,6 @@ export class AvatarManager
     // устанавливаем путь для img
     _setAvatarsSrc(avatarPath, userId, isGroup)
     {
-        console.log(isGroup);
         // обновляем все аватары для этого пользователя/группы
         const avatarElements = document.querySelectorAll(`[data-user-id="${userId}"] .avatar img`);
         avatarElements.forEach(img => 

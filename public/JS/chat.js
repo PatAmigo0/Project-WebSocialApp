@@ -167,7 +167,6 @@ export class ChatManager
         const name = chatHeader.querySelector('.chat-name p');
 
         avatar.innerHTML = `<img src="${avatarManager.getAvatarPath(user.id, user.isGroup)}" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">`;
-        console.log(avatarManager.getAvatarPath(user.id, user.isGroup));
         name.textContent = user.name;
     }
 
@@ -205,7 +204,7 @@ export class ChatManager
     /*TODO: функция для добавления нового пользователя в список чатов */
     addNewChat() 
     {
-        console.log('Добавление нового чата');
+        // TODO: реализовать добавление нового чата
     }
 
     // поиск чатов

@@ -22,7 +22,6 @@ export class ModalWindowHandler
        // ЗАКРЫТИЕ МОДАЛЬНОГО ОКНА
        this.modalCloseButton.addEventListener('click', () => 
         {
-            console.log("test");
             this.toggleModalWindow();
         });
     }

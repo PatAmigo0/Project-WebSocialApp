@@ -116,7 +116,6 @@ export class ThemeManager
                 this.avatarsSelector.value = savedAvatarsStyle;
                 this.currentAvatarsStyle = savedAvatarsStyle;
                 avatarManager.changeAvatarsStyle(this.currentAvatarsStyle);
-                console.log(this.currentAvatarsStyle);
             }
         }
         else

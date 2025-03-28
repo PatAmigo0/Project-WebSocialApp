@@ -13,15 +13,6 @@
     --close-button-color-hover: #e9eced; 
 }
 
-/* общие стили */
-* 
-{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
 /* вспомогательный класс для скрытия текста меток */
 .visually-hidden 
 {
