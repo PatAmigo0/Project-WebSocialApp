@@ -1,8 +1,9 @@
 export class ThemeManager 
 {
-    constructor(root) 
+    constructor(root, messagesContainer) 
     {
         this.root = root;
+        this.messagesContainer = messagesContainer;
         this.themes = 
         {
             dark: 
@@ -41,6 +42,7 @@ export class ThemeManager
         };
     }
 
+    // меняем тему (все элементы) согласно новой выбранной теме
     changeTheme(theme) 
     {
         if (!this.themes[theme]) 
@@ -51,13 +53,17 @@ export class ThemeManager
         {
             this.root.style.setProperty(property, value);
         });
+
+        this.updateGradient();
     }
 
+    // сохраняем все стили сайта в куки
     saveTheme()
     {
         localStorage.setItem("theme", JSON.stringify(this.getCurrentTheme()));
     }
 
+    // загружаем сохраненную тему из куки
     loadTheme() 
     {
         const savedTheme = localStorage.getItem("theme");
@@ -71,6 +77,7 @@ export class ThemeManager
         }
     }
     
+    // получаем ВЕСЬ текущий стиль сайта
     getCurrentTheme() 
     {
         const styles = {};
@@ -79,5 +86,19 @@ export class ThemeManager
             styles[prop] = this.root.style.getPropertyValue(prop);
         });
         return styles;
+    }
+
+    // обновляем градиент фона
+    updateGradient()
+    {
+        if (this.messagesContainer) 
+        {
+            const computedStyle = window.getComputedStyle(this.messagesContainer);
+            const bgImage = computedStyle.backgroundImage;
+            
+            this.messagesContainer.style.backgroundImage = 'none';
+            this.messagesContainer.offsetHeight; // принудительно обновляем стили
+            this.messagesContainer.style.backgroundImage = bgImage;
+        }
     }
 } 

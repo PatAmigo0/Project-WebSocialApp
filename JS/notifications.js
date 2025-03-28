@@ -1,29 +1,35 @@
 export class NotificationManager
 {
-    constructor(notificationToggle)
+    constructor()
     {
-        this.button = notificationToggle;
+        this.notificationToggle = document.getElementById('notifications');
         this.allowed = false;
-        this.init()
-        console.log("INITIALIZED");
+
+        this.init();
     }
 
     init()
     {
-        console.log(this.button);
-        // настраиваем уведомления
-        if (this.button) 
-        {
-            this.button.addEventListener("change", (e) => 
-            {
-                if (e.target.checked) 
-                    this.requestNotificationPermission();
-            });
-        }
+        this.setupEventListeners();
     }
 
+    setupEventListeners()
+    {
+        this.notificationToggle.addEventListener('change', (e) => 
+        {
+            if (e.target.value)
+            {  
+                console.log(e.target.value);
+                notificationManager.requestNotificationPermission();
+            }
+            else console.log("уведомления выключаются...")
+        });
+    }
+
+    // запрашиваем разрешение у пользователя на отправку уведомлений
     requestNotificationPermission() 
     {
+
         console.log("пытаюсь получить доступ к уведомлениям")
         if ("Notification" in window) 
         {
@@ -41,3 +47,5 @@ export class NotificationManager
         }
     } 
 }
+
+export const notificationManager = new NotificationManager();
