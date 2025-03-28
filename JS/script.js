@@ -16,6 +16,11 @@ import { ChatManager } from './chat.js';
 import { SettingsHandler } from './settings.js';
 import users from './users.js';
 
+// Глобальные переменные для менеджеров
+let themeManager;
+let chatManager;
+let settingsHandler;
+
 /*
 // список возможных ответов для тестирования
 const randomResponses = 
@@ -27,17 +32,16 @@ const randomResponses =
 ];
 */
 
-// создаем менеджер темы
-const themeManager = new ThemeManager(elements.root, elements.messagesContainer);
-const settingsHandler = new SettingsHandler(elements.root, themeManager);
-
 function init()
 {
+    themeManager = new ThemeManager(elements.root, elements.messagesContainer);
+    // загружаем сохраненную тему и градиент
+    themeManager.loadTheme();    
+    
+    chatManager = new ChatManager(users); // после загрузки стилей для правильной обработки аватаров
+    settingsHandler = new SettingsHandler(elements.root, themeManager, chatManager);
     // загружаем сохраненные настройки
     settingsHandler.loadSavedSettings();
-    
-    // загружаем сохраненную тему и градиент
-    themeManager.loadTheme();
     
     // настраиваем сохранение при закрытии
     initUnload();
@@ -58,9 +62,6 @@ function getRandomResponse()
     return randomResponses[Math.floor(Math.random() * randomResponses.length)];
 }
 */
-
-// инициализируем классы для работы с пользователем
-const chatManager = new ChatManager(users);
 
 // настраиваем обработчики событий при загрузке страницы
 document.addEventListener("DOMContentLoaded", () => init());

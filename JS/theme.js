@@ -1,11 +1,17 @@
+import { avatarManager } from "./avatars.js";
+
 export class ThemeManager 
 {
     constructor(root, messagesContainer) 
     {
         this.root = root;
         this.messagesContainer = messagesContainer;
+
         this.gradientPatternSelector = document.getElementById("gradient-pattern");
+        this.avatarsSelector = document.getElementById('avatars-images');
+
         this.currentPattern = 'blue'; // значение по умолчанию
+        this.currentAvatarsStyle = 'default';
         this.themes = 
         {
             dark: 
@@ -53,7 +59,6 @@ export class ThemeManager
         {
             const pattern = this.gradientPatternSelector.value;
             this.changeGradientPattern(pattern);
-            localStorage.setItem('gradientPattern', pattern);
         });
     }
 
@@ -76,7 +81,13 @@ export class ThemeManager
     // сохраняем все стили сайта в куки
     saveTheme()
     {
-        localStorage.setItem("theme", JSON.stringify(this.getCurrentTheme()));
+        const themeData =
+        {
+            styles: this.getCurrentTheme(),
+            gradientPattern: this.currentPattern,
+            avatarsStyle: avatarManager.getCurrentAvatarsStyle()
+        };
+        localStorage.setItem("theme", JSON.stringify(themeData));
     }
 
     // загружаем сохраненную тему из куки
@@ -85,24 +96,33 @@ export class ThemeManager
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme)
         {
-            const styles = JSON.parse(savedTheme);
-            Object.keys(styles).forEach((prop) =>
+            const parsedSavedTheme = JSON.parse(savedTheme);
+            Object.keys(parsedSavedTheme.styles).forEach((prop) =>
             {
-                this.root.style.setProperty(prop, styles[prop]);
+                this.root.style.setProperty(prop, parsedSavedTheme.styles[prop]);
             });
-        }
 
-        // Загружаем сохраненный градиент
-        const savedGradientPattern = localStorage.getItem("gradientPattern");
-        if (savedGradientPattern)
-        {
-            this.currentPattern = savedGradientPattern;
-            this.gradientPatternSelector.value = savedGradientPattern;
-            this.changeGradientPattern(savedGradientPattern);
+            const savedGradientPattern = parsedSavedTheme.gradientPattern;
+            if (savedGradientPattern)
+            {
+                this.currentPattern = savedGradientPattern;
+                this.gradientPatternSelector.value = savedGradientPattern;
+                this.changeGradientPattern(savedGradientPattern);
+            }
+
+            const savedAvatarsStyle = parsedSavedTheme.avatarsStyle;
+            if (savedAvatarsStyle)
+            {
+                this.avatarsSelector.value = savedAvatarsStyle;
+                this.currentAvatarsStyle = savedAvatarsStyle;
+                avatarManager.changeAvatarsStyle(this.currentAvatarsStyle);
+                console.log(this.currentAvatarsStyle);
+            }
         }
         else
         {
             // По умолчанию используем синий паттерн
+            this.changeTheme('light');
             this.changeGradientPattern('blue');
         }
     }
@@ -132,7 +152,7 @@ export class ThemeManager
     {
         this.currentPattern = pattern;
         
-        // Удаляем все классы градиентов
+        // удаляем все классы градиентов
         this.messagesContainer.classList.remove(
             'gradient-pattern-blue', 
             'gradient-pattern-light', 
@@ -140,10 +160,10 @@ export class ThemeManager
             'gradient-pattern-rainbow'
         );
         
-        // Добавляем выбранный класс градиента
+        // добавляем выбранный класс градиента
         this.messagesContainer.classList.add(`gradient-pattern-${pattern}`);
         
-        // Обновляем градиент
+        // обновляем градиент
         this.updateGradient();
     }
 } 

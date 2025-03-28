@@ -60,6 +60,7 @@
     padding-bottom: 10px;
 }
 
+/* элемент списка чата */
 .chat-item 
 {
     display: grid;
@@ -70,6 +71,7 @@
     transition: background-color 0.2s;
 }
 
+
 .chat-item:hover 
 {
     background-color: var(--bg-primary);
@@ -79,6 +81,11 @@
 {
     background-color: var(--bg-primary);
     border-left: 3px solid var(--accent-color);
+}
+
+.profile-info
+{
+    display: grid;
 }
 
 /* кнопка добавления чата */
@@ -96,9 +103,14 @@
     transition: background-color 0.2s, color 0.2s;
 }
 
-.chat-item.button:hover .add-chat-button
+.chat-item.button:hover
 {
     background-color: var(--bg-primary);
+    color: var(--accent-color);
+}
+
+.chat-item.button:hover .add-chat-button
+{
     color: var(--accent-color);
 }
 
@@ -120,11 +132,6 @@
 {
     font-size: 1em;
     color: inherit;
-}
-
-.profile-info
-{
-    display: grid;
 }
 
 /* аватар пользователя */

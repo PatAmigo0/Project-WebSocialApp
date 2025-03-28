@@ -49,6 +49,26 @@ export class ChatManager
         this.chatList.append(addChatButton);
     }
 
+    // обновляем аватары всех пользователей
+    updateUsersAvatars(value)
+    {
+        let check = true // для оптимизации чтобы не проверять на активный чат если мы его уже нашли
+        this.users.forEach(user => 
+        {
+            if (user.isGroup) 
+                avatarManager.setAvatar(user.id, `${value}/${value}-group.png`, true);
+            else 
+                avatarManager.setAvatar(user.id, `${value}/${value}-avatar.png`);
+
+            // на случай если был октрыт чат (нужно изменить аватар пользователя в заголовке чата)
+            if (check && this.chatList.querySelector(`[data-user-id="${user.id}"]`).classList.contains("active"))
+            {
+                check = false; // больше не проверять
+                this.updateChatHeader(user);
+            }
+        });
+    }
+
     // создание элемента чата (пользователя или группы)
     createUserElement(user) 
     {

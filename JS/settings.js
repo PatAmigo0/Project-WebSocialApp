@@ -1,12 +1,10 @@
-/*TODO: сделать класс для работы с настройками (перенести из script.js) */ 
-import { notificationManager } from "./notifications.js";
-
 export class SettingsHandler
 {
-    constructor(root, themeManager)
+    constructor(root, themeManager, chatManager)
     {
         this.root = root;
         this.themeManager = themeManager;
+        this.chatManager = chatManager;
 
         this.settingsPanel = document.getElementById("settingsPanel");
         this.settingsButton = document.querySelector('.settings-button');
@@ -14,6 +12,7 @@ export class SettingsHandler
         this.notificationToggle = document.getElementById('notifications');
         this.themeRadios = document.querySelectorAll(".theme-radio");
         this.fontSizeSelector = document.getElementById('font-size');
+        this.avatarsSelector = document.getElementById('avatars-images');
 
         this.init();
     }
@@ -59,6 +58,12 @@ export class SettingsHandler
 
             this.root.style.fontSize = `${fontSize}px`;
             localStorage.setItem('fontSize', fontSize);
+        });
+
+        // ВЫБОР АВАТАРОВ
+        this.avatarsSelector?.addEventListener('change', (e) => 
+        {
+            this.chatManager.updateUsersAvatars(e.target.value);
         });
     }
 
