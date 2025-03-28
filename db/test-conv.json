@@ -1,0 +1,67 @@
+[
+    {
+        "id": "100",
+        "name": "About JS",
+        "users": ["0", "100"],
+        "messages": [
+            {
+                "sender": "0",
+                "text": "Hello. How are you?"
+            },
+            {
+                "sender": "100",
+                "text": "Hi!"
+            },
+            {
+                "sender": "0",
+                "text": "I'm kek"
+            }
+        ]
+    },
+    {
+        "id": "200",
+        "name": "WHAT",
+        "users": ["0", "300"],
+        "messages": [
+            {
+                "sender": "300",
+                "text": "Hello"
+            },
+            {
+                "sender": "0",
+                "text": "Hi!"
+            },
+            {
+                "sender": "300",
+                "text": "You are idiot?"
+            }
+        ]
+    },
+    {
+        "id": "300",
+        "name": "True or False",
+        "users": ["0", "300", "500"],
+        "messages": [
+            {
+                "sender": "300",
+                "text": "Hello"
+            },
+            {
+                "sender": "500",
+                "text": "Hi!"
+            },
+            {
+                "sender": "0",
+                "text": "Aaaaa"
+            },
+            {
+                "sender": "300",
+                "text": "You are idiot?"
+            },
+            {
+                "sender": "0",
+                "text": "AAAAA"
+            }
+        ]
+    }
+]
