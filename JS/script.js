@@ -4,6 +4,7 @@
 const elements = 
 {
     root: document.documentElement,
+    messagesContainer: document.querySelector('.messages-container'),
     //chatItems: document.querySelectorAll(".chat-item:not(:has(.add-chat-button))"),
     //chatContainer: document.querySelector('.chat-container'),
 };
@@ -33,21 +34,14 @@ const settingsHandler = new SettingsHandler(elements.root, themeManager);
 
 function init()
 {
-    
-    initSaved();
-    initUnload();
-    themeManager.updateGradient();
-
-}
-
-
-function initSaved() 
-{
-    // загружаем сохраненные настройки для элементов выбора
+    // Загружаем сохраненные настройки
     settingsHandler.loadSavedSettings();
     
-    // загружаем сохраненную тему
+    // Загружаем сохраненную тему и градиент
     themeManager.loadTheme();
+    
+    // Настраиваем сохранение при закрытии
+    initUnload();
 }
 
 function initUnload() 
@@ -66,9 +60,17 @@ function getRandomResponse()
 }
 */
 
+// инициализируем классы для работы с пользователем
+const chatManager = new ChatManager(users);
 
 // настраиваем обработчики событий при загрузке страницы
-document.addEventListener("DOMContentLoaded", () => init());
-
-// инициализируем классы для работы с пользователем и
-const chatManager = new ChatManager(users);
+document.addEventListener("DOMContentLoaded", () => {
+    // Убеждаемся, что все элементы загружены
+    if (elements.messagesContainer) 
+    {
+        init();
+    } 
+    else
+        console.error('Messages container not found');
+    
+});

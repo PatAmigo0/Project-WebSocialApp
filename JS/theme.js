@@ -4,6 +4,8 @@ export class ThemeManager
     {
         this.root = root;
         this.messagesContainer = messagesContainer;
+        this.gradientPatternSelector = document.getElementById("gradient-pattern");
+        this.currentPattern = 'blue'; // значение по умолчанию
         this.themes = 
         {
             dark: 
@@ -40,6 +42,19 @@ export class ThemeManager
                 "--close-button-color-hover": "rgba(78, 72, 198, 0.95)"
             }
         };
+
+        this.setupGradientListener();
+    }
+
+    setupGradientListener()
+    {
+        // ВЫБОР ГРАДИЕНТА
+        this.gradientPatternSelector?.addEventListener('change', () => 
+        {
+            const pattern = this.gradientPatternSelector.value;
+            this.changeGradientPattern(pattern);
+            localStorage.setItem('gradientPattern', pattern);
+        });
     }
 
     // меняем тему (все элементы) согласно новой выбранной теме
@@ -54,7 +69,8 @@ export class ThemeManager
             this.root.style.setProperty(property, value);
         });
 
-        this.updateGradient();
+        // При смене темы обновляем текущий градиент
+        this.changeGradientPattern(this.currentPattern);
     }
 
     // сохраняем все стили сайта в куки
@@ -75,6 +91,20 @@ export class ThemeManager
                 this.root.style.setProperty(prop, styles[prop]);
             });
         }
+
+        // Загружаем сохраненный градиент
+        const savedGradientPattern = localStorage.getItem("gradientPattern");
+        if (savedGradientPattern)
+        {
+            this.currentPattern = savedGradientPattern;
+            this.gradientPatternSelector.value = savedGradientPattern;
+            this.changeGradientPattern(savedGradientPattern);
+        }
+        else
+        {
+            // По умолчанию используем синий паттерн
+            this.changeGradientPattern('blue');
+        }
     }
     
     // получаем ВЕСЬ текущий стиль сайта
@@ -91,14 +121,29 @@ export class ThemeManager
     // обновляем градиент фона
     updateGradient()
     {
-        if (this.messagesContainer) 
-        {
-            const computedStyle = window.getComputedStyle(this.messagesContainer);
-            const bgImage = computedStyle.backgroundImage;
-            
-            this.messagesContainer.style.backgroundImage = 'none';
-            this.messagesContainer.offsetHeight; // принудительно обновляем стили
-            this.messagesContainer.style.backgroundImage = bgImage;
-        }
+        // Принудительно обновляем стили
+        this.messagesContainer.style.backgroundImage = 'none';
+        this.messagesContainer.offsetHeight; // принудительный reflow
+        this.messagesContainer.style.backgroundImage = '';
+    }
+
+    // меняем паттерн градиента
+    changeGradientPattern(pattern)
+    {
+        this.currentPattern = pattern;
+        
+        // Удаляем все классы градиентов
+        this.messagesContainer.classList.remove(
+            'gradient-pattern-blue', 
+            'gradient-pattern-light', 
+            'gradient-pattern-color',
+            'gradient-pattern-rainbow'
+        );
+        
+        // Добавляем выбранный класс градиента
+        this.messagesContainer.classList.add(`gradient-pattern-${pattern}`);
+        
+        // Обновляем градиент
+        this.updateGradient();
     }
 } 

@@ -60,7 +60,6 @@ export class SettingsHandler
             this.root.style.fontSize = `${fontSize}px`;
             localStorage.setItem('fontSize', fontSize);
         });
-
     }
 
     // включаем / выключаем панель настроек
