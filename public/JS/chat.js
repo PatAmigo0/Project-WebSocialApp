@@ -8,7 +8,7 @@ export class ChatManager
 {
     constructor(users) 
     {
-        this.users = users;
+        this.users = users; // чаты
         this.settingsWereOpened = false;
 
         this.chatList = document.querySelector('.chat-list');
@@ -52,7 +52,9 @@ export class ChatManager
     // обновляем аватары всех пользователей
     updateUsersAvatars(value)
     {
+        avatarManager.changeAvatarsStyle(value);
         let check = true // для оптимизации чтобы не проверять на активный чат если мы его уже нашли
+
         this.users.forEach(user => 
         {
             if (user.isGroup) 
@@ -61,12 +63,14 @@ export class ChatManager
                 avatarManager.setAvatar(user.id, `${value}/${value}-avatar.png`);
 
             // на случай если был октрыт чат (нужно изменить аватар пользователя в заголовке чата)
-            if (check && this.chatList.querySelector(`[data-user-id="${user.id}"]`).classList.contains("active"))
+            if (check 
+                && this.chatList.querySelector(`[data-user-id="${user.id}"]`).classList.contains("active"))
             {
                 check = false; // больше не проверять
                 this.updateChatHeader(user);
             }
         });
+
     }
 
     // создание элемента чата (пользователя или группы)

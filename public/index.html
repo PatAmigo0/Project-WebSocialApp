@@ -6,7 +6,6 @@
     <title>Разметка</title>
     <link rel="stylesheet" href="CSS/main.css">
     <script src="JS/api.js"></script>
-    <script src="JS/main.js"></script>
 </head>
 <body>
     <div class="chat-container">
@@ -168,8 +167,18 @@
             </div>
         </div>
 
+        <div class="modal-login gradient-pattern-rainbow">
+            <div class="login-content gradient-pattern-blue">
+                <h2>Окно входа</h2>
+                <label for="login-input">Имя пользователя:</label>
+                <input type="text" autocomplete="off" id="login-input" name="login-input" class="login-input">
+                <button id="loginButton">Вход</button>
+            </div>
+        </div>
     </div>
 
+    <!-- Сначала загружаем script.js, затем main.js -->
     <script type="module" src="JS/script.js"></script>
+    <script type="module" src="JS/main.js"></script>
 </body>
 </html> 

@@ -53,6 +53,7 @@
 .chat-list 
 {
     overflow-y: auto;
+    scrollbar-width: thin;
     display: grid;
     grid-auto-rows: min-content;
     gap: 2px;

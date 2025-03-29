@@ -13,11 +13,11 @@ export class AvatarManager
     // устанавливаем аватар для пользователя
     setAvatar(userId, avatarPath, isGroup = false) 
     {
-        if (!avatarPath) avatarPath = this.avatarsPath + (isGroup ? `${this.currentStyle}/${this.currentStyle}-group.png` 
+        if (!avatarPath) avatarPath = this.avatarsPath + (isGroup 
+            ? `${this.currentStyle}/${this.currentStyle}-group.png` 
             : `${this.currentStyle}/${this.currentStyle}-avatar.png`);
         else 
         {
-            this.currentStyle = avatarPath.split('/')[0];
             avatarPath = this.avatarsPath + avatarPath;
         }
         this.avatars.set(userId, avatarPath);
@@ -39,6 +39,8 @@ export class AvatarManager
     {
         this.currentStyle = style;
     }
+
+
     // устанавливаем путь для img
     _setAvatarsSrc(avatarPath, userId, isGroup)
     {
@@ -50,6 +52,8 @@ export class AvatarManager
             img.onerror = () => 
             {
                 img.src = this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
+                console.warn("Error in _setAvatrsSrc");
+                this.avatars.set(userId, (this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar)));
             };
             img.src = avatarPath;
         });

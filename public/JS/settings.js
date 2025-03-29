@@ -1,10 +1,10 @@
 export class SettingsHandler
 {
-    constructor(root, themeManager, chatManager)
+    constructor(root, themeManager)
     {
         this.root = root;
         this.themeManager = themeManager;
-        this.chatManager = chatManager;
+        // chatManager теперь доступен через window.chatManager
 
         this.settingsPanel = document.getElementById("settingsPanel");
         this.settingsButton = document.querySelector('.settings-button');
@@ -63,7 +63,11 @@ export class SettingsHandler
         // ВЫБОР АВАТАРОВ
         this.avatarsSelector?.addEventListener('change', (e) => 
         {
-            this.chatManager.updateUsersAvatars(e.target.value);
+            if (window.chatManager)
+                window.chatManager.updateUsersAvatars(e.target.value);
+            else
+                console.warn("chatManager еще не загружен, попробуйте позже");
+            
         });
     }
 

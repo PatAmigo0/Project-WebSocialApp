@@ -1,3 +1,11 @@
+/* ИМПОРТЫ */
+
+import { loginHandler } from "./login.js";
+
+/////////////////////////////////////////
+
+let signalThemeReadyFlag = false;
+
 const USER = {
     id: "",
     name: ""
@@ -12,12 +20,17 @@ const WS_HANDLERS = {
 
 const WS_CONNECTOR = new WebSocketConnector();
 
-window.onload = function() {
+window.onload = function() 
+{
     // Здесь стартуем или Math.PI...
-    USER.name = prompt("Username:");
-    login(USER.name, onLoginSuccess, onLoginError);
-
+    startLogin();
     // Тут может быть какой-нибудь код, не касающийся работы с сервером
+}
+
+async function startLogin()
+{
+    USER.name = await loginHandler.handleLogin();
+    login(USER.name, onLoginSuccess, onLoginError);
 }
 
 /**
@@ -83,7 +96,7 @@ function onNewUser(user) {
  * @param {User} user
  */
 function onLeaveUser(user) {
-    console.log(`User ${user.name} is leave`);
+    console.log(`User ${user.name} left`);
 }
 
 /**

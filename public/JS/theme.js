@@ -1,5 +1,6 @@
 import { avatarManager } from "./avatars.js";
 
+
 export class ThemeManager 
 {
     constructor(root, messagesContainer) 
