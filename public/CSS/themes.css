@@ -1,7 +1,7 @@
 /* селектор тем */
 .theme-selector {
   display: grid;
-  grid-template-columns: repeat(4, 30px);
+  grid-template-columns: repeat(5, 30px);
   gap: 10px;
 }
 
@@ -53,6 +53,10 @@
 
 .theme-green {
   background-color: #e8f5e9;
+}
+
+.theme-abstract {
+  background: linear-gradient(45deg, #3023ae, #c86dd7);
 }
 
 /* градиентный фон для контейнера сообщений */
@@ -139,6 +143,30 @@
   animation: gradient 15s ease infinite;
 }
 
+/* градиент 5 - абстрактный */
+
+@keyframes abstract-shift {
+  0% {
+    background-position: 0% 0%, 100% 100%, 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%, 0% 0%, 50% 50%;
+  }
+  100% {
+    background-position: 0% 0%, 100% 100%, 0% 0%;
+  }
+}
+
+.gradient-pattern-abstract {
+  background-image: 
+    radial-gradient(circle at 30% 30%, rgba(99, 72, 203, 0.1) 0%, transparent 70%),
+    radial-gradient(circle at 70% 65%, rgba(200, 109, 215, 0.1) 0%, transparent 70%),
+    linear-gradient(135deg, rgba(48, 35, 174, 0.05) 0%, rgba(200, 109, 215, 0.05) 100%);
+  background-size: 200% 200%, 200% 200%, 100% 100%;
+  animation: abstract-shift 20s ease infinite;
+}
+
+
 /* фоновый градиент */
 .messages-container::before {
   content: "";
@@ -196,4 +224,15 @@
   );
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
+}
+
+/* градиент 5 - абстрактный */
+.gradient-pattern-abstract::before {
+  background: linear-gradient(
+    135deg,
+    rgba(48, 35, 174, 0.05),
+    rgba(200, 109, 215, 0.05)
+  );
+  mix-blend-mode: overlay;
+  animation: abstract-shift 20s ease infinite;
 }

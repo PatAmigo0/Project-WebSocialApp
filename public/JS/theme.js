@@ -58,6 +58,17 @@ export class ThemeManager
                 "--bg-message-received": "rgba(255, 255, 255, 0.95)",
                 "--bg-message-sent": "rgba(76, 175, 80, 0.95)",
                 "--close-button-color-hover": "rgba(12, 10, 10, 0.95)"
+            },
+            abstract: 
+            {
+                "--bg-primary": "#3023ae",
+                "--bg-secondary": "#c86dd7",
+                "--text-primary": "#ffffff",
+                "--text-secondary": "#e0cbf5",
+                "--border-color": "#8057c5",
+                "--bg-message-received": "rgba(64, 45, 120, 0.95)",
+                "--bg-message-sent": "rgba(200, 109, 215, 0.95)",
+                "--close-button-color-hover": "rgba(30, 23, 50, 0.95)"
             }
         };
 
@@ -152,7 +163,7 @@ export class ThemeManager
     // обновляем градиент фона
     updateGradient()
     {
-        // Принудительно обновляем стили
+        // принудительно обновляем стили
         this.messagesContainer.style.backgroundImage = 'none';
         this.messagesContainer.offsetHeight; // принудительный reflow
         this.messagesContainer.style.backgroundImage = '';
@@ -168,7 +179,8 @@ export class ThemeManager
             'gradient-pattern-blue', 
             'gradient-pattern-light', 
             'gradient-pattern-color',
-            'gradient-pattern-rainbow'
+            'gradient-pattern-rainbow',
+            'gradient-pattern-abstract'
         );
         
         // добавляем выбранный класс градиента
