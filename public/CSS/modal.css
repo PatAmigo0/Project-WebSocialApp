@@ -1,127 +1,154 @@
-.modal-window.active
-{
-    display: grid;
-    pointer-events: all;
+.modal-window.active {
+  display: grid;
+  pointer-events: all;
 }
 
 /* окно добавление пользователей */
-.modal-window 
-{
-    overflow: hidden;
-    color: black;
-    display: none;
-    position: fixed;
-    pointer-events: none;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* затененный фон*/
+.modal-window {
+  overflow: hidden;
+  color: black;
+  display: none;
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* затененный фон*/
 }
 
-.modal-content 
-{
-    overflow-y: auto;
-    scrollbar-width: none;
-    background-color: #fff;
-    margin: 15% auto; 
-    padding: 20px;
-    width: 40%; 
-    height: 50%;
-    border: 1px solid #888;
+.modal-content {
+  overflow-y: auto;
+  scrollbar-width: none;
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  width: 40%;
+  height: 50%;
+  border: 1px solid #888;
 }
 
-.close-button 
-{
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
-.close-button:hover
-{
-    color: black;
+.close-button:hover {
+  color: black;
 }
 
 /* окно логина */
 
-.modal-login
-{
-    overflow: hidden;
-    color: black;
-    display: grid;
-    grid-auto-rows: min-content;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
+.modal-login {
+  overflow: hidden;
+  color: black;
+  display: grid;
+  grid-auto-rows: min-content;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
 
-    width: 100%;
-    height: 100%;
-    background-color: rgb(0, 0, 0); /* затененный фон*/
-    z-index: 999;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0); /* затененный фон*/
+  z-index: 999;
 }
 
-
-.login-content
-{
-    display: grid;
-    overflow-y: auto;
-    scrollbar-width: none;
-    border-radius: 5px;
-    grid-auto-rows: min-content;
-    padding: 3px;
-    background-color: rgba(23, 7, 7, 0.767); /* затененный фон*/
-    margin: 15% auto; 
-    padding: 20px;
-    width: 40%; 
-    height: 50%;
-    border: 1px solid #888;
-    z-index: 1000;
+.login-content {
+  display: grid;
+  overflow-y: auto;
+  scrollbar-width: none;
+  border-radius: 5px;
+  grid-auto-rows: min-content;
+  padding: 3px;
+  background-color: rgba(23, 7, 7, 0.767); /* затененный фон*/
+  margin: 15% auto;
+  padding: 20px;
+  width: 40%;
+  max-width: 400px;
+  min-width: 250px;
+  height: auto;
+  max-height: 80vh;
+  border: 1px solid #888;
+  z-index: 1000;
 }
 
-.login-content h2
-{
-    padding-bottom: 45px;
-    color: rgb(246, 245, 245);
+.login-content h2 {
+  padding-bottom: 45px;
+  color: rgb(246, 245, 245);
 }
 
-.login-content label
-{
-    color: white;
+.login-content label {
+  color: white;
 }
 
-.login-input
-{
-    padding: 20px;
-    color: black;
-    border-radius: 4px;
+.login-input {
+  padding: 20px;
+  color: black;
+  border-radius: 4px;
 }
 
-.login-input.error
-{
-    border-color: red;
+.login-input.error {
+  border-color: red;
 }
 
-.login-content button
-{
-    margin: 10px;
-    padding: 20px;
-    transition: right 0.3s ease;
-    color: black;
-    border-radius: 4px;
-    transition: 0.5s ease;
+.login-content button {
+  margin: 10px;
+  padding: 20px;
+  transition: right 0.3s ease;
+  color: black;
+  border-radius: 4px;
+  transition: 0.5s ease;
 }
 
-.login-content button:hover
-{
-    cursor: pointer;
-    color: white;
+.login-content button:hover {
+  cursor: pointer;
+  color: white;
+}
+
+/* Медиа-запросы для адаптивности на маленьких экранах */
+@media (max-width: 768px) {
+  .login-content {
+    width: 85%;
+    margin: 10% auto;
+    padding: 15px;
+  }
+  
+  .login-input {
+    padding: 15px;
+  }
+  
+  .login-content button {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-content {
+    width: 90%;
+    margin: 5% auto;
+    padding: 10px;
+  }
+  
+  .login-content h2 {
+    padding-bottom: 20px;
+    font-size: 1.5em;
+  }
+  
+  .login-input {
+    padding: 10px;
+  }
+  
+  .login-content button {
+    padding: 10px;
+  }
 }

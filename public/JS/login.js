@@ -18,7 +18,7 @@ export class LoginHandler
             "jslearner",
             "ga...",
             "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-            "lelelelelelelelelelelelellelelelelelelelelelelellelelelelelelelellelelelelelelellelelelelelelelelelelleleelllelelelelelelelelelelelellelelelelelelelelelelelelelellelelelelelelelelelelellelelelelelelellelelelelelelelelelelleleelllelelelelele Ты не должен тут быть..."
+            "lelelelelelelelelelelelelellelelelelelelelelelellelelelelelelelellelelelelelellelelelelelelelelelelelleleelllelelelelelelelelelelellelelelelelelelelelelelelelelellelelelelelelelelelelellelelelelelelellelelelelelelelelelelleleelllelelelelele Ты не должен тут быть..."
         ];
 
         this.style = "gradient-pattern-rainbow"
@@ -61,16 +61,15 @@ export class LoginHandler
     // обрабатываем поле ввода
     handleInput()
     {
-
         this.username = this.loginInput.value;
         this.loginInput.value = "";
 
+        console.warn(this.username);
         if (this.username)
             return this.username;
         else
         {
-            this.loginInput.classList.add("error");
-            this.loginInput.placeholder = "Поле не должно быть пустым."
+            this.loginError("Поле не должно быть пустым.");
         }
     }
 
@@ -80,36 +79,49 @@ export class LoginHandler
         this.mainWindow.remove();
     }
 
+    loginError(errorText)
+    {
+        this.loginInput.classList.add("error");
+        this.loginInput.placeholder = errorText;
+    }
+
     async handleLogin()
     {
-        return new Promise((res, rej) => 
+        return new Promise((res) => 
         {
-            // НАЖАТИЕ НА КНОПКУ
-            this.loginButton.addEventListener("click", (e) => 
+
+            // создаем функции-обработчики которые сможем удалить
+            const buttonClickHandler = () => 
             {
                 const val = this.handleInput();
                 if (val)
                 {
-                    this.hideLoginWindow();
+                    // отписываемся от событий перед разрешением Promise
+                    this.loginButton.removeEventListener("click", buttonClickHandler);
+                    this.loginInput.removeEventListener("keypress", keyPressHandler);
                     res(val);
                 }
-            });
+            };
 
-            // НАЖАТИЕ НА ENTER
-            this.loginInput.addEventListener("keypress", (e) => 
+            const keyPressHandler = (e) => 
             {
                 if (e.key == "Enter")
                 {
                     const val = this.handleInput();
                     if (val)
                     {
-                        this.hideLoginWindow();
+                        // отписываемся от событий перед разрешением Promise
+                        this.loginButton.removeEventListener("click", buttonClickHandler);
+                        this.loginInput.removeEventListener("keypress", keyPressHandler);
                         res(val);
                     }
                 }
-            });
+            };
 
-        })
+            // добавляем обработчики
+            this.loginButton.addEventListener("click", buttonClickHandler);
+            this.loginInput.addEventListener("keypress", keyPressHandler);
+        });
     }
 }
 

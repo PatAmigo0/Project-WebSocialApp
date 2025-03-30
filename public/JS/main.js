@@ -40,6 +40,7 @@ async function startLogin()
  * @param {String} userId id пользователя
  */
 function onLoginSuccess(userId) {
+    loginHandler.hideLoginWindow();
     window.chatManager.setCurrentUser(userId);
     console.log(`User id: ${userId}`);
     USER.id = userId;
@@ -63,6 +64,8 @@ function onLoginSuccess(userId) {
  */
 function onLoginError(errorText) {
     console.error(`Login error: ${errorText}`);
+    loginHandler.loginError(errorText);
+    startLogin();
 }
 
 /**
@@ -93,6 +96,7 @@ function onLoadConversations(conversations) {
  */
 function onNewUser(user) {
     console.log(`New online user: ${user.name}`);
+    window.chatManager.handleUserOnline(user.id);
 }
 
 /**
@@ -120,7 +124,7 @@ function onNewConversation(conversation) {
  * @param {NewMessage} message
  */
 function onNewMessage(message) {
-    console.log("New message:");
+    console.log("New message received from server:");
     console.log(message);
     window.chatManager.handleReceivedMessage(message);
 }
@@ -205,6 +209,7 @@ function onLoadConversationByIdError(errorText) {
  * @param {String} text текст сообщения
  */
 export function sendMessage(convId, text) {
+    console.warn("ОТПРАВКА СООБЩЕНИЯ");
     WS_CONNECTOR.sendNewMessage({
         convId: convId,
         sender: USER.id,

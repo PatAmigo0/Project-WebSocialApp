@@ -1,22 +1,22 @@
-@import 'variables.css';
-@import 'themes.css';
-@import 'sidebar.css';
-@import 'chat.css';
-@import 'settings.css';
-@import 'chathiden.css';
-@import 'modal.css';
+@import "variables.css";
+@import "themes.css";
+@import "sidebar.css";
+@import "chat.css";
+@import "settings.css";
+@import "chathiden.css";
+@import "modal.css";
 
 :root {
-    --back: rgb(32, 33, 37);
-    --light-back: rgb(42, 43, 48);
-    --red: rgb(232, 71, 104);
-    --green: rgb(147, 222, 166);
-    --white: rgb(246, 249, 255);
+  --back: rgb(32, 33, 37);
+  --light-back: rgb(42, 43, 48);
+  --red: rgb(232, 71, 104);
+  --green: rgb(147, 222, 166);
+  --white: rgb(246, 249, 255);
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
 }

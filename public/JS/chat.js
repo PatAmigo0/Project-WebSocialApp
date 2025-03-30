@@ -36,7 +36,7 @@ export class ChatManager
 
         this.modalWindowHandler = new ModalWindowHandler();
 
-        this.renderUsers();
+        //this.renderUsers();
         this.setupEventListeners();
     }
 
@@ -63,9 +63,65 @@ export class ChatManager
     // когда наш текущий пользователь получает сообщение вызывается этот обработчик
     handleReceivedMessage(message)
     {
-        new Message(message.text, "reveived", this.messagesContainer, this.messageInput);
+        console.log(`новое сообщение: ${message}`);
+        
+        const targetChat = this.users.find(user => user.id === message.convId);
+        
+        // обновляем последнее сообщение в чате (для отображения в списке)
+        if (targetChat) {
+            targetChat.lastMessage = message.text;
+            
+            // если этот чат сейчас открыт - добавляем сообщение в контейнер
+            if (this.selectedConservationId === message.convId && 
+                this.chatWindow.classList.contains('chat-selected')) {
+                new Message(message.text, "received", this.messagesContainer, this.messageInput);
+            } else 
+            {
+                // индикатор непрочитанного сообщения
+                const chatElement = this.chatList.querySelector(`[data-user-id="${message.convId}"]`);
+                if (chatElement)
+                    chatElement.classList.add('unread-message'); 
+                /* TODO: добавить индикатор непрочитанного сообщения */
+            }
+            
+            // Обновляем список чатов
+            this.renderUsers();
+        } else {
+            console.warn("Получено сообщение для неизвестного чата:", message.convId);
+            // Возможно, нужно загрузить информацию о новом чате
+            tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation));
+        }
     }
 
+    handleUserOnline(userId)    
+    {
+        /* TODO: переписать чтобы не искать в списке чатов */
+        /*
+        const user = this.chatList.querySelector(`[data-user-id="${userId}"]`);
+        if (user)
+        {
+            user.online = true;
+            this._toggleStatus(user);
+        }
+        else
+            console.warn(`Пользователь ${userId} не найден в списке чатов`);
+        */
+    }
+
+    handleUserOffline(userId)
+    {
+        /* TODO: переписать чтобы не искать в списке чатов */
+        /*
+        const user = this.chatList.querySelector(`[data-user-id="${userId}"]`);
+        if (user)
+        {
+            user.online = false;
+            this._toggleStatus(user);
+        }
+        else
+            console.warn(`Пользователь ${userId} не найден в списке чатов`);
+        */
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /* главные функции для работы с сайтом */
@@ -171,6 +227,9 @@ export class ChatManager
         {
             if (this.selectedConservationId)
             {
+                console.warn("Отправка сообщения");
+                console.warn(this.selectedConservationId);
+                console.warn(messageText);
                 sendMessage(this.selectedConservationId, messageText);
                 new Message(messageText, "sent", this.messagesContainer, this.messageInput);
             }
@@ -281,13 +340,31 @@ export class ChatManager
     /* функции для создания чего либо */
 
     // загрузка сообщений из сервера в чат
-    _onFullConservationLoadSuccess(conservation)
+    _onFullConservationLoadSuccess(conversation)
     {
         /* TODO: оптимизировать чтобы появлялись не все сообщения (сейчас я не понимаю как это сделать) */
-        conservation.messages.forEach(message =>
+        this._hadnleAsUserConversation(conversation);
+    }
+
+    _handleAsGroup(conversation)
+    {
+
+    }
+
+    _hadnleAsUserConversation(conversation)
+    {
+        conversation.messages.forEach(message =>
         {
+            //console.warn(message);
             new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, this.messagesContainer, this.messageInput);
         });
+    }
+
+    _toggleStatus(user)
+    {
+        const onlineStatus = user.querySelector('.online-status');
+        if (onlineStatus)
+            onlineStatus.textContent = user.online ? "online" : "offline";
     }
 
     _buildConservation(conversation)
@@ -295,14 +372,14 @@ export class ChatManager
         const user = 
         {
             id: String(conversation.id),
-            online : false,
             name: conversation.name,
             avatar: "",
             messages: conversation.messages,
             lastMessage: conversation.messages[-1] ? conversation.messages[-1] : "",
             time: "12:30",
             unreadCount: 0,
-            isGroup: false
+            isGroup: conversation.users.length > 2 ? true : false,
+            online : conversation.users.find(user => user.online == true) ? true : false
         }
         return user;
     }

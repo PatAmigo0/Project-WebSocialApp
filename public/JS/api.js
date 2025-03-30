@@ -100,10 +100,20 @@ class WebSocketConnector {
      * @param {NewMessage} message 
      */
     sendNewMessage(message) {
-        this.#ws.send(JSON.stringify({
-            type: WebSocketConnector.Type.NEW_MESS,
-            data: { ...message }
-        }));
+        if (!this.#ws || this.#ws.readyState !== WebSocket.OPEN) {
+            console.error("WebSocket не подключен. Невозможно отправить сообщение.");
+            return;
+        }
+        
+        try {
+            this.#ws.send(JSON.stringify({
+                type: WebSocketConnector.Type.NEW_MESS,
+                data: { ...message }
+            }));
+            console.log("Сообщение успешно отправлено через WebSocket");
+        } catch (error) {
+            console.error("Ошибка при отправке сообщения через WebSocket:", error);
+        }
     }
 
     /**
@@ -111,9 +121,19 @@ class WebSocketConnector {
      * @param {ConversationShort} conversation 
      */
     sendNewConversation(id) {
-        this.#ws.send(JSON.stringify({
-            type: WebSocketConnector.Type.NEW_CONV,
-            data: { id: id }
-        }));
+        if (!this.#ws || this.#ws.readyState !== WebSocket.OPEN) {
+            console.error("WebSocket не подключен. Невозможно отправить информацию о новой беседе.");
+            return;
+        }
+        
+        try {
+            this.#ws.send(JSON.stringify({
+                type: WebSocketConnector.Type.NEW_CONV,
+                data: { id: id }
+            }));
+            console.log("Информация о новой беседе успешно отправлена через WebSocket");
+        } catch (error) {
+            console.error("Ошибка при отправке информации о новой беседе через WebSocket:", error);
+        }
     }
 }
