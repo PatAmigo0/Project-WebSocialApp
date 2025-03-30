@@ -66,9 +66,10 @@ export class ChatManager
         console.log(`новое сообщение: ${message}`);
         
         const targetChat = this.users.find(user => user.id === message.convId);
-        
+        console.log(targetChat);
         // обновляем последнее сообщение в чате (для отображения в списке)
-        if (targetChat) {
+        if (targetChat) 
+        {
             targetChat.lastMessage = message.text;
             
             // если этот чат сейчас открыт - добавляем сообщение в контейнер
@@ -211,9 +212,6 @@ export class ChatManager
         {
             if (this.selectedConservationId)
             {
-                console.warn("Отправка сообщения");
-                console.warn(this.selectedConservationId);
-                console.warn(messageText);
                 sendMessage(this.selectedConservationId, messageText);
                 new Message(messageText, "sent", this.messagesContainer, this.messageInput);
             }
@@ -225,10 +223,7 @@ export class ChatManager
     // выбор пользователя
     selectUser(userId) 
     {
-        const user = this.users.find((u) => 
-        {
-            return String(u.id) === String(userId);
-        });
+        const user = this.users.find((u) => String(u.id) === String(userId));
         
         if (user) 
         {
@@ -347,10 +342,11 @@ export class ChatManager
     _toggleStatus(user, online = true)
     {
         const statusIndicator = user.querySelector('.status-indicator');
-        if (statusIndicator) {
+        if (statusIndicator) 
+        {
             statusIndicator.classList.remove('online', 'offline');
             statusIndicator.classList.add(online ? 'online' : 'offline');
-            console.log(`Статус пользователя изменен на ${online ? 'online' : 'offline'}`);
+            // console.log(`Статус пользователя изменен на ${online ? 'online' : 'offline'}`);
         }
     }
 
@@ -362,7 +358,7 @@ export class ChatManager
             name: conversation.name,
             avatar: "",
             messages: conversation.messages,
-            lastMessage: conversation.messages[-1] ? conversation.messages[-1] : "",
+            lastMessage: "",
             time: "12:30",
             unreadCount: 0,
             isGroup: conversation.users.length > 2 ? true : false,

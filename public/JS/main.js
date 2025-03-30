@@ -210,7 +210,6 @@ function onLoadConversationByIdError(errorText) {
  * @param {String} text текст сообщения
  */
 export function sendMessage(convId, text) {
-    console.warn("ОТПРАВКА СООБЩЕНИЯ");
     WS_CONNECTOR.sendNewMessage({
         convId: convId,
         sender: USER.id,
