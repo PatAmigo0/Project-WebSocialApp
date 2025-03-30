@@ -72,10 +72,10 @@ export class ChatManager
             targetChat.lastMessage = message.text;
             
             // если этот чат сейчас открыт - добавляем сообщение в контейнер
-            if (this.selectedConservationId === message.convId && 
-                this.chatWindow.classList.contains('chat-selected')) {
-                new Message(message.text, "received", this.messagesContainer, this.messageInput);
-            } else 
+            if (this.selectedConservationId === message.convId 
+                && this.chatWindow.classList.contains('chat-selected'))
+                new Message(message.text, "received", this.messagesContainer, this.messageInput); 
+            else 
             {
                 // индикатор непрочитанного сообщения
                 const chatElement = this.chatList.querySelector(`[data-user-id="${message.convId}"]`);
@@ -95,35 +95,17 @@ export class ChatManager
         }
     }
 
-    handleUserOnline(userId)    
+    toggleStatus(userId, online)    
     {
-        /* TODO: переписать чтобы не искать в списке чатов */
-        /*
-        const user = this.chatList.querySelector(`[data-user-id="${userId}"]`);
-        if (user)
-        {
-            user.online = true;
-            this._toggleStatus(user);
-        }
+        const users = this.chatList.querySelectorAll(`[data-companion-id="${userId}"]`);
+        console.warn(`Найдено чатов с пользователем ${userId}: ${users.length}`);
+        
+        if (users.length > 0)
+            users.forEach(item => this._toggleStatus(item, online));
         else
             console.warn(`Пользователь ${userId} не найден в списке чатов`);
-        */
     }
 
-    handleUserOffline(userId)
-    {
-        /* TODO: переписать чтобы не искать в списке чатов */
-        /*
-        const user = this.chatList.querySelector(`[data-user-id="${userId}"]`);
-        if (user)
-        {
-            user.online = false;
-            this._toggleStatus(user, false);
-        }
-        else
-            console.warn(`Пользователь ${userId} не найден в списке чатов`);
-        */
-    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /* главные функции для работы с сайтом */
@@ -364,9 +346,12 @@ export class ChatManager
 
     _toggleStatus(user, online = true)
     {
-        const onlineStatus = user.querySelector('.online-status');
-        if (onlineStatus)
-            onlineStatus.textContent = online ? "online" : "offline";
+        const statusIndicator = user.querySelector('.status-indicator');
+        if (statusIndicator) {
+            statusIndicator.classList.remove('online', 'offline');
+            statusIndicator.classList.add(online ? 'online' : 'offline');
+            console.log(`Статус пользователя изменен на ${online ? 'online' : 'offline'}`);
+        }
     }
 
     _buildConservation(conversation)
@@ -381,7 +366,8 @@ export class ChatManager
             time: "12:30",
             unreadCount: 0,
             isGroup: conversation.users.length > 2 ? true : false,
-            online : conversation.users.find(user => user.online == true) ? true : false
+            online : conversation.users.find(user => user.online == true) ? true : false,
+            users : conversation.users
         }
         return user;
     }

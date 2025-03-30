@@ -5,6 +5,24 @@ export class User
         const chatItem = document.createElement('div');
         chatItem.className = `chat-item ${user.isGroup ? 'group' : 'user'}`;
         chatItem.dataset.userId = String(user.id);
+        
+        // ищем ID собеседника
+        if (!user.isGroup && user.users && user.users.length > 0) 
+        {
+            // получаем ID текущего пользователя от ChatManager
+            const currentUserId = window.chatManager?.currentUserId;
+            if (currentUserId) 
+            {
+                // ищем пользователя, который НЕ является текущим
+                const companion = user.users.find(us => String(us.id) !== String(currentUserId));
+                if (companion) 
+                {
+                    chatItem.dataset.companionId = String(companion.id);
+                    //console.log(`Установлен companionId: ${companion.id} для чата ${user.id}`);
+                }
+            }
+        }
+        //console.log(user);
 
         // разметка профиля пользователя
         chatItem.innerHTML = `
@@ -32,8 +50,8 @@ export class User
         if (!user.isGroup)
         {
             const statusIndicator = chatItem.querySelector('.status-indicator');
-            console.log(user);
-            console.log(user.online);
+            //console.log(user);
+            //console.log(user.online);
             statusIndicator.classList.add(user.online ? 'online' : 'offline');
         }
 

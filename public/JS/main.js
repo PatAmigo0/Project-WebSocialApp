@@ -96,7 +96,7 @@ function onLoadConversations(conversations) {
  */
 function onNewUser(user) {
     console.log(`New online user: ${user.name}`);
-    window.chatManager.handleUserOnline(user.id);
+    window.chatManager.toggleStatus(user.id, true);
 }
 
 /**
@@ -106,6 +106,7 @@ function onNewUser(user) {
  */
 function onLeaveUser(user) {
     console.log(`User ${user.name} left`);
+    window.chatManager.toggleStatus(user.id, false);
 }
 
 /**

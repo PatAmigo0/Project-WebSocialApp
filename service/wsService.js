@@ -93,7 +93,7 @@ function newConvHandler(stream, user, data) {
  */
 function newMessHandler(stream, user, data) {
     if (convService.addMessage(data)) {
-        const conv = convService.getFullById(data.convId);
+        const conv = convService.getById(data.convId);
         broadcastToUsers(user, conv.users, new WebSocketData(
             WebSocketData.Type.NEW_MESS,
             data
