@@ -2,11 +2,12 @@
 .main-chat {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background-color var(--transition-time) ease;
   position: relative;
   background-color: var(--bg-secondary);
   height: 100%;
   overflow: hidden;
+  will-change: transform, background-color;
 }
 
 /* заголовок чата в sidebar */
@@ -22,6 +23,9 @@
   );
   border-bottom: 1px solid var(--border-color);
   height: 65px;
+  transition: background-color var(--transition-time) ease,
+    border-color var(--transition-time) ease;
+  will-change: background-color, border-color;
 }
 
 /* Заголовок чата в самом чате */
@@ -63,7 +67,8 @@
   position: relative;
   height: 100%;
   z-index: 1;
-  will-change: background-image;
+  will-change: background-image, background-color;
+  transition: background-color var(--transition-time) ease;
 }
 
 /* стили сообщений */
@@ -75,6 +80,8 @@
   position: relative;
   z-index: 2;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: background-color var(--transition-time) ease;
+  will-change: background-color;
 }
 
 .message.received {
@@ -95,6 +102,9 @@
   padding: 12px;
   background-color: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
+  transition: background-color var(--transition-time) ease,
+    border-color var(--transition-time) ease;
+  will-change: background-color, border-color;
 }
 
 .message-input,
@@ -105,6 +115,9 @@
   outline: none;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  transition: background-color var(--transition-time) ease,
+    color var(--transition-time) ease, border-color var(--transition-time) ease;
+  will-change: background-color, color, border-color;
 }
 
 /* кнопка отправки */

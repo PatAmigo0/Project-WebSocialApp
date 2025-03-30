@@ -48,19 +48,7 @@ export class ChatManager
         conversations.forEach(conversation =>
         {
             /* TODO: оптимизировать чтобы рендер работал на прямую c conservations */
-            this.users.push(
-                {
-                    id: String(conversation.id),
-                    online : true,
-                    name: conversation.name,
-                    avatar: "",
-                    messages: conversation.messages,
-                    lastMessage: conversation.messages[-1] ? conversation.messages[-1] : "",
-                    time: "12:30",
-                    unreadCount: 0,
-                    isGroup: false
-                }
-            )
+            this.users.push(this._buildConservation(conversation));
         });
         this.renderUsers();
     }
@@ -68,18 +56,7 @@ export class ChatManager
     // при добавлении нового чата вызывается этот обработчик для ре-рендеринга всех пользователей учитывая новый чат
     handleNewConservation(conversation)
     {
-        this.users.push(
-            {
-                id: String(conversation.id),
-                online : true,
-                name: conversation.name,
-                avatar: "",
-                messages: conversation.messages,
-                lastMessage: conversation.messages[-1] ? conversation.messages[-1] : "",
-                time: "12:30",
-                unreadCount: 0,
-                isGroup: false
-            });
+        this.users.push(this._buildConservation(conversation));
         this.renderUsers();
     }
 
@@ -90,6 +67,8 @@ export class ChatManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /* главные функции для работы с сайтом */
 
     // рендер всех пользователей
     renderUsers() 
@@ -297,6 +276,10 @@ export class ChatManager
         this.currentUserId = userId;
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /* функции для создания чего либо */
+
     // загрузка сообщений из сервера в чат
     _onFullConservationLoadSuccess(conservation)
     {
@@ -305,5 +288,22 @@ export class ChatManager
         {
             new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, this.messagesContainer, this.messageInput);
         });
+    }
+
+    _buildConservation(conversation)
+    {
+        const user = 
+        {
+            id: String(conversation.id),
+            online : false,
+            name: conversation.name,
+            avatar: "",
+            messages: conversation.messages,
+            lastMessage: conversation.messages[-1] ? conversation.messages[-1] : "",
+            time: "12:30",
+            unreadCount: 0,
+            isGroup: false
+        }
+        return user;
     }
 }

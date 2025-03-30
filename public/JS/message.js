@@ -10,9 +10,4 @@ export class Message
         messageInput.value = "";
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
-
-    sendMesage()
-    {
-        
-    }
 }

@@ -47,6 +47,17 @@ export class ThemeManager
                 "--bg-message-received": "rgba(255, 255, 255, 0.95)",
                 "--bg-message-sent": "rgba(227, 242, 253, 0.95)",
                 "--close-button-color-hover": "rgba(78, 72, 198, 0.95)"
+            },
+            green: 
+            {
+                "--bg-primary": "#e8f5e9",
+                "--bg-secondary": "#c8e6c9",
+                "--text-primary": "#2e7d32",
+                "--text-secondary": "#4caf50",
+                "--border-color": "#a5d6a7",
+                "--bg-message-received": "rgba(255, 255, 255, 0.95)",
+                "--bg-message-sent": "rgba(76, 175, 80, 0.95)",
+                "--close-button-color-hover": "rgba(12, 10, 10, 0.95)"
             }
         };
 

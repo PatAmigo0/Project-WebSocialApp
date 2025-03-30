@@ -32,6 +32,8 @@ export class User
         if (!user.isGroup)
         {
             const statusIndicator = chatItem.querySelector('.status-indicator');
+            console.log(user);
+            console.log(user.online);
             statusIndicator.classList.add(user.online ? 'online' : 'offline');
         }
 

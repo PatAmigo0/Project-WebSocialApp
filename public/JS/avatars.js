@@ -30,6 +30,7 @@ export class AvatarManager
         return this.avatars.get(userId) || this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
     }
 
+    // для других функций вне avatarManager для того чтобы знать какой сейчас стиль
     getCurrentAvatarsStyle()
     {
         return this.currentStyle;

@@ -1,49 +1,52 @@
 /* корневые переменные */
-:root 
-{
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --bg-message-received: rgba(255, 255, 255, 0.95);
-    --bg-message-sent: rgba(227, 242, 253, 0.95);
-    --text-primary: #222;
-    --text-secondary: #666;
-    --border-color: #e0e0e0;
-    --accent-color: #0088cc;
-    --accent-hover: #006699;
-    --close-button-color-hover: #e9eced; 
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-message-received: rgba(255, 255, 255, 0.95);
+  --bg-message-sent: rgba(227, 242, 253, 0.95);
+  --text-primary: #222;
+  --text-secondary: #666;
+  --border-color: #e0e0e0;
+  --accent-color: #0088cc;
+  --accent-hover: #006699;
+  --close-button-color-hover: #e9eced;
+
+  /* Общее время перехода для всех свойств */
+  --transition-time: 0.3s;
 }
 
 /* вспомогательный класс для скрытия текста меток */
-.visually-hidden 
-{
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-body 
-{
-    height: 100vh;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    display: grid;
-    place-items: center;
+body {
+  height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  display: grid;
+  place-items: center;
+  transition: background-color var(--transition-time) ease,
+    color var(--transition-time) ease;
+  will-change: background-color, color;
 }
 
-.chat-container 
-{
-    width: 100%;
-    height: 100vh;
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    background-color: var(--bg-secondary);
-    position: relative;
-    transition: transform 0.3s ease;
-    overflow: hidden;
-} 
+.chat-container {
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  background-color: var(--bg-secondary);
+  position: relative;
+  transition: transform 0.3s ease, background-color var(--transition-time) ease;
+  overflow: hidden;
+  will-change: transform, background-color;
+}

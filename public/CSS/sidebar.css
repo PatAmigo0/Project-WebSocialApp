@@ -1,238 +1,224 @@
 /* стили боковой панели */
-.sidebar 
-{
-    display: grid;
-    grid-template-rows: auto 1fr;
-    border-right: 1px solid var(--border-color);
-    height: 100%;
-    overflow: hidden;
+.sidebar {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-right: 1px solid var(--border-color);
+  height: 100%;
+  overflow: hidden;
+  transition: border-color var(--transition-time) ease;
+  will-change: border-color;
 }
 
-.sidebar-header 
-{
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 10px;
-    padding: 12px;
-    align-items: center;
-    background-color: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    height: 65px;
-    
+.sidebar-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 12px;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  height: 65px;
+  transition: background-color var(--transition-time) ease,
+    border-color var(--transition-time) ease;
+  will-change: background-color, border-color;
 }
 
-.settings-button 
-{
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-secondary);
-    font-size: 1.2em;
-    padding: 8px;
+.settings-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 1.2em;
+  padding: 8px;
 }
 
-.settings-button:hover 
-{
-    color: var(--accent-color);
+.settings-button:hover {
+  color: var(--accent-color);
 }
 
 /* поле поиска */
 .search-box,
-#chat-search 
-{
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    outline: none;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+#chat-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  outline: none;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-time) ease,
+    color var(--transition-time) ease, border-color var(--transition-time) ease;
+  will-change: background-color, color, border-color;
 }
 
 /* список чатов */
-.chat-list 
-{
-    overflow-y: auto;
-    scrollbar-width: none;
-    display: grid;
-    grid-auto-rows: min-content;
-    gap: 2px;
-    height: 100%;
-    padding-bottom: 10px;
+.chat-list {
+  overflow-y: auto;
+  scrollbar-width: none;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 2px;
+  height: 100%;
+  padding-bottom: 10px;
 }
 
 /* элемент списка чата */
-.chat-item 
-{
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px;
-    padding: 12px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.chat-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color var(--transition-time),
+    border-color var(--transition-time);
+  will-change: background-color, border-color;
 }
 
-
-.chat-item:hover 
-{
-    background-color: var(--bg-primary);
+.chat-item:hover {
+  background-color: var(--bg-primary);
 }
 
-.chat-item.active 
-{
-    background-color: var(--bg-primary);
-    border-left: 3px solid var(--accent-color);
+.chat-item.active {
+  background-color: var(--bg-primary);
+  border-left: 3px solid var(--accent-color);
 }
 
-.profile-info
-{
-    display: grid;
-    position: relative;
+.profile-info {
+  display: grid;
+  position: relative;
 }
 
 /* кнопка добавления чата */
-.add-chat-button 
-{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-secondary);
-    transition: background-color 0.2s, color 0.2s;
+.add-chat-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: background-color 0.2s, color 0.2s;
+  will-change: color;
 }
 
-.chat-item.button:hover
-{
-    background-color: var(--bg-primary);
-    color: var(--accent-color);
+.chat-item.button:hover {
+  background-color: var(--bg-primary);
+  color: var(--accent-color);
 }
 
-.chat-item.button:hover .add-chat-button
-{
-    color: var(--accent-color);
+.chat-item.button:hover .add-chat-button {
+  color: var(--accent-color);
 }
 
-.add-chat-icon 
-{
-    background: none;
-    width: 36px;
-    height: 36px;
-    opacity: 0.7;
-    transition: opacity 0.2s;
+.add-chat-icon {
+  background: none;
+  width: 36px;
+  height: 36px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
 }
 
-.add-chat-button:hover .add-chat-icon 
-{
-    opacity: 1;
+.add-chat-button:hover .add-chat-icon {
+  opacity: 1;
 }
 
-.add-chat-text 
-{
-    font-size: 1em;
-    color: inherit;
+.add-chat-text {
+  font-size: 1em;
+  color: inherit;
 }
 
 /* аватар пользователя */
-.avatar 
-{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    position: relative;
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
 }
 
-.avatar img 
-{   
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* статус пользователя - новый стиль с кружком */
-.status-indicator 
-{
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    position: absolute;
-    top: 30px;
-    bottom: 3px;
-    right: 3px;
-    border: 2px solid var(--bg-primary);
-    z-index: 1;
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  top: 30px;
+  bottom: 3px;
+  right: 3px;
+  transition: background-color var(--transition-time) ease,
+    border-color var(--transition-time) ease;
+  will-change: background-color, border-color;
+  border: 2px solid var(--bg-primary);
+  z-index: 1;
 }
 
 .status-indicator.online {
-    background-color: #43b581; /* Discord-like online color */
+  background-color: #43b581; /* Discord-like online color */
 }
 
 .status-indicator.offline {
-    background-color: #747f8d; /* Discord-like offline color */
+  background-color: #747f8d; /* Discord-like offline color */
 }
 
-/* Старые стили статуса сохраняем для обратной совместимости */
-.status
-{
-    justify-content: center;
-    text-align: center;
-    display: none; /* Скрываем старый статус */
+/* старые стили статуса сохраняем для обратной совместимости */
+.status {
+  justify-content: center;
+  text-align: center;
+  display: none;
 }
 
-.status.online
-{
-    color: green;
-    text-transform: capitalize;
+.status.online {
+  color: green;
+  text-transform: capitalize;
 }
 
-.status.offline
-{
-    color: red;
-    text-transform: capitalize;
+.status.offline {
+  color: red;
+  text-transform: capitalize;
 }
 
 /* информация о чате */
-.chat-info 
-{
-    display: grid;
-    grid-template-rows: auto auto;
-    gap: 4px;
-    min-width: 0; /* для корректной работы text-overflow */
+.chat-info {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 4px;
+  min-width: 0; /* для корректной работы text-overflow */
 }
 
-.chat-name 
-{
-    font-weight: bold;
-    color: var(--text-primary);
+.chat-name {
+  font-weight: bold;
+  color: var(--text-primary);
 }
 
-.chat-preview 
-{
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px;
-    align-items: center;
-    min-width: 0; /* важно для работы text-overflow */
+.chat-preview {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 0; /* важно для работы text-overflow */
 }
 
-.last-message 
-{
-    color: var(--text-secondary);
-    font-size: 0.9em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 200px;
-    height: 20px;
-    line-height: 20px;
-    display: block;
-    max-width: 100%;
-    padding: 0;
-    margin: 0;
-} 
+.last-message {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 200px;
+  height: 20px;
+  line-height: 20px;
+  display: block;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
