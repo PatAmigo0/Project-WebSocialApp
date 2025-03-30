@@ -84,11 +84,13 @@ export class ChatManager
                 /* TODO: добавить индикатор непрочитанного сообщения */
             }
             
-            // Обновляем список чатов
+            // обновляем список чатов
             this.renderUsers();
-        } else {
+        } 
+        else 
+        {
             console.warn("Получено сообщение для неизвестного чата:", message.convId);
-            // Возможно, нужно загрузить информацию о новом чате
+            // нужно загрузить информацию о новом чате
             tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation));
         }
     }
@@ -116,7 +118,7 @@ export class ChatManager
         if (user)
         {
             user.online = false;
-            this._toggleStatus(user);
+            this._toggleStatus(user, false);
         }
         else
             console.warn(`Пользователь ${userId} не найден в списке чатов`);
@@ -360,11 +362,11 @@ export class ChatManager
         });
     }
 
-    _toggleStatus(user)
+    _toggleStatus(user, online = true)
     {
         const onlineStatus = user.querySelector('.online-status');
         if (onlineStatus)
-            onlineStatus.textContent = user.online ? "online" : "offline";
+            onlineStatus.textContent = online ? "online" : "offline";
     }
 
     _buildConservation(conversation)
