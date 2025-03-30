@@ -4,7 +4,7 @@ export class User
     {
         const chatItem = document.createElement('div');
         chatItem.className = `chat-item ${user.isGroup ? 'group' : 'user'}`;
-        chatItem.dataset.userId = user.id;
+        chatItem.dataset.userId = String(user.id);
 
         // разметка профиля пользователя
         chatItem.innerHTML = `
@@ -12,8 +12,7 @@ export class User
                 <div class="avatar">
                     <img src="images/avatars/default/default-avatar.png" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
                 </div>
-                ${!user.isGroup ? '<div class="status"><p>онлайн</p></div>' : ''}
-                
+                ${!user.isGroup ? '<div class="status-indicator"></div>' : ''}
             </div>
 
             <div class="chat-info">
@@ -32,9 +31,8 @@ export class User
         // настройка некоторых элементов
         if (!user.isGroup)
         {
-            const status = chatItem.querySelector('.status');
-            status.classList.add(user.online ? 'online' : 'offline');
-            status.querySelector('p').textContent = user.online ? 'онлайн' : 'оффлайн';
+            const statusIndicator = chatItem.querySelector('.status-indicator');
+            statusIndicator.classList.add(user.online ? 'online' : 'offline');
         }
 
         chatList.append(chatItem);

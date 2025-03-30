@@ -1,5 +1,6 @@
 /* ИМПОРТЫ */
 
+import { avatarManager } from "./avatars.js";
 import { loginHandler } from "./login.js";
 
 /////////////////////////////////////////
@@ -39,6 +40,7 @@ async function startLogin()
  * @param {String} userId id пользователя
  */
 function onLoginSuccess(userId) {
+    window.chatManager.setCurrentUser(userId);
     console.log(`User id: ${userId}`);
     USER.id = userId;
 
@@ -47,9 +49,11 @@ function onLoginSuccess(userId) {
     WS_CONNECTOR.register(USER, WS_HANDLERS);
 
     // Это для теста (можно удалить)
+    
     if (USER.name == "admin") {
         setTimeout(test, 3000);
     }
+        
 }
 
 /**
@@ -79,6 +83,7 @@ function onLoadOnlineUsers(users) {
 function onLoadConversations(conversations) {
     console.log("Conversations:")
     console.log(conversations);
+    window.chatManager.handleLoadedConversations(conversations);
 }
 
 /**
@@ -117,6 +122,7 @@ function onNewConversation(conversation) {
 function onNewMessage(message) {
     console.log("New message:");
     console.log(message);
+    window.chatManager.handleReceivedMessage(message);
 }
 
 /**
@@ -141,6 +147,8 @@ function tryCreateNewConversation(conversation) {
 function onCreateConversationSuccess(convId) {
     console.log(`Conversation created with id ${convId}`);
     WS_CONNECTOR.sendNewConversation(convId);
+    tryLoadConversation(convId, createConversationByIdAfterSuccess);
+
 }
 
 /**
@@ -156,8 +164,9 @@ function onCreateConversationError(errorText) {
  * Функция для загрузки полной информации о беседе
  * @param {*} convId 
  */
-function tryLoadConversation(convId) {
-    loadConversationById(convId, onLoadConversationByIdSuccess)
+export function tryLoadConversation(convId, callback = onLoadConversationByIdSuccess) 
+{
+    loadConversationById(convId, callback);
 }
 
 /**
@@ -168,6 +177,17 @@ function tryLoadConversation(convId) {
 function onLoadConversationByIdSuccess(conversation) {
     console.log("Conversation by id:");
     console.log(conversation);
+}
+
+/**
+ * Функция, вызываемая автоматически после успешной
+ * загрузки полной информации о беседе для ее последующего создания
+ * @param {Conversation} conversation 
+ */
+function createConversationByIdAfterSuccess(conversation)
+{
+    window.chatManager.handleNewConservation(conversation);
+    console.warn("rerendering users...");
 }
 
 /**
@@ -184,7 +204,7 @@ function onLoadConversationByIdError(errorText) {
  * @param {String} convId id беседы
  * @param {String} text текст сообщения
  */
-function sendMessage(convId, text) {
+export function sendMessage(convId, text) {
     WS_CONNECTOR.sendNewMessage({
         convId: convId,
         sender: USER.id,
@@ -196,15 +216,17 @@ function sendMessage(convId, text) {
 
 
 function test() {
+    /*
     console.log("TEST: create conversation with user 500");
     tryCreateNewConversation({
         name: "TEST",
         usersIds: ["500"]
     });
+    */
 
     console.log("TEST: get full info about conversation 200");
     tryLoadConversation("200");
 
     console.log("TEST: send message to conv 200");
-    sendMessage("200", "TEST_MESSAGE");
+    sendMessage("200", "EEE");
 }

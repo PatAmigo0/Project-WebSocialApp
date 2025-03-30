@@ -18,7 +18,7 @@ export class LoginHandler
             "jslearner",
             "ga...",
             "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-            "lelelelelelelelelelelelellelelelelelelelelelelellelelelelelelelellelelelelelelellelelelelelelelelelelleleelllelelelelelelelelelelelellelelelelelelelelelelelelelellelelelelelelelele Если ты можешь это читать то у тебя большой экран!"
+            "lelelelelelelelelelelelellelelelelelelelelelelellelelelelelelelellelelelelelelellelelelelelelelelelelleleelllelelelelelelelelelelelellelelelelelelelelelelelelelellelelelelelelelelelelellelelelelelelellelelelelelelelelelelleleelllelelelelele Ты не должен тут быть..."
         ];
 
         this.style = "gradient-pattern-rainbow"
@@ -31,12 +31,13 @@ export class LoginHandler
         this.setupEventListeners();
     }
 
-
+    // для случайных надписей на панели ввода
     randomizePlaceholder()
     {
         this.loginInput.placeholder = this.randomPlaceholders[Math.floor(Math.random() * this.randomPlaceholders.length)];
     }
     
+    // для управления видом
     setupEventListeners()
     {
         this.loginButton.addEventListener("mouseenter", () => 
@@ -57,6 +58,7 @@ export class LoginHandler
         });
     }
 
+    // обрабатываем поле ввода
     handleInput()
     {
 
@@ -72,6 +74,7 @@ export class LoginHandler
         }
     }
 
+    // удаляем окно логина так как оно нам больше не нужно
     hideLoginWindow()
     {
         this.mainWindow.remove();
@@ -81,7 +84,7 @@ export class LoginHandler
     {
         return new Promise((res, rej) => 
         {
-            
+            // НАЖАТИЕ НА КНОПКУ
             this.loginButton.addEventListener("click", (e) => 
             {
                 const val = this.handleInput();
@@ -91,7 +94,20 @@ export class LoginHandler
                     res(val);
                 }
             });
-        
+
+            // НАЖАТИЕ НА ENTER
+            this.loginInput.addEventListener("keypress", (e) => 
+            {
+                if (e.key == "Enter")
+                {
+                    const val = this.handleInput();
+                    if (val)
+                    {
+                        this.hideLoginWindow();
+                        res(val);
+                    }
+                }
+            });
 
         })
     }

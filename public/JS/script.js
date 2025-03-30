@@ -38,7 +38,7 @@ function init()
     // загружаем сохраненную тему и градиент
     themeManager.loadTheme();    
     
-    chatManager = new ChatManager(new Array()); // после загрузки стилей для правильной обработки аватаров
+    window.chatManager = new ChatManager(new Array()); // после загрузки стилей для правильной обработки аватаров
     settingsHandler = new SettingsHandler(elements.root, themeManager, chatManager);
     // загружаем сохраненные настройки
     settingsHandler.loadSavedSettings();

@@ -53,7 +53,7 @@
 .chat-list 
 {
     overflow-y: auto;
-    scrollbar-width: thin;
+    scrollbar-width: none;
     display: grid;
     grid-auto-rows: min-content;
     gap: 2px;
@@ -87,6 +87,7 @@
 .profile-info
 {
     display: grid;
+    position: relative;
 }
 
 /* кнопка добавления чата */
@@ -138,11 +139,12 @@
 /* аватар пользователя */
 .avatar 
 {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background-color: var(--border-color);
     overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
 }
 
 .avatar img 
@@ -153,11 +155,34 @@
     display: block;
 }
 
-/* статус пользователя */
+/* статус пользователя - новый стиль с кружком */
+.status-indicator 
+{
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    top: 30px;
+    bottom: 3px;
+    right: 3px;
+    border: 2px solid var(--bg-primary);
+    z-index: 1;
+}
+
+.status-indicator.online {
+    background-color: #43b581; /* Discord-like online color */
+}
+
+.status-indicator.offline {
+    background-color: #747f8d; /* Discord-like offline color */
+}
+
+/* Старые стили статуса сохраняем для обратной совместимости */
 .status
 {
     justify-content: center;
     text-align: center;
+    display: none; /* Скрываем старый статус */
 }
 
 .status.online

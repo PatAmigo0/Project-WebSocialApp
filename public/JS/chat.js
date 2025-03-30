@@ -1,14 +1,22 @@
-// импорты для работы с пользователями
+/* импорты для работы с пользователями */
 import { avatarManager } from './avatars.js';
 import { ModalWindowHandler } from './modal.js';
 import { Message } from './message.js';
 import { User } from './user.js';
+
+/* из main.js для работы с сервером */
+import { tryLoadConversation } from './main.js';
+import { sendMessage } from './main.js';
+
+///////////////////////////////////////////////////////
 
 export class ChatManager 
 {
     constructor(users) 
     {
         this.users = users; // чаты
+        this.currentUserId = null;
+        this.selectedConservationId = null;
         this.settingsWereOpened = false;
 
         this.chatList = document.querySelector('.chat-list');
@@ -31,6 +39,57 @@ export class ChatManager
         this.renderUsers();
         this.setupEventListeners();
     }
+
+    /* handlers для обработки информации с сервера */
+
+    // при загрузке страницы вызывается этот обработчик для загрузки и последующего рендера всех пользователей
+    handleLoadedConversations(conversations)
+    {
+        conversations.forEach(conversation =>
+        {
+            /* TODO: оптимизировать чтобы рендер работал на прямую c conservations */
+            this.users.push(
+                {
+                    id: String(conversation.id),
+                    online : true,
+                    name: conversation.name,
+                    avatar: "",
+                    messages: conversation.messages,
+                    lastMessage: conversation.messages[-1] ? conversation.messages[-1] : "",
+                    time: "12:30",
+                    unreadCount: 0,
+                    isGroup: false
+                }
+            )
+        });
+        this.renderUsers();
+    }
+
+    // при добавлении нового чата вызывается этот обработчик для ре-рендеринга всех пользователей учитывая новый чат
+    handleNewConservation(conversation)
+    {
+        this.users.push(
+            {
+                id: String(conversation.id),
+                online : true,
+                name: conversation.name,
+                avatar: "",
+                messages: conversation.messages,
+                lastMessage: conversation.messages[-1] ? conversation.messages[-1] : "",
+                time: "12:30",
+                unreadCount: 0,
+                isGroup: false
+            });
+        this.renderUsers();
+    }
+
+    // когда наш текущий пользователь получает сообщение вызывается этот обработчик
+    handleReceivedMessage(message)
+    {
+        new Message(message.text, "reveived", this.messagesContainer, this.messageInput);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // рендер всех пользователей
     renderUsers() 
@@ -94,11 +153,7 @@ export class ChatManager
                     return;
                 }
 
-                chatItem.className.includes('group') // если группа то обрабатываем соответствующим образом
-                ? this.selectUser(String(chatItem.dataset.userId)) 
-                : this.selectUser(parseInt(chatItem.dataset.userId));
-
-                this.updateChatWindow();
+                this.selectUser(String(chatItem.dataset.userId));
             }
             else if (chatItem && chatItem.querySelector('.add-chat-button'))
                 this.modalWindowHandler.toggleModalWindow(); // открываем модальное окно (для выбора онлайн пользователей)
@@ -129,12 +184,19 @@ export class ChatManager
         });
     }
 
+    // отправка сообщения
     sendMessage()
     {
         const messageText = this.messageInput.value.trim();
         if (messageText) 
         {
-            new Message(messageText, "sent", this.messagesContainer, this.messageInput);
+            if (this.selectedConservationId)
+            {
+                sendMessage(this.selectedConservationId, messageText);
+                new Message(messageText, "sent", this.messagesContainer, this.messageInput);
+            }
+            else
+                console.warn("Не знаю как это произошло, но сообщение отправилось без выбранного чата, ошибка в sendMessage");
         }
     }
 
@@ -143,9 +205,7 @@ export class ChatManager
     {
         const user = this.users.find((u) => 
         {
-            return u.isGroup 
-                ? (String(u.id) === String(userId)) 
-                : (Number(u.id) === Number(userId));
+            return String(u.id) === String(userId);
         });
         
         if (user) 
@@ -153,15 +213,18 @@ export class ChatManager
             this.currentUser = user;
             this.updateChatHeader(user);
             this.updateActiveChat(userId);
+            this.updateChatWindow(user);
             document.querySelector('.main-chat').classList.add('chat-selected');
         }
     }
 
     // обновление главной страницы с чатом
-    updateChatWindow()
+    updateChatWindow(user)
     {
-        /*TODO: получение последних сообщений и обновление страницы */
+        this.messagesContainer.innerHTML = "";
+        tryLoadConversation(user.id, (conservation) => this._onFullConservationLoadSuccess(conservation)); // у стрелочной функции нет сообственного this поэтому он не теряется при передаче функции через него, передавать ТАК!
     }
+
 
     // обновление заголовка чата
     updateChatHeader(user) 
@@ -182,7 +245,10 @@ export class ChatManager
         // добавляем класс active выбранному чату
         const selectedChat = this.chatList.querySelector(`[data-user-id="${userId}"]`);
         if (selectedChat)
+        {
             selectedChat.classList.toggle('active');
+            this.selectedConservationId = userId;
+        }
     }
 
     // функция для безопасного скрытия текущего чата
@@ -195,9 +261,8 @@ export class ChatManager
         });
 
         this.chatWindow.classList.remove('chat-selected');
+        this.currentConservation = null;
     }
-
-
 
     /*TODO: получаем ВСЕХ онлайн пользователей */
     fetchOnlineUsers()
@@ -225,4 +290,20 @@ export class ChatManager
         });
     }
 
+    // для того чтобы chatManager знал как обрабатывать сообщения и вообще все что связано с текущим пользователем
+    setCurrentUser(userId)
+    {
+        console.warn(`Current user id: ${userId}`);
+        this.currentUserId = userId;
+    }
+
+    // загрузка сообщений из сервера в чат
+    _onFullConservationLoadSuccess(conservation)
+    {
+        /* TODO: оптимизировать чтобы появлялись не все сообщения (сейчас я не понимаю как это сделать) */
+        conservation.messages.forEach(message =>
+        {
+            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, this.messagesContainer, this.messageInput);
+        });
+    }
 }

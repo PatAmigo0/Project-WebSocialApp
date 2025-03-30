@@ -121,7 +121,7 @@ export class ThemeManager
         }
         else
         {
-            // По умолчанию используем синий паттерн
+            // по умолчанию используем белый паттерн
             this.changeTheme('light');
             this.changeGradientPattern('blue');
         }
