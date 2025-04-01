@@ -1,5 +1,9 @@
 export class SettingsHandler
 {
+    /**
+     * @param {HTMLElement} root - корневой элемент
+     * @param {ThemeManager} themeManager - менеджер тем
+     */
     constructor(root, themeManager)
     {
         this.root = root;

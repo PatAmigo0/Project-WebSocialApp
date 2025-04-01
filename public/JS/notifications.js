@@ -31,7 +31,7 @@ export class NotificationManager
         {
             Notification.requestPermission().then(permission => 
             {
-                // Обработка разрешения
+                // обработка разрешения
             });
         }
     } 

@@ -79,6 +79,9 @@ export class LoginHandler
         this.mainWindow.remove();
     }
 
+    /**
+     * @param {string} errorText - текст ошибки
+     */ 
     loginError(errorText)
     {
         this.loginInput.classList.add("error");

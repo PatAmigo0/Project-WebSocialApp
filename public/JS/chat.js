@@ -42,7 +42,10 @@ export class ChatManager
 
     /* handlers для обработки информации с сервера */
 
-    // при загрузке страницы вызывается этот обработчик для загрузки и последующего рендера всех пользователей
+    /**
+     * обработка загруженных чатов
+     * @param {Object} conversations - объект чатов
+     */ 
     handleLoadedConversations(conversations)
     {
         conversations.forEach(conversation =>
@@ -53,20 +56,26 @@ export class ChatManager
         this.renderUsers();
     }
 
-    // при добавлении нового чата вызывается этот обработчик для ре-рендеринга всех пользователей учитывая новый чат
+    /**
+     * обработка нового чата
+     * @param {Object} conversation - объект чата
+     */ 
     handleNewConservation(conversation)
     {
         this.users.push(this._buildConservation(conversation));
         this.renderUsers();
     }
 
-    // когда наш текущий пользователь получает сообщение вызывается этот обработчик
+    /**
+     * обработка полученного сообщения
+     * @param {Object} message - объект сообщения
+     */ 
     handleReceivedMessage(message)
     {
-        console.log(`новое сообщение: ${message}`);
+        //console.log(`новое сообщение: ${message}`);
         
-        const targetChat = this.users.find(user => user.id === message.convId);
-        console.log(targetChat);
+        const targetChat = this.users.find(user => user.id === message.convId); // user.id - id чата, message.convId - id чата в который пришло сообщение
+        //console.log(targetChat);
         // обновляем последнее сообщение в чате (для отображения в списке)
         if (targetChat) 
         {
@@ -86,7 +95,7 @@ export class ChatManager
             }
             
             // обновляем список чатов
-            this.renderUsers();
+            this.updateLastMessage(targetChat);
         } 
         else 
         {
@@ -96,10 +105,15 @@ export class ChatManager
         }
     }
 
+    /**
+     * изменение статуса пользователя
+     * @param {string} userId - ID пользователя
+     * @param {boolean} online - статус пользователя
+     */ 
     toggleStatus(userId, online)    
     {
         const users = this.chatList.querySelectorAll(`[data-companion-id="${userId}"]`);
-        console.warn(`Найдено чатов с пользователем ${userId}: ${users.length}`);
+        //console.warn(`Найдено чатов с пользователем ${userId}: ${users.length}`);
         
         if (users.length > 0)
             users.forEach(item => this._toggleStatus(item, online));
@@ -128,7 +142,21 @@ export class ChatManager
         this.chatList.append(addChatButton);
     }
 
-    // обновляем аватары всех пользователей
+    /**
+     * обновляем последнее сообщение в чате
+     * @param {Object} chat - объект чата
+     */         
+    updateLastMessage(chat)
+    {
+        const chatElement = this.chatList.querySelector(`[data-user-id="${chat.id}"]`);
+        if (chatElement)
+            chatElement.querySelector(".last-message").textContent = chat.lastMessage;
+    }
+
+    /**
+     * обновляем аватары всех пользователей
+     * @param {string} value - значение для аватара
+     */     
     updateUsersAvatars(value)
     {
         avatarManager.changeAvatarsStyle(value);
@@ -152,7 +180,10 @@ export class ChatManager
 
     }
 
-    // создание элемента чата (пользователя или группы)
+    /**
+     * создание элемента чата (пользователя или группы)
+     * @param {Object} user - объект чата
+     */     
     createUserElement(user) 
     {
         new User(user, this.chatList);
@@ -220,7 +251,10 @@ export class ChatManager
         }
     }
 
-    // выбор пользователя
+    /**
+     * выбор пользователя
+     * @param {string} userId - ID пользователя
+     */ 
     selectUser(userId) 
     {
         const user = this.users.find((u) => String(u.id) === String(userId));
@@ -235,7 +269,10 @@ export class ChatManager
         }
     }
 
-    // обновление главной страницы с чатом
+    /**
+     * обновление главной страницы с чатом
+     * @param {Object} user - объект чата
+     */ 
     updateChatWindow(user)
     {
         this.messagesContainer.innerHTML = "";
@@ -243,7 +280,10 @@ export class ChatManager
     }
 
 
-    // обновление заголовка чата
+    /**
+     * обновление заголовка чата
+     * @param {Object} user - объект чата
+     */ 
     updateChatHeader(user) 
     {
         const chatHeader = document.querySelector('.main-chat .chat-header');
@@ -254,7 +294,10 @@ export class ChatManager
         name.textContent = user.name;
     }
 
-    // обновление активного чата
+    /**
+     * обновление активного чата
+     * @param {string} userId - ID пользователя
+     */ 
     updateActiveChat(userId) 
     {
         this.disableActiveChat();
@@ -293,7 +336,10 @@ export class ChatManager
         // TODO: реализовать добавление нового чата
     }
 
-    // поиск чатов
+    /**
+     * поиск чатов
+     * @param {string} query - поисковый запрос
+     */ 
     searchChats(query) 
     {
         const searchTerm = query.toLowerCase();
@@ -307,10 +353,12 @@ export class ChatManager
         });
     }
 
-    // для того чтобы chatManager знал как обрабатывать сообщения и вообще все что связано с текущим пользователем
+    /**
+     * для того чтобы chatManager знал как обрабатывать сообщения и вообще все что связано с текущим пользователем
+     * @param {string} userId - ID пользователя
+     */ 
     setCurrentUser(userId)
     {
-        console.warn(`Current user id: ${userId}`);
         this.currentUserId = userId;
     }
 
@@ -318,18 +366,29 @@ export class ChatManager
 
     /* функции для создания чего либо */
 
-    // загрузка сообщений из сервера в чат
+    /**
+     * загрузка сообщений из сервера в чат
+     * @param {Object} conversation - объект чата
+     */ 
     _onFullConservationLoadSuccess(conversation)
     {
         /* TODO: оптимизировать чтобы появлялись не все сообщения (сейчас я не понимаю как это сделать) */
         this._hadnleAsUserConversation(conversation);
     }
 
-    _handleAsGroup(conversation)
+    /**
+     * обработка группового чата
+     * @param {Object} conversation - объект чата
+     */ 
+    _handleAsAGroup(conversation)
     {
-
+        // TODO: реализовать обработку группового чата
     }
 
+    /**
+     * обработка пользовательского чата
+     * @param {Object} conversation - объект чата
+     */ 
     _hadnleAsUserConversation(conversation)
     {
         conversation.messages.forEach(message =>
@@ -339,6 +398,11 @@ export class ChatManager
         });
     }
 
+    /**
+     * изменение статуса пользователя
+     * @param {Object} user - объект чата
+     * @param {boolean} online - статус пользователя
+     */ 
     _toggleStatus(user, online = true)
     {
         const statusIndicator = user.querySelector('.status-indicator');
@@ -350,6 +414,16 @@ export class ChatManager
         }
     }
 
+    _getLastMessage(conversation)
+    {
+        return conversation.messages[conversation.messages.length - 1].text ? conversation.messages[conversation.messages.length - 1].text : "";
+    }
+
+    /**
+     * построение объекта чата
+     * @param {Object} conversation - объект чата
+     * @returns {Object} - объект чата
+     */ 
     _buildConservation(conversation)
     {
         const user = 
@@ -358,7 +432,7 @@ export class ChatManager
             name: conversation.name,
             avatar: "",
             messages: conversation.messages,
-            lastMessage: "",
+            lastMessage: this._getLastMessage(conversation),
             time: "12:30",
             unreadCount: 0,
             isGroup: conversation.users.length > 2 ? true : false,

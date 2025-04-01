@@ -1,5 +1,10 @@
 export class User 
 {
+    /**
+     * @param {Object} user - объект чата
+     * @param {HTMLElement} chatList - контейнер для чатов
+     */
+
     constructor(user, chatList)
     {
         const chatItem = document.createElement('div');

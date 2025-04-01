@@ -10,7 +10,12 @@ export class AvatarManager
         this.defaultGroupAvatar = "default/default-group.png";
     }
 
-    // устанавливаем аватар для пользователя
+    /**
+     * устанавливаем аватар для пользователя
+     * @param {string} userId - ID пользователя
+     * @param {string} avatarPath - путь к аватару
+     * @param {boolean} isGroup - является ли пользователь группой
+     */         
     setAvatar(userId, avatarPath, isGroup = false) 
     {
         if (!avatarPath) avatarPath = this.avatarsPath + (isGroup 
@@ -24,7 +29,12 @@ export class AvatarManager
         this._setAvatarsSrc(avatarPath, userId, isGroup);
     }
 
-    // получаем путь к аватару пользователя (на будущее для локальных аватаров)
+    /**
+     * получаем путь к аватару пользователя (на будущее для локальных аватаров)
+     * @param {string} userId - ID пользователя
+     * @param {boolean} isGroup - является ли пользователь группой
+     * @returns {string} - путь к аватару
+     */     
     getAvatarPath(userId, isGroup = false) 
     {
         return this.avatars.get(userId) || this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
@@ -42,7 +52,12 @@ export class AvatarManager
     }
 
 
-    // устанавливаем путь для img
+    /**
+     * устанавливаем путь для img
+     * @param {string} avatarPath - путь к аватару
+     * @param {string} userId - ID пользователя
+     * @param {boolean} isGroup - является ли пользователь группой
+    */     
     _setAvatarsSrc(avatarPath, userId, isGroup)
     {
         // обновляем все аватары для этого пользователя/группы

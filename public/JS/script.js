@@ -14,7 +14,7 @@ const elements =
 import { ThemeManager } from './theme.js';
 import { ChatManager } from './chat.js';
 import { SettingsHandler } from './settings.js';
-import users from './users.js';
+//import users from './users.js';
 
 // Глобальные переменные для менеджеров
 let themeManager;

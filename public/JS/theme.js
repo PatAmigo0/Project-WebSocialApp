@@ -1,8 +1,11 @@
 import { avatarManager } from "./avatars.js";
 
-
 export class ThemeManager 
 {
+    /**
+     * @param {HTMLElement} root - корневой элемент
+     * @param {HTMLElement} messagesContainer - контейнер для сообщений
+     */
     constructor(root, messagesContainer) 
     {
         this.root = root;
@@ -17,55 +20,55 @@ export class ThemeManager
         {
             dark: 
             {
-                "--bg-primary": "#2f3136",
-                "--bg-secondary": "#36393f",
-                "--text-primary": "#ffffff",
-                "--text-secondary": "#b9bbbe",
-                "--border-color": "#202225",
+                "--bg-primary": "rgba(47, 49, 54, 1)",
+                "--bg-secondary": "rgba(54, 57, 63, 1)",
+                "--text-primary": "rgba(255, 255, 255, 1)",
+                "--text-secondary": "rgba(185, 187, 190, 1)",
+                "--border-color": "rgba(32, 34, 37, 1)",
                 "--bg-message-received": "rgba(64, 68, 75, 0.95)",
                 "--bg-message-sent": "rgba(88, 101, 242, 0.95)",
                 "--close-button-color-hover": "rgba(16, 12, 12, 0.95)"
             },
             blue: 
             {
-                "--bg-primary": "#e3f2fd",
-                "--bg-secondary": "#bbdefb",
-                "--text-primary": "#1976d2",
-                "--text-secondary": "#2196f3",
-                "--border-color": "#90caf9",
+                "--bg-primary": "rgba(227, 242, 253, 1)",
+                "--bg-secondary": "rgba(187, 222, 251, 1)",
+                "--text-primary": "rgba(25, 118, 210, 1)",
+                "--text-secondary": "rgba(33, 150, 243, 1)",
+                "--border-color": "rgba(144, 202, 249, 1)",
                 "--bg-message-received": "rgba(255, 255, 255, 0.95)",
                 "--bg-message-sent": "rgba(33, 150, 243, 0.95)",
                 "--close-button-color-hover": "rgba(12, 10, 10, 0.95)"
             },
             light: 
             {
-                "--bg-primary": "#f0f2f5",
-                "--bg-secondary": "#f8f9fa",
-                "--text-primary": "#222",
-                "--text-secondary": "#666",
-                "--border-color": "#e0e0e0",
+                "--bg-primary": "rgba(240, 242, 245, 1)",
+                "--bg-secondary": "rgba(248, 249, 250, 1)",
+                "--text-primary": "rgba(34, 34, 34, 1)",
+                "--text-secondary": "rgba(102, 102, 102, 1)",
+                "--border-color": "rgba(224, 224, 224, 1)",
                 "--bg-message-received": "rgba(255, 255, 255, 0.95)",
                 "--bg-message-sent": "rgba(227, 242, 253, 0.95)",
                 "--close-button-color-hover": "rgba(78, 72, 198, 0.95)"
             },
             green: 
             {
-                "--bg-primary": "#e8f5e9",
-                "--bg-secondary": "#c8e6c9",
-                "--text-primary": "#2e7d32",
-                "--text-secondary": "#4caf50",
-                "--border-color": "#a5d6a7",
+                "--bg-primary": "rgba(232, 245, 233, 1)",
+                "--bg-secondary": "rgba(200, 230, 201, 1)",
+                "--text-primary": "rgba(46, 125, 50, 1)",
+                "--text-secondary": "rgba(76, 175, 80, 1)",
+                "--border-color": "rgba(165, 214, 167, 1)",
                 "--bg-message-received": "rgba(255, 255, 255, 0.95)",
                 "--bg-message-sent": "rgba(76, 175, 80, 0.95)",
                 "--close-button-color-hover": "rgba(12, 10, 10, 0.95)"
             },
             abstract: 
             {
-                "--bg-primary": "#3023ae",
-                "--bg-secondary": "#c86dd7",
-                "--text-primary": "#ffffff",
-                "--text-secondary": "#e0cbf5",
-                "--border-color": "#8057c5",
+                "--bg-primary": "rgba(48, 35, 174, 1)",
+                "--bg-secondary": "rgba(200, 109, 215, 1)",
+                "--text-primary": "rgba(255, 255, 255, 1)",
+                "--text-secondary": "rgba(224, 203, 245, 1)",
+                "--border-color": "rgba(128, 87, 197, 1)",
                 "--bg-message-received": "rgba(64, 45, 120, 0.95)",
                 "--bg-message-sent": "rgba(200, 109, 215, 0.95)",
                 "--close-button-color-hover": "rgba(30, 23, 50, 0.95)"
@@ -86,6 +89,9 @@ export class ThemeManager
     }
 
     // меняем тему (все элементы) согласно новой выбранной теме
+    /**
+     * @param {string} theme - название темы
+     */
     changeTheme(theme) 
     {
         if (!this.themes[theme]) 
@@ -169,7 +175,10 @@ export class ThemeManager
         this.messagesContainer.style.backgroundImage = '';
     }
 
-    // меняем паттерн градиента
+    /**
+     * меняем паттерн градиента
+     * @param {string} pattern - название паттерна
+     */
     changeGradientPattern(pattern)
     {
         this.currentPattern = pattern;
