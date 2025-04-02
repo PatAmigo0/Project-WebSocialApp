@@ -21,12 +21,12 @@ const WS_HANDLERS = {
 
 const WS_CONNECTOR = new WebSocketConnector();
 
-window.onload = function() 
+window.addEventListener('load', () => 
 {
     // Здесь стартуем или Math.PI...
     startLogin();
     // Тут может быть какой-нибудь код, не касающийся работы с сервером
-}
+});
 
 async function startLogin()
 {
@@ -41,6 +41,7 @@ async function startLogin()
  */
 function onLoginSuccess(userId) {
     loginHandler.hideLoginWindow();
+    console.log(window.chatManager);
     window.chatManager.setCurrentUser(userId);
     console.log(`User id: ${userId}`);
     USER.id = userId;
@@ -53,8 +54,16 @@ function onLoginSuccess(userId) {
     
     if (USER.name == "admin") {
         setTimeout(test, 3000);
-    }
-        
+    }       
+}
+
+/**
+ * не смог понять как использовать loadOnlineUsers в других скриптах, сделал так
+ * @param {*} callback 
+ */
+export function publicLoadOnlineUsers(callback)
+{
+    loadOnlineUsers(callback);
 }
 
 /**
@@ -73,7 +82,8 @@ function onLoginError(errorText) {
  * списка онлайн пользователей
  * @param {Array<User>} users
  */
-function onLoadOnlineUsers(users) {
+function onLoadOnlineUsers(users) 
+{
     console.log("Online users:");
     console.log(users);
 }
@@ -220,14 +230,13 @@ export function sendMessage(convId, text) {
 
 
 
-function test() {
-    /*
+function test() 
+{
     console.log("TEST: create conversation with user 500");
     tryCreateNewConversation({
         name: "TEST",
-        usersIds: ["500"]
+        usersIds: ["300", "100", "200"]
     });
-    */
 
     console.log("TEST: get full info about conversation 200");
     tryLoadConversation("200");

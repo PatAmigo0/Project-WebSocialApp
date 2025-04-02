@@ -6,7 +6,6 @@
 /* окно добавление пользователей */
 .modal-window {
   overflow: hidden;
-  color: black;
   display: none;
   position: fixed;
   pointer-events: none;
@@ -19,14 +18,32 @@
 }
 
 .modal-content {
+  display: grid;
+  grid-auto-columns: min-content;
   overflow-y: auto;
   scrollbar-width: none;
-  background-color: #fff;
+  background-color: var(--bg-primary);
   margin: 15% auto;
   padding: 20px;
   width: 40%;
   height: 50%;
-  border: 1px solid #888;
+  border: 1px solid var(--border-color);
+}
+
+.modal-content h2 {
+  display: flex;
+  flex-direction: row;
+  color: var(--text-primary);
+}
+
+.modal-header {
+  display: grid;
+  grid-auto-rows: min-content;
+}
+
+.modal-elements {
+  display: grid;
+  grid-auto-columns: min-content;
 }
 
 .close-button {
@@ -35,6 +52,7 @@
   cursor: pointer;
   padding: 8px;
   display: flex;
+  flex: auto;
   color: #aaa;
   float: right;
   font-size: 28px;
@@ -43,6 +61,10 @@
 
 .close-button:hover {
   color: black;
+}
+
+.modal-element {
+  display: grid;
 }
 
 /* окно логина */

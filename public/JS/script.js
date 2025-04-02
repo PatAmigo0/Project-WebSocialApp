@@ -34,6 +34,8 @@ const randomResponses =
 
 function init()
 {
+
+    console.log(document.location.protocol);
     themeManager = new ThemeManager(elements.root, elements.messagesContainer);
     // загружаем сохраненную тему и градиент
     themeManager.loadTheme();    
@@ -63,5 +65,12 @@ function getRandomResponse()
 }
 */
 
-// настраиваем обработчики событий при загрузке страницы
-document.addEventListener("DOMContentLoaded", () => init());
+// ES modules are executed when imported, so we can call init directly
+// or check if the document is already loaded
+
+if (document.readyState === 'loading') {
+    document.addEventListener("DOMContentLoaded", init);
+} else {
+    // DOM already loaded, run the init function directly
+    init();
+}

@@ -1,10 +1,10 @@
 /*TODO: перенести логику модального окна из chat.js сюда */
+import { publicLoadOnlineUsers } from "./main.js";
+
 export class ModalWindowHandler
 {
     constructor()
-    {
-        this.users = {};
-        
+    {   
         this.modalWindow = document.querySelector('.modal-window')
         this.modalCloseButton = this.modalWindow.querySelector('.close-button');
         this.settingsPanel = document.querySelector('#settingsPanel');
@@ -42,7 +42,7 @@ export class ModalWindowHandler
                 
             document.body.style.overflow = "hidden";
 
-            this.fetchOnlineUsers();
+            publicLoadOnlineUsers(users => this.fetchOnlineUsers(users));
         }
         else 
         {
@@ -55,16 +55,22 @@ export class ModalWindowHandler
         }
     }
 
+    fetchOnlineUsers(users)
+    {
+        console.log(users);
+    }
+
+    renderOnlineUsers()
+    {
+
+    }
+
     createUserElement()
     {
 
     }
 
-    /*TODO: получаем ВСЕХ онлайн пользователей */
-    fetchOnlineUsers()
-    {
 
-    }
 
     searchUsers()
     {

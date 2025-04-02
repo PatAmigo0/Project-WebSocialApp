@@ -14,6 +14,7 @@ export class ChatManager
 {
     constructor(users) 
     {
+        /* ЧТОБЫ НЕ ПУТАТЬ: USERS ЭТО ТЕ ЖЕ ЧАТЫ, ПРОСТО СТАРОЕ НАЗВАНИЕ КОТОРОЕ Я НИКАК НЕ ПОМЕНЯЮ */
         this.users = users; // чаты
         this.currentUserId = null;
         this.selectedConservationId = null;
@@ -105,22 +106,6 @@ export class ChatManager
         }
     }
 
-    /**
-     * изменение статуса пользователя
-     * @param {string} userId - ID пользователя
-     * @param {boolean} online - статус пользователя
-     */ 
-    toggleStatus(userId, online)    
-    {
-        const users = this.chatList.querySelectorAll(`[data-companion-id="${userId}"]`);
-        //console.warn(`Найдено чатов с пользователем ${userId}: ${users.length}`);
-        
-        if (users.length > 0)
-            users.forEach(item => this._toggleStatus(item, online));
-        else
-            console.warn(`Пользователь ${userId} не найден в списке чатов`);
-    }
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /* главные функции для работы с сайтом */
@@ -135,6 +120,12 @@ export class ChatManager
         this.users.forEach(user => 
         {
             this.createUserElement(user);
+            // ждем пока из базы данных загрузится чат и получаем последнее сообщение
+            this.getLastMessage(user.id).then(lastMessage => 
+            {
+                user.lastMessage = lastMessage;
+                this.updateLastMessage(user);
+            }); 
             
             // устанавливаем аватар через AvatarManager
             avatarManager.setAvatar(user.id, null, user.isGroup);
@@ -178,6 +169,22 @@ export class ChatManager
             }
         });
 
+    }
+
+    /**
+     * изменение статуса пользователя
+     * @param {string} userId - ID пользователя
+     * @param {boolean} online - статус пользователя
+     */ 
+    toggleStatus(userId, online)    
+    {
+        const users = this.chatList.querySelectorAll(`[data-companion-id="${userId}"]`);
+        //console.warn(`Найдено чатов с пользователем ${userId}: ${users.length}`);
+        
+        if (users.length > 0)
+            users.forEach(item => this._toggleStatus(item, online));
+        else
+            console.warn(`Пользователь ${userId} не найден в списке чатов`);
     }
 
     /**
@@ -355,16 +362,34 @@ export class ChatManager
 
     /**
      * для того чтобы chatManager знал как обрабатывать сообщения и вообще все что связано с текущим пользователем
-     * @param {string} userId - ID пользователя
+     * @param {string} userId - ID чата
      */ 
     setCurrentUser(userId)
     {
         this.currentUserId = userId;
     }
 
+    /**
+     * обещаем что получим последнее сообщение почти любой ценой
+     *  @param {string} convId - ID чата
+     */ 
+    async getLastMessage(convId)
+    {
+        return new Promise((res, rej) =>
+        {
+            tryLoadConversation(convId, (conversation) => 
+            {
+                if (conversation)
+                    this._getLastMessage(conversation).then(message => res(message));
+                else
+                    rej("Не получилось получить последнее сообщение");
+            });
+        });
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* функции для создания чего либо */
+    /* функции для создания чего либо (или же просто спрятанные функции) */
 
     /**
      * загрузка сообщений из сервера в чат
@@ -414,9 +439,12 @@ export class ChatManager
         }
     }
 
-    _getLastMessage(conversation)
+    async _getLastMessage(conversation)
     {
-        return conversation.messages[conversation.messages.length - 1].text ? conversation.messages[conversation.messages.length - 1].text : "";
+        return new Promise((res) =>
+        {
+            res(conversation.messages.length - 1 >= 0 ? conversation.messages[conversation.messages.length - 1].text : "");
+        })
     }
 
     /**
@@ -432,11 +460,11 @@ export class ChatManager
             name: conversation.name,
             avatar: "",
             messages: conversation.messages,
-            lastMessage: this._getLastMessage(conversation),
+            lastMessage: "",
             time: "12:30",
             unreadCount: 0,
             isGroup: conversation.users.length > 2 ? true : false,
-            online : conversation.users.find(user => user.online == true) ? true : false,
+            online : conversation.users.find(us => us.online == true && us.id != this.currentUserId) ? true : false,
             users : conversation.users
         }
         return user;
