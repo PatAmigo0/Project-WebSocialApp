@@ -69,9 +69,10 @@ class WebSocketConnector {
 
     register(user, handlers) {
         const host = window.location.hostname;
-        let protocol = window.location.protocol;
+        const protocol = window.location.protocol.endsWith("s:") ? "wss:" : "ws:";
+        const port = window.location.port;
 
-        this.#ws = new WebSocket(`${protocol}//${host}:3000`);
+        this.#ws = new WebSocket(`${protocol}//${host}${port ? `:${port}` : ""}`);
 
         this.#ws.onopen = () => {
             console.log("Connected to WebSocket");
