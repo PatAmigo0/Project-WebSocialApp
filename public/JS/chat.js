@@ -455,7 +455,7 @@ export class ChatManager
             avatar: "",
             messages: conversation.messages,
             lastMessage: "",
-            time: "12:30",
+            time: "",
             unreadCount: 0,
             isGroup: conversation.users.length > 2 ? true : false,
             online : conversation.users.find(us => us.online == true && us.id != this.currentUserId) ? true : false,
