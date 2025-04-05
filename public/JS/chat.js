@@ -1,8 +1,8 @@
 /* импорты для работы с пользователями */
 import { avatarManager } from './avatars.js';
-import { ModalWindowHandler } from './modal.js';
 import { Message } from './message.js';
 import { User } from './user.js';
+import { modalWindowHandler } from './modal.js';
 
 /* из main.js для работы с сервером */
 import { tryLoadConversation } from './main.js';
@@ -25,7 +25,7 @@ export class ChatManager
         this.sendButton = document.querySelector(".send-button");
         this.messageInput = document.querySelector(".message-input");
         this.messagesContainer = document.querySelector(".messages-container");
-        this.searchBox = document.querySelector(".search-box");
+        this.searchBox = document.querySelector("#chat-search");
 
         this.init();
     }
@@ -34,8 +34,6 @@ export class ChatManager
     {
         // на всякий чтобы при загрузке не было по ошибке никакого выбранного чата
         this.chatWindow.classList.remove('chat-selected');
-
-        this.modalWindowHandler = new ModalWindowHandler();
 
         //this.renderUsers();
         this.setupEventListeners();
@@ -64,6 +62,7 @@ export class ChatManager
     handleNewConservation(conversation)
     {
         this.users.push(this._buildConservation(conversation));
+        this.searchBox.value = ""; // ресетаем значение searchBox
         this.renderUsers();
     }
 
@@ -214,7 +213,7 @@ export class ChatManager
                 this.selectUser(String(chatItem.dataset.userId));
             }
             else if (chatItem && chatItem.querySelector('.add-chat-button'))
-                this.modalWindowHandler.toggleModalWindow(); // открываем модальное окно (для выбора онлайн пользователей)
+                modalWindowHandler.toggleModalWindow(); // открываем модальное окно (для выбора онлайн пользователей)
             else 
                 this.disableActiveChat(); // если попал за пределы конактов и кнопки то закрывать чат
         });
@@ -236,7 +235,7 @@ export class ChatManager
         });
 
         // ПОИСК ПОЛЬЗОВАТЕЛЕЙ
-        this.searchBox.addEventListener("input", (e) => 
+        this.searchBox.addEventListener('input', (e) => 
         {
             this.searchChats(e.target.value);
         });
@@ -331,11 +330,6 @@ export class ChatManager
         this.currentConservation = null;
     }
 
-    /*TODO: получаем ВСЕХ онлайн пользователей */
-    fetchOnlineUsers()
-    {
-
-    }
 
     /*TODO: функция для добавления нового пользователя в список чатов */
     addNewChat() 

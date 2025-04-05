@@ -1,9 +1,11 @@
 .modal-window.active {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   pointer-events: all;
 }
 
-/* окно добавление пользователей */
 .modal-window {
   overflow: hidden;
   display: none;
@@ -14,36 +16,87 @@
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* затененный фон*/
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-.modal-content {
-  display: grid;
-  grid-auto-columns: min-content;
-  overflow-y: auto;
-  scrollbar-width: none;
-  background-color: var(--bg-primary);
-  margin: 15% auto;
-  padding: 20px;
+.modal-container {
+  display: flex;
+  flex-direction: column;
   width: 40%;
-  height: 50%;
+  max-height: 80vh;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
 }
 
-.modal-content h2 {
-  display: flex;
-  flex-direction: row;
-  color: var(--text-primary);
+.modal-content {
+  flex: 1;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 13px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.modal-content * {
+  border-radius: 6px;
+  background-color: rgb(
+      from var(--bg-primary) calc(r + 10) calc(g + 10) calc(b + 10)
+  );
 }
 
 .modal-header {
   display: grid;
-  grid-auto-rows: min-content;
+  grid-template-columns: 1fr auto;
+  padding-bottom: 10px;
+  height: 65px;
+  align-items: center;
+}
+
+#chat-name-input {
+  height: 30px;
+  box-sizing: border-box;
+}
+
+.modal-header * {
+  margin: 9px;
+}
+
+.modal-search {
+  height: 55px;
+}
+
+.modal-search input {
+  height: 55px;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .modal-elements {
+  overflow-y: auto;
+  padding: 5px;
+  max-height: 100%;
+}
+
+.modal-element {
+  background-color: var(--bg-primary);
+  margin: 5px;
+  height: 70px;
   display: grid;
-  grid-auto-columns: min-content;
+  align-items: center;
+  padding: 0 15px;
+  transition: border var(--transition-time) cubic-bezier(0, 1.12, 0.11, 1.44);
+  border: 1px solid transparent;
+}
+
+.modal-element:hover {
+  border: 3px solid var(--accent-color);
+}
+
+.modal-element.selected {
+  border: 3px solid green;
 }
 
 .close-button {
@@ -51,10 +104,7 @@
   border: none;
   cursor: pointer;
   padding: 8px;
-  display: flex;
-  flex: auto;
   color: #aaa;
-  float: right;
   font-size: 28px;
   font-weight: bold;
 }
@@ -63,8 +113,52 @@
   color: black;
 }
 
-.modal-element {
+.modal-action {
+  padding: 15px;
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  text-align: right;
+}
+
+.add-user-button {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: 
+    opacity var(--transition-time) ease,
+    transform var(--transition-time) ease,
+    background-color var(--transition-time) ease;
+  will-change: opacity, transform, background-color;
+}
+
+.add-user-button.active {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+  padding: 12px 25px;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.add-user-button.active:hover {
+  background-color: var(--accent-color);
+}
+
+.modal-profile-info {
   display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.name {
+  align-items: center;
+  padding-left: 10px;
 }
 
 /* окно логина */
@@ -144,11 +238,11 @@
     margin: 10% auto;
     padding: 15px;
   }
-  
+
   .login-input {
     padding: 15px;
   }
-  
+
   .login-content button {
     padding: 15px;
   }
@@ -160,16 +254,16 @@
     margin: 5% auto;
     padding: 10px;
   }
-  
+
   .login-content h2 {
     padding-bottom: 20px;
     font-size: 1.5em;
   }
-  
+
   .login-input {
     padding: 10px;
   }
-  
+
   .login-content button {
     padding: 10px;
   }

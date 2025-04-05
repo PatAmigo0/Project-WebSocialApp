@@ -161,15 +161,23 @@
 
         <!-- Окно поиска онлайн пользователей -->
         <div class="modal-window">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span class="close-button">&times;</span>
-                    <h2>Это модальное окно</h2>
+            <div class="modal-container">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <label for="chat-name-input" class="visually-hidden">Поиск пользователей</label>
+                        <input type="text" id="chat-name-input" name="chat-name-input" class="search-box" placeholder="Имя вашего чата...">
+                        <span class="close-button">&times;</span>
+                    </div>
+                    <div class="modal-search">
+                        <label for="user-search" class="visually-hidden">Поиск пользователей</label>
+                        <input type="text" id="user-search" name="user-search" class="search-box" placeholder="Поиск чатов">
+                    </div>
+                    <div class="modal-elements">
+                    </div>
                 </div>
-                <div class="modal-elemets">
-                    <div class="modal-element"></div>
+                <div class="modal-action">
+                    <button class="add-user-button">Добавить</button>
                 </div>
-                
             </div>
         </div>
 

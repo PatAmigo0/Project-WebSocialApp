@@ -2,6 +2,7 @@
 
 import { avatarManager } from "./avatars.js";
 import { loginHandler } from "./login.js";
+import { modalWindowHandler } from "./modal.js";
 
 /////////////////////////////////////////
 
@@ -106,6 +107,7 @@ function onLoadConversations(conversations) {
  */
 function onNewUser(user) {
     console.log(`New online user: ${user.name}`);
+    modalWindowHandler.handleNewOnlineUser(user)
     window.chatManager.toggleStatus(user.id, true);
 }
 
@@ -116,6 +118,7 @@ function onNewUser(user) {
  */
 function onLeaveUser(user) {
     console.log(`User ${user.name} left`);
+    modalWindowHandler.handleUserLeft(user.id);
     window.chatManager.toggleStatus(user.id, false);
 }
 
@@ -144,7 +147,8 @@ function onNewMessage(message) {
  * Функция для создания новой беседы
  * @param {NewConversation} conversation 
  */
-function tryCreateNewConversation(conversation) {
+export function tryCreateNewConversation(conversation) 
+{
     conversation.usersIds.push(USER.id);
 
     createConversation(

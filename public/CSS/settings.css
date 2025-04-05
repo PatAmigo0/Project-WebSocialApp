@@ -19,6 +19,8 @@
 }
 
 .settings-panel.active {
+  scrollbar-width: none;
+  overflow-y: auto;
   right: 0;
 }
 
