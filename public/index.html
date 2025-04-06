@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чатик</title>
+    <link rel="stylesheet" href="CSS/main.css">
+    <script src="JS/api.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+
+        <!-- Боковая панель-->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <label for="chat-search" class="visually-hidden">Поиск чатов</label>
+                <input type="text" id="chat-search" name="chat-search" class="search-box" placeholder="Поиск чатов">
+                <button class="settings-button">
+                    <img class="settings-icon" src="images/settings-icon.png" alt="Настройки">
+                </button>
+            </div>
+
+            <div class="chat-list">
+                <div class="chat-item button">
+                    <button class="add-chat-button" aria-label="Добавить новый чат">
+                        <img class="add-chat-icon" src="images/add-icon.png" alt="">
+                        <span class="add-chat-text">Добавить чат</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Тестовая страница -->
+        <div class="main-chat">
+            <div class="chat-header">
+                <div class="avatar">
+                    <img src="images/avatars/default/default-avatar.png" alt="Аватар текущего чата" data-user-id="1">
+                </div>
+                <div class="chat-name">
+                    <p>admin</p>
+                </div>
+            </div>
+
+            <div class="messages-container">
+                
+            </div>
+
+            <div class="input-area">
+                <label for="message-input" class="visually-hidden">Введите сообщение</label>
+                <input type="text" autocomplete="off" id="message-input" name="message-input" class="message-input" placeholder="Сюда можно писать :)">
+                <button class="send-button">Пнуть</button>
+            </div>
+
+        </div>
+
+        <!-- Разметка настроек -->
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-header">
+                <h2>Настройки</h2>
+                <span class="settings-close">
+                    &times;
+                </span>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Внешний вид</h3>
+                <div class="setting-item">
+                    <span class="settings-label">Тема</span>
+                    <div class="theme-selector">
+                        <label class="theme-option-label">
+                            <input type="radio" name="theme" id="theme-light" value="light" class="theme-radio" checked>
+                            <span class="theme-option theme-light"></span>
+                            <span class="visually-hidden">Светлая тема</span>
+                        </label>
+                        <label class="theme-option-label">
+                            <input type="radio" name="theme" id="theme-dark" value="dark" class="theme-radio">
+                            <span class="theme-option theme-dark"></span>
+                            <span class="visually-hidden">Темная тема</span>
+                        </label>
+                        <label class="theme-option-label">
+                            <input type="radio" name="theme" id="theme-blue" value="blue" class="theme-radio">
+                            <span class="theme-option theme-blue"></span>
+                            <span class="visually-hidden">Синяя тема</span>
+                        </label>
+                        <label class="theme-option-label">
+                            <input type="radio" name="theme" id="theme-green" value="green" class="theme-radio">
+                            <span class="theme-option theme-green"></span>
+                            <span class="visually-hidden">Зеленая тема</span>
+                        </label>
+                        <label class="theme-option-label">
+                            <input type="radio" name="theme" id="theme-abstract" value="abstract" class="theme-radio">
+                            <span class="theme-option theme-abstract"></span>
+                            <span class="visually-hidden">Абстрактная тема</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <label for="font-size">Размер шрифта</label>
+                    <select id="font-size" class="settings-select" name="font-size">
+                        <option value="12">Маленький</option>
+                        <option value="14" selected>Средний</option>
+                        <option value="16">Большой</option>
+                    </select>
+                </div>
+
+                <div class="setting-item">
+                    <label for="gradient-pattern">Фоновый градиент</label>
+                    <select id="gradient-pattern" class="settings-select" name="gradient-pattern">
+                        <option value="blue">Синий паттерн</option>
+                        <option value="light">Светлый паттерн</option>
+                        <option value="color">Цветной градиент</option>
+                        <option value="rainbow">Переливающийся</option>
+                        <option value="abstract">Абстрактный</option>
+                    </select>
+                </div>
+
+                <div class="setting-item"> 
+                    <label for="avatars-images">Аватары пользователей</label>
+                    <select id ="avatars-images" class="settings-select" name="avatars-images">
+                        <option value="default">Классические аватары</option>
+                        <option value="cartoon">Мультяшные аватары</option>
+                        <option value="spooky">Жуткие аватары</option>
+                        <option value="meme">Лучшие аватары</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Уведомления</h3>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="notifications" name="notifications" checked> 
+                        <span>Включить уведомления</span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="sound-effects" name="sound-effects" checked> 
+                        <span>Включить звуковые эффекты</span>
+                    </label>
+                </div>
+            </div>  
+
+            <div class="settings-section">
+                <h3>Конфиденциальность</h3>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="mark-as-read" name="mark-as-read"> 
+                        <span>Помечать сообщения прочитанными</span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="show-online" name="show-online" checked> 
+                        <span>Показывать статус в сети</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Окно поиска онлайн пользователей -->
+        <div class="modal-window">
+            <div class="modal-container">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <label for="chat-name-input" class="visually-hidden">Поиск пользователей</label>
+                        <input type="text" id="chat-name-input" name="chat-name-input" class="search-box" placeholder="Имя вашего чата...">
+                        <span class="close-button">&times;</span>
+                    </div>
+                    <div class="modal-search">
+                        <label for="user-search" class="visually-hidden">Поиск пользователей</label>
+                        <input type="text" id="user-search" name="user-search" class="search-box" placeholder="Поиск чатов">
+                    </div>
+                    <div class="modal-elements">
+                    </div>
+                </div>
+                <div class="modal-action">
+                    <button class="add-user-button">Добавить</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-login gradient-pattern-rainbow">
+            <div class="login-content gradient-pattern-blue">
+                <h2>Окно входа</h2>
+                <label for="login-input">Имя пользователя:</label>
+                <input type="text" autocomplete="off" id="login-input" name="login-input" class="login-input">
+                <button id="loginButton">Вход</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Сначала загружаем script.js, затем main.js -->
+    <script type="module" src="JS/script.js"></script>
+    <script type="module" src="JS/main.js"></script>
+</body>
+</html> 

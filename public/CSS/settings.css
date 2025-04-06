@@ -1,0 +1,140 @@
+/* панель настроек */
+.settings-panel {
+  position: fixed;
+  right: -300px;
+  top: 0;
+  width: 300px;
+  height: 100%;
+  background-color: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
+  padding: 20px;
+  transition: right 0.3s ease, background-color var(--transition-time) ease,
+    border-color var(--transition-time) ease;
+  will-change: right, background-color, border-color;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 20px;
+  z-index: 1000;
+}
+
+.settings-panel.active {
+  scrollbar-width: none;
+  overflow-y: auto;
+  right: 0;
+}
+
+/* сдвиг основного контейнера при активных настройках */
+.settings-panel.active ~ .main-chat {
+  transform: translateX(-300px);
+}
+
+/* заголовок настроек */
+.settings-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color var(--transition-time) ease;
+  will-change: border-color;
+}
+
+.settings-header h2 {
+  color: var(--text-primary);
+  font-size: 1.2em;
+  transition: color var(--transition-time) ease;
+  will-change: color;
+}
+
+/* кнопка закрытия настроек */
+.settings-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  transition: color var(--transition-time) ease;
+  will-change: color;
+}
+
+.settings-close:hover {
+  color: var(--close-button-color-hover);
+  opacity: 0.8;
+}
+
+.settings-close-icon {
+  width: 16px;
+  height: 16px;
+  transition: opacity 0.2s ease;
+}
+
+/* содержимое настроек */
+.settings-content {
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+/* секции настроек */
+.settings-section {
+  display: grid;
+  gap: 10px;
+}
+
+.settings-section h3 {
+  color: var(--text-secondary);
+  font-size: 1em;
+  transition: color var(--transition-time) ease;
+  will-change: color;
+}
+
+.settings-item {
+  display: grid;
+  gap: 5px;
+}
+
+/* иконка настроек */
+.settings-icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.settings-button:hover .settings-icon {
+  transform: rotate(90deg);
+}
+
+#font-size {
+  border-radius: 5px;
+}
+
+/* стили для селекторов настроек */
+.settings-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease,
+    background-color var(--transition-time) ease,
+    color var(--transition-time) ease;
+  will-change: border-color, background-color, color;
+}
+
+.settings-select:hover {
+  border-color: var(--accent-color);
+}
+
+.settings-select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.1);
+}

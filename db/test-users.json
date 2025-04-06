@@ -1,0 +1,32 @@
+[
+    {
+        "id": "0",
+        "name": "admin",
+        "online": false
+    },
+    {
+        "id": "100",
+        "name": "user-1",
+        "online": false
+    },
+    {
+        "id": "200",
+        "name": "user-2",
+        "online": false
+    },
+    {
+        "id": "300",
+        "name": "user-3",
+        "online": false
+    },
+    {
+        "id": "400",
+        "name": "user-4",
+        "online": false
+    },
+    {
+        "id": "500",
+        "name": "user-5",
+        "online": false
+    }
+]
