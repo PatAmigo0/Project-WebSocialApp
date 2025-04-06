@@ -64,6 +64,7 @@ function onLoginSuccess(userId) {
  */
 export function publicLoadOnlineUsers(callback)
 {
+    console.log("пытаюсь загрузить онлайн пользователей...");
     loadOnlineUsers(callback);
 }
 

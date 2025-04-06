@@ -18,7 +18,6 @@ export class ModalWindowHandler
         this.addButton = this.modalWindow.querySelector(".add-user-button");
         this.nameInput = this.modalContent.querySelector("#chatNameInput");
         this.searchUsersBox = this.modalContent.querySelector("#user-search");
-        console.log(this.searchUsersBox);
 
         this.init()
     }
