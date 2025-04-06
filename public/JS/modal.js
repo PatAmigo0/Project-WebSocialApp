@@ -1,6 +1,7 @@
 import { publicLoadOnlineUsers } from "./main.js";
 import { tryCreateNewConversation } from "./main.js";
 import { modalUser } from "./modalUser.js";
+import { words } from "./words.js";
 
 export class ModalWindowHandler
 {
@@ -14,10 +15,9 @@ export class ModalWindowHandler
         this.modalCloseButton = this.modalWindow.querySelector('.close-button');
         this.settingsPanel = document.querySelector('#settingsPanel');
 
-
         this.addButton = this.modalWindow.querySelector(".add-user-button");
-        this.nameInput = this.modalContent.querySelector("#chat-name-input");
-        this.searchUsersBox = this.modalContent.querySelector(".search-box");
+        this.nameInput = this.modalContent.querySelector("#chatNameInput");
+        this.searchUsersBox = this.modalContent.querySelector("#user-search");
         console.log(this.searchUsersBox);
 
         this.init()
@@ -43,6 +43,14 @@ export class ModalWindowHandler
     handleUserLeft(userId)
     {
         this.modalElements.querySelector(`[data-user-id="${userId}"]`)?.remove();
+        const indexToDelete = this.users.indexOf(userId);
+            if (indexToDelete != -1)
+                this.users.splice(indexToDelete, 1);
+
+        if (this.users.length > 0)
+            this.addButton.classList.add("active");
+        else
+            this.addButton.classList.remove("active");
     }
 
     /**
@@ -78,12 +86,11 @@ export class ModalWindowHandler
 
         this.addButton.addEventListener('click', () => 
         {
-            this.toggleModalWindow();
             tryCreateNewConversation({
-                name: this.nameInput.value.length > 0 ? this.nameInput.value : "gay",
+                name: this.nameInput.value.length > 0 ? this.nameInput.value : this.generateRandomName(),
                 usersIds: this.users
             });
-            this.users = new Array();
+            this.toggleModalWindow();
         });
 
         this.searchUsersBox.addEventListener('input', (e) => 
@@ -112,8 +119,7 @@ export class ModalWindowHandler
         }
         else 
         {
-            this.nameInput.value = "";
-            this.modalElements.innerHTML = ""; // ресетаем
+            this._reset();
             if (this.settingsWereOpened) 
             {
                 this.settingsPanel.classList.toggle('active'); 
@@ -152,6 +158,14 @@ export class ModalWindowHandler
         //this._handleList()
     }
 
+    generateRandomName()
+    {
+        const count = Math.floor(Math.random() * 2) + 1;
+        const shuffled = [...words].sort(() => Math.random() - 0.5);
+
+        return shuffled.slice(0, count).join(' ');
+    }
+
     /**
      * @param {string} text 
      *  функция которая будет проверять есть ли что-то в списке
@@ -159,6 +173,14 @@ export class ModalWindowHandler
     _handleList(text = "В данный момент никто не в сети... :(")
     {
         console.log(this.modalElements.childNodes.length);
+    }
+
+    _reset()
+    {
+        this.nameInput.value = "";
+        this.modalElements.innerHTML = ""; // ресетаем
+        this.addButton.classList.remove("active");
+        this.users = new Array();
     }
 }
 
