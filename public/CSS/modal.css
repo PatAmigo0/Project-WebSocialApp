@@ -54,24 +54,23 @@
   align-items: center;
 }
 
-#chatNameInput {
-  height: 30px;
-  box-sizing: border-box;
-}
-
 .modal-header * {
   margin: 9px;
 }
 
-.modal-search {
+.modal-name-input {
   height: 55px;
 }
 
-.modal-search input {
+#chat-name-input {
   height: 55px;
   width: 100%;
   padding: 0 10px;
   box-sizing: border-box;
+}
+
+#user-search {
+  border-radius: 20px;
 }
 
 .modal-elements {
@@ -230,42 +229,4 @@
 .login-content button:hover {
   cursor: pointer;
   color: white;
-}
-
-/* Медиа-запросы для адаптивности на маленьких экранах */
-@media (max-width: 768px) {
-  .login-content {
-    width: 85%;
-    margin: 10% auto;
-    padding: 15px;
-  }
-
-  .login-input {
-    padding: 15px;
-  }
-
-  .login-content button {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .login-content {
-    width: 90%;
-    margin: 5% auto;
-    padding: 10px;
-  }
-
-  .login-content h2 {
-    padding-bottom: 20px;
-    font-size: 1.5em;
-  }
-
-  .login-input {
-    padding: 10px;
-  }
-
-  .login-content button {
-    padding: 10px;
-  }
 }

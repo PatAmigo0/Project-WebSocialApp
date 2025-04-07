@@ -18,13 +18,9 @@ export class AvatarManager
      */         
     setAvatar(userId, avatarPath, isGroup = false) 
     {
-        if (!avatarPath) avatarPath = this.avatarsPath + (isGroup 
-            ? `${this.currentStyle}/${this.currentStyle}-group.png` 
-            : `${this.currentStyle}/${this.currentStyle}-avatar.png`);
-        else 
-        {
-            avatarPath = this.avatarsPath + avatarPath;
-        }
+        if (!avatarPath) avatarPath = this.getAvatarPath(userId);
+        else
+           avatarPath = this.avatarsPath + avatarPath;
         this.avatars.set(userId, avatarPath);
         this._setAvatarsSrc(avatarPath, userId, isGroup);
     }
@@ -37,7 +33,9 @@ export class AvatarManager
      */     
     getAvatarPath(userId, isGroup = false) 
     {
-        return this.avatars.get(userId) || this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
+        return this.avatars.get(userId) || this.avatarsPath + (isGroup 
+            ? `${this.currentStyle}/${this.currentStyle}-group.png` 
+            : `${this.currentStyle}/${this.currentStyle}-avatar.png`);
     }
 
     // для других функций вне avatarManager для того чтобы знать какой сейчас стиль
@@ -50,7 +48,6 @@ export class AvatarManager
     {
         this.currentStyle = style;
     }
-
 
     /**
      * устанавливаем путь для img

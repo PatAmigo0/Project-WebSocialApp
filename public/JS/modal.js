@@ -1,7 +1,10 @@
 import { publicLoadOnlineUsers } from "./main.js";
 import { tryCreateNewConversation } from "./main.js";
 import { modalUser } from "./modalUser.js";
-import { words } from "./words.js";
+
+/* Слова */
+import { wordsFirst } from "./words.js";
+import { wordsSecond } from "./words.js";
 
 export class ModalWindowHandler
 {
@@ -16,7 +19,7 @@ export class ModalWindowHandler
         this.settingsPanel = document.querySelector('#settingsPanel');
 
         this.addButton = this.modalWindow.querySelector(".add-user-button");
-        this.nameInput = this.modalContent.querySelector("#chatNameInput");
+        this.nameInput = this.modalContent.querySelector("#chat-name-input");
         this.searchUsersBox = this.modalContent.querySelector("#user-search");
 
         this.init()
@@ -159,10 +162,10 @@ export class ModalWindowHandler
 
     generateRandomName()
     {
-        const count = Math.floor(Math.random() * 2) + 1;
-        const shuffled = [...words].sort(() => Math.random() - 0.5);
+        const firstWord = wordsFirst[Math.floor(Math.random() * wordsFirst.length)];
+        const secondWord = wordsSecond[Math.floor(Math.random() * wordsSecond.length)];
 
-        return shuffled.slice(0, count).join(' ');
+        return `${firstWord} ${secondWord}`;
     }
 
     /**
