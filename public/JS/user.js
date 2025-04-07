@@ -1,11 +1,14 @@
+import { avatarManager } from "./avatars.js";
+
 export class User 
 {
     /**
      * @param {Object} user - объект чата
      * @param {HTMLElement} chatList - контейнер для чатов
+     * @param {HTMLElement} sibling 
      */
 
-    constructor(user, chatList)
+    constructor(user, chatList, sibling = null)
     {
         const chatItem = document.createElement('div');
         chatItem.className = `chat-item ${user.isGroup ? 'group' : 'user'}`;
@@ -33,7 +36,7 @@ export class User
         chatItem.innerHTML = `
             <div class="profile-info"> 
                 <div class="avatar">
-                    <img src="images/avatars/default/default-avatar.png" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
+                    <img src="${avatarManager.getAvatarPath(user.id)}" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
                 </div>
                 ${!user.isGroup ? '<div class="status-indicator"></div>' : ''}
             </div>
@@ -59,7 +62,9 @@ export class User
             //console.log(user.online);
             statusIndicator.classList.add(user.online ? 'online' : 'offline');
         }
-
-        chatList.append(chatItem);
+        if (sibling)
+            document.body.insertBefore(chatItem, sibling)
+        else
+            chatList.append(chatItem);
     }
 }

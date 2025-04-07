@@ -6,6 +6,7 @@
 @import "chathiden.css";
 @import "modal.css";
 @import "modalhidden.css";
+@import "animations.css";
 
 :root {
   --back: rgb(32, 33, 37);

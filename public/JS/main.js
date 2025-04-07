@@ -233,15 +233,14 @@ export function sendMessage(convId, text) {
     });
 }
 
-
-
 function test() 
 {
-    console.log("TEST: create conversation with user 500");
+   /* console.log("TEST: create conversation with user 500");
     tryCreateNewConversation({
         name: "TEST",
         usersIds: ["300", "100", "200"]
     });
+    */
 
     console.log("TEST: get full info about conversation 200");
     tryLoadConversation("200");

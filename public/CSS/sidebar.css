@@ -71,7 +71,7 @@
   cursor: pointer;
   transition: background-color var(--transition-time),
     border-color var(--transition-time);
-  will-change: background-color, border-color;
+  will-change: background-color, border-color, background-position;
 }
 
 .chat-item:hover {
