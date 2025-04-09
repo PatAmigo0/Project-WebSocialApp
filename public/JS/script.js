@@ -34,7 +34,6 @@ const randomResponses =
 
 function init()
 {
-
     console.log(document.location.protocol);
     themeManager = new ThemeManager(elements.root, elements.messagesContainer);
     // загружаем сохраненную тему и градиент
@@ -47,6 +46,7 @@ function init()
     
     // настраиваем сохранение при закрытии
     initUnload();
+    loadIcon();
 }
 
 function initUnload() 
@@ -55,6 +55,21 @@ function initUnload()
     {
         themeManager.saveTheme();
     });
+}
+
+function loadIcon()
+{
+    const icons = ['a.png', 'd.png', 'y.png'];
+    const randomIcon = icons[Math.floor(Math.random() * 3)];
+    
+    // удаляем существующие favicon чтобы не было наложения
+    document.querySelectorAll('link[rel="icon"]').forEach(link => link.remove());
+
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = `images/favicons/${randomIcon}`;
+
+    document.head.appendChild(link);
 }
 
 /*

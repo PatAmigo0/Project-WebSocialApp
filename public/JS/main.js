@@ -42,7 +42,6 @@ async function startLogin()
  */
 function onLoginSuccess(userId) {
     loginHandler.hideLoginWindow();
-    console.log(window.chatManager);
     window.chatManager.setCurrentUser(userId);
     console.log(`User id: ${userId}`);
     USER.id = userId;
@@ -50,12 +49,6 @@ function onLoginSuccess(userId) {
     loadOnlineUsers(onLoadOnlineUsers);
     loadAllConversations(onLoadConversations);
     WS_CONNECTOR.register(USER, WS_HANDLERS);
-
-    // Это для теста (можно удалить)
-    
-    if (USER.name == "admin") {
-        setTimeout(test, 3000);
-    }       
 }
 
 /**
