@@ -168,15 +168,6 @@ export class ModalWindowHandler
         return `${firstWord} ${secondWord}`;
     }
 
-    /**
-     * @param {string} text 
-     *  функция которая будет проверять есть ли что-то в списке
-     * */
-    _handleList(text = "В данный момент никто не в сети... :(")
-    {
-        console.log(this.modalElements.childNodes.length);
-    }
-
     _reset()
     {
         this.nameInput.value = "";

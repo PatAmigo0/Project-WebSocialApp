@@ -1,12 +1,8 @@
-// trim() убирает лишние пробелы в начале и конце строки
 
-// основные элементы интерфейса
 const elements = 
 {
     root: document.documentElement,
     messagesContainer: document.querySelector('.messages-container'),
-    //chatItems: document.querySelectorAll(".chat-item:not(:has(.add-chat-button))"),
-    //chatContainer: document.querySelector('.chat-container'),
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -14,23 +10,13 @@ const elements =
 import { ThemeManager } from './theme.js';
 import { ChatManager } from './chat.js';
 import { SettingsHandler } from './settings.js';
-//import users from './users.js';
 
-// Глобальные переменные для менеджеров
+
+// глобальные переменные для менеджеров
 let themeManager;
 let chatManager;
 let settingsHandler;
 
-/*
-// список возможных ответов для тестирования
-const randomResponses = 
-[
-    "Привет!",
-    "Пока!",
-    "Секретка",
-    "Тестовое сообщение"
-];
-*/
 
 function init()
 {
@@ -60,7 +46,7 @@ function initUnload()
 function loadIcon()
 {
     const icons = ['a.png', 'd.png', 'y.png'];
-    const randomIcon = icons[Math.floor(Math.random() * 3)];
+    const randomIcon = icons[Math.floor(Math.random() * icons.length)];
     
     // удаляем существующие favicon чтобы не было наложения
     document.querySelectorAll('link[rel="icon"]').forEach(link => link.remove());
@@ -72,20 +58,7 @@ function loadIcon()
     document.head.appendChild(link);
 }
 
-/*
-// получаем случайный ответ из списка
-function getRandomResponse() 
-{
-    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-}
-*/
-
-// ES modules are executed when imported, so we can call init directly
-// or check if the document is already loaded
-
-if (document.readyState === 'loading') {
+if (document.readyState === 'loading')
     document.addEventListener("DOMContentLoaded", init);
-} else {
-    // DOM already loaded, run the init function directly
+else 
     init();
-}

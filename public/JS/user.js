@@ -8,7 +8,7 @@ export class User
      * @param {HTMLElement} sibling 
      */
 
-    constructor(user, chatList, sibling = null)
+    constructor(user, chatList, callback, sibling)
     {
         const chatItem = document.createElement('div');
         chatItem.className = `chat-item ${user.isGroup ? 'group' : 'user'}`;
@@ -66,5 +66,8 @@ export class User
             document.body.insertBefore(chatItem, sibling)
         else
             chatList.append(chatItem);
+
+        if (callback)
+            callback(chatItem);
     }
 }

@@ -16,12 +16,14 @@ export class ChatManager
     {
         /* ЧТОБЫ НЕ ПУТАТЬ: USERS ЭТО ТЕ ЖЕ ЧАТЫ, ПРОСТО СТАРОЕ НАЗВАНИЕ КОТОРОЕ Я НИКАК НЕ ПОМЕНЯЮ */
         this.users = users; // чаты
+        this.chats = new Set();
+        this.unreadChats = new Map();
+
         this.currentUserId = null;
         this.selectedConservationId = null;
-        this.settingsWereOpened = false;
-
         this.selectedChatElement = null
 
+        this.settingsWereOpened = false;
         this.chatList = document.querySelector('.chat-list');
         this.chatWindow = document.querySelector('.main-chat');
         this.sendButton = document.querySelector(".send-button");
@@ -95,10 +97,7 @@ export class ChatManager
             else 
             {
                 // индикатор непрочитанного сообщения
-                const chatElement = this.chatList.querySelector(`[data-user-id="${message.convId}"]`);
-                if (chatElement)
-                    chatElement.classList.add('unread-message'); 
-                /* TODO: добавить индикатор непрочитанного сообщения */
+                this._markUndread(message.convId);
             }
             
             // обновляем список чатов
@@ -111,9 +110,7 @@ export class ChatManager
             tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation, () => 
                 {
                     // добавляем индикатор непроч. сообщения после загрузки
-                    const chatElement = this.chatList.querySelector(`[data-user-id="${message.convId}"]`);
-                    if (chatElement)
-                        chatElement.classList.add('unread-message'); 
+                    this._markUndread(message.convId);
                 }));
         }
     }
@@ -127,6 +124,7 @@ export class ChatManager
     {
         const addChatButton = this.chatList.querySelector('.add-chat-button').parentElement;
         this.chatList.innerHTML = '';
+        this.chats.clear();
 
         // тест рендера всех пользователей
         this.users.forEach(user => 
@@ -142,6 +140,7 @@ export class ChatManager
             // устанавливаем аватар через AvatarManager DEPRECATED
             //avatarManager.setAvatar(user.id, null, user.isGroup);
         });
+
         this.chatList.append(addChatButton);
     }
 
@@ -170,10 +169,7 @@ export class ChatManager
         });
 
         // ОТПРАВКА СООБЩЕНИЯ ПРИ НАЖАТИИ НА КНОПКУ ОТПРАВИТЬ
-        this.sendButton.addEventListener('click', () => 
-        {
-            this.sendMessage()
-        });
+        this.sendButton.addEventListener('click', () => this.sendMessage());
 
         // ОТПРАВКА СООБЩЕНИЯ ПРИ НАЖАТИИ НА ENTER
         this.messageInput.addEventListener('keypress', (e) => 
@@ -186,10 +182,7 @@ export class ChatManager
         });
 
         // ПОИСК ПОЛЬЗОВАТЕЛЕЙ
-        this.searchBox.addEventListener('input', (e) => 
-        {
-            this.searchChats(e.target.value);
-        });
+        this.searchBox.addEventListener('input', () => this.searchChats(this.searchBox.value));
     }
 
     /**
@@ -249,9 +242,12 @@ export class ChatManager
      * создание элемента чата (пользователя или группы)
      * @param {Object} user - объект чата
      */     
-    createUserElement(user) 
+    createUserElement(user, parent = this.chatList) 
     {
-        new User(user, this.chatList);
+        new User(user, parent, item => 
+        {
+            this.chats.add(item);
+        });
     }
 
     // отправка сообщения
@@ -356,12 +352,6 @@ export class ChatManager
     }
 
 
-    /*TODO: функция для добавления нового пользователя в список чатов */
-    addNewChat() 
-    {
-        // TODO: реализовать добавление нового чата
-    }
-
     /**
      * поиск чатов
      * @param {string} query - поисковый запрос
@@ -369,7 +359,7 @@ export class ChatManager
     searchChats(query) 
     {
         const searchTerm = query.toLowerCase();
-        document.querySelectorAll('.chat-item:not(:has(.add-chat-button))').forEach(item => 
+        this.chats.forEach(item => 
         {
             const chatName = item.querySelector(".chat-name").textContent.toLowerCase();
             const lastMessage = item.querySelector(".last-message").textContent.toLowerCase();
@@ -466,6 +456,24 @@ export class ChatManager
         {
             res(conversation.messages.length - 1 >= 0 ? conversation.messages[conversation.messages.length - 1].text : "");
         })
+    }
+
+    /**
+     * 
+     * @param {string} convId 
+     */
+    _markUndread(convId)
+    {
+        const chatElement = this.chatList.querySelector(`[data-user-id="${convId}"]`)
+        if (chatElement) 
+        {
+            classList.add("unread-message");
+            
+            // проверяем, если в чате уже были непрочитанные сообщения то прибавляем это значение, иначе инициализируем
+            this.unreadChats.set(convId, this.unreadChats.has(convId) 
+            ? this.unreadChats.get(convId) + 1
+            : 1);
+        } 
     }
 
     /**

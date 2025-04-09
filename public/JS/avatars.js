@@ -55,7 +55,7 @@ export class AvatarManager
      * @param {string} userId - ID пользователя
      * @param {boolean} isGroup - является ли пользователь группой
     */     
-    _setAvatarsSrc(avatarPath, userId, isGroup)
+    _setAvatarsSrc(avatarPath, userId, isGroup = false)
     {
         // обновляем все аватары для этого пользователя/группы
         const avatarElements = document.querySelectorAll(`[data-user-id="${userId}"] .avatar img`);
@@ -64,9 +64,10 @@ export class AvatarManager
             // добавляем обработчик ошибок загрузки изображения
             img.onerror = () => 
             {
-                img.src = this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar);
                 console.warn("Error in _setAvatrsSrc");
-                this.avatars.set(userId, (this.avatarsPath + (isGroup ? this.defaultGroupAvatar : this.defaultAvatar)));
+                const path = this.getAvatarPath(userId, isGroup);
+                img.src = this._setAvatarsSrc(path, userId)
+                this.avatars.set(userId, path);
             };
             img.src = avatarPath;
         });
