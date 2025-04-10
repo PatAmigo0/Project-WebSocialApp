@@ -7,7 +7,7 @@ export class modalUser
      * @param {Array} user 
      * @param {HTMLElement} list 
      */
-    constructor(user, list, callback) 
+    constructor(user, list, onSuccess, callback) 
     {
         const newUser = document.createElement('div');
         this.toggled = false;
@@ -31,5 +31,6 @@ export class modalUser
         }
 
         list.append(newUser);
+        onSuccess(newUser);
     }
 }

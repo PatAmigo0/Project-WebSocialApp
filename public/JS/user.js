@@ -36,7 +36,7 @@ export class User
         chatItem.innerHTML = `
             <div class="profile-info"> 
                 <div class="avatar">
-                    <img src="${avatarManager.getAvatarPath(user.id)}" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
+                    <img src="${avatarManager.getAvatarPath(user.id, user.isGroup)}" alt="Аватар ${user.isGroup ? 'группы' : 'пользователя'}">
                 </div>
                 ${!user.isGroup ? '<div class="status-indicator"></div>' : ''}
             </div>
@@ -67,7 +67,6 @@ export class User
         else
             chatList.append(chatItem);
 
-        if (callback)
-            callback(chatItem);
+        callback(chatItem);
     }
 }

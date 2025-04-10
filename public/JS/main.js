@@ -43,6 +43,7 @@ async function startLogin()
 function onLoginSuccess(userId) {
     loginHandler.hideLoginWindow();
     window.chatManager.setCurrentUser(userId);
+    window.chatManager.loadCookies();
     console.log(`User id: ${userId}`);
     USER.id = userId;
 

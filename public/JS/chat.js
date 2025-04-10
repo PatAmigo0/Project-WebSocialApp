@@ -12,12 +12,12 @@ import { sendMessage } from './main.js';
 
 export class ChatManager 
 {
-    constructor(users) 
+    constructor() 
     {
         /* ЧТОБЫ НЕ ПУТАТЬ: USERS ЭТО ТЕ ЖЕ ЧАТЫ, ПРОСТО СТАРОЕ НАЗВАНИЕ КОТОРОЕ Я НИКАК НЕ ПОМЕНЯЮ */
-        this.users = users; // чаты
-        this.chats = new Set();
-        this.unreadChats = new Map();
+        this.users = new Array(); // чаты
+        this.chats = new Map(); // для хранения html элементов (ключ - convId)
+        this.unreadChats = new Map(); // для хранения не прочитанных чатов
 
         this.currentUserId = null;
         this.selectedConservationId = null;
@@ -71,8 +71,7 @@ export class ChatManager
         this.renderUsers();
         /* TODO: переделать систему добавление нового чата чтобы не ререндерить раз за разом...*/
         //new User(user, this.chatList);
-        if (callback)
-            callback()
+        if (callback) callback()
     }
 
     /**
@@ -97,7 +96,7 @@ export class ChatManager
             else 
             {
                 // индикатор непрочитанного сообщения
-                this._markUndread(message.convId);
+                this._markUnread(message.convId);
             }
             
             // обновляем список чатов
@@ -129,7 +128,13 @@ export class ChatManager
         // тест рендера всех пользователей
         this.users.forEach(user => 
         {
-            this.createUserElement(user);
+            // в этой функции помещается html element чата в словарь
+            this.createUserElement(user, (chatElement) => 
+            {
+                if (this.unreadChats.has(user.id))
+                    chatElement.classList.add('unread-message');
+                    
+            });
             // ждем пока из базы данных загрузится чат и получаем последнее сообщение
             this.getLastMessage(user.id).then(lastMessage => 
             {
@@ -191,7 +196,7 @@ export class ChatManager
      */         
     updateLastMessage(chatId, text)
     {
-        const chatElement = this.chatList.querySelector(`[data-user-id="${chatId}"]`);
+        const chatElement = this.chats.get(chatId);
         if (chatElement)
                 chatElement.querySelector(".last-message").textContent = text;
     }
@@ -214,7 +219,7 @@ export class ChatManager
 
             // на случай если был октрыт чат (нужно изменить аватар пользователя в заголовке чата)
             if (check 
-                && this.chatList.querySelector(`[data-user-id="${user.id}"]`).classList.contains("active"))
+                && this.chats.get(user.id).classList.contains("active"))
             {
                 check = false; // больше не проверять
                 this.updateChatHeader(user);
@@ -242,11 +247,12 @@ export class ChatManager
      * создание элемента чата (пользователя или группы)
      * @param {Object} user - объект чата
      */     
-    createUserElement(user, parent = this.chatList) 
+    createUserElement(user, onSuccess, parent = this.chatList) 
     {
         new User(user, parent, item => 
         {
-            this.chats.add(item);
+            this.chats.set(user.id, item);
+            onSuccess(item);
         });
     }
 
@@ -279,6 +285,7 @@ export class ChatManager
         {
             this.currentUser = user;
             this.updateActiveChat(userId); // ЗДЕСЬ СТАВИТЬСЯ this.selectedChatElement
+            this.updateMarked();
             this.updateReceivedMessageIndicator()
             this.updateChatHeader(user);
             this.updateChatWindow(user);
@@ -289,6 +296,14 @@ export class ChatManager
     updateReceivedMessageIndicator()
     {
         this.selectedChatElement.classList.remove("unread-message");
+    }
+
+    updateMarked()
+    {
+        if (this.unreadChats.has(this.selectedConservationId))
+        {
+            this.unreadChats.delete(this.selectedConservationId);
+        }
     }
 
     /**
@@ -323,7 +338,7 @@ export class ChatManager
     updateActiveChat(userId) 
     {
         this.disableActiveChat();
-        this.selectedChatElement = this.chatList.querySelector(`[data-user-id="${userId}"]`);
+        this.selectedChatElement = this.chats.get(userId);
         // добавляем класс active выбранному чату
         if (this.selectedChatElement)
         {
@@ -396,6 +411,28 @@ export class ChatManager
         });
     }
 
+    // куку...
+    cook()
+    {
+        const chatData =
+        {
+            unreadChats: this.unreadChats.entries().toArray()
+        }
+        localStorage.setItem(this.currentUserId, JSON.stringify(chatData));
+    }
+
+    loadCookies()
+    {
+        const rawChatData = localStorage.getItem(this.currentUserId);
+        if (rawChatData)
+        {
+            const chatData = JSON.parse(rawChatData);
+            console.log(chatData.unreadChats)
+            this.unreadChats = new Map(chatData.unreadChats)
+        }
+
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /* функции для создания чего либо (или же просто спрятанные функции) */
@@ -462,12 +499,12 @@ export class ChatManager
      * 
      * @param {string} convId 
      */
-    _markUndread(convId)
+    _markUnread(convId)
     {
-        const chatElement = this.chatList.querySelector(`[data-user-id="${convId}"]`)
+        const chatElement = this.chats.get(convId);
         if (chatElement) 
         {
-            classList.add("unread-message");
+            chatElement.classList.add("unread-message");
             
             // проверяем, если в чате уже были непрочитанные сообщения то прибавляем это значение, иначе инициализируем
             this.unreadChats.set(convId, this.unreadChats.has(convId) 

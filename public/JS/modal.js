@@ -10,7 +10,8 @@ export class ModalWindowHandler
 {
     constructor()
     {   
-        this.users = new Array();
+        this.users = new Set();
+        this.elements = new Map();
 
         this.modalWindow = document.querySelector('.modal-window')
         this.modalContent = this.modalWindow.querySelector('.modal-content');
@@ -35,8 +36,11 @@ export class ModalWindowHandler
     {
         if (this.modalWindow.classList.contains("active"))
         {
-            if (!this.modalElements.querySelector(`[data-user-id="${user.id}"]`))
-                new modalUser(user, this.modalElements, (toggled) => this.handleToggledUser(user.id, toggled));
+            if (!this.elements.get(user.id))
+                new modalUser(user, this.modalElements, 
+                    (userElement) => this.elements.set(user.id, userElement), 
+                    (toggled) => this.handleToggledUser(user.id, toggled)
+                );
             else
                 console.warn("Пользователь уже в списке на добавление");
         }
@@ -44,12 +48,15 @@ export class ModalWindowHandler
 
     handleUserLeft(userId)
     {
-        this.modalElements.querySelector(`[data-user-id="${userId}"]`)?.remove();
-        const indexToDelete = this.users.indexOf(userId);
-            if (indexToDelete != -1)
-                this.users.splice(indexToDelete, 1);
+        const us = this.elements.get(userId);
+        if (us)
+        {
+            us.remove();
+            console.log(this.elements)
+            this.elements.delete(userId);
+        }
 
-        if (this.users.length > 0)
+        if (this.users.size > 0)
             this.addButton.classList.add("active");
         else
             this.addButton.classList.remove("active");
@@ -63,15 +70,11 @@ export class ModalWindowHandler
     handleToggledUser(userId, toggled)
     {
         if (toggled)
-            this.users.push(userId);
+            this.users.add(userId);
         else
-        {
-            const indexToDelete = this.users.indexOf(userId);
-            if (indexToDelete != -1)
-                this.users.splice(indexToDelete, 1);
-        }
+            this.users.delete(userId);
 
-        if (this.users.length > 0)
+        if (this.users.size > 0)
             this.addButton.classList.add("active");
         else
             this.addButton.classList.remove("active");
@@ -81,16 +84,13 @@ export class ModalWindowHandler
     setupEventListeners()
     {
        // ЗАКРЫТИЕ МОДАЛЬНОГО ОКНА
-       this.modalCloseButton.addEventListener('click', () => 
-        {
-            this.toggleModalWindow();
-        });
+       this.modalCloseButton.addEventListener('click', () => this.toggleModalWindow());
 
         this.addButton.addEventListener('click', () => 
         {
             tryCreateNewConversation({
                 name: this.nameInput.value.length > 0 ? this.nameInput.value : this.generateRandomName(),
-                usersIds: this.users
+                usersIds: this.users.values().toArray()
             });
             this.toggleModalWindow();
         });
@@ -138,7 +138,10 @@ export class ModalWindowHandler
         users.forEach(user => 
         {
             if (user.id != window.chatManager.currentUserId)
-                new modalUser(user, this.modalElements, (toggled) => this.handleToggledUser(user.id, toggled));
+                new modalUser(user, this.modalElements, 
+                    (userElement) => this.elements.set(user.id, userElement), 
+                    (toggled) => this.handleToggledUser(user.id, toggled)
+                );
         });
     }
 
@@ -173,7 +176,8 @@ export class ModalWindowHandler
         this.nameInput.value = "";
         this.modalElements.innerHTML = ""; // ресетаем
         this.addButton.classList.remove("active");
-        this.users = new Array();
+        this.users.clear();
+        this.elements.clear();
     }
 }
 
