@@ -109,7 +109,7 @@ export class ChatManager
             tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation, () => 
                 {
                     // добавляем индикатор непроч. сообщения после загрузки
-                    this._markUndread(message.convId);
+                    this._markUnread(message.convId);
                 }));
         }
     }
@@ -427,7 +427,6 @@ export class ChatManager
         if (rawChatData)
         {
             const chatData = JSON.parse(rawChatData);
-            console.log(chatData.unreadChats)
             this.unreadChats = new Map(chatData.unreadChats)
         }
 
@@ -476,7 +475,7 @@ export class ChatManager
      */ 
     _toggleStatus(user, online = true)
     {
-        const fuser = this.users.find(us => us.companionId == user.dataset.companionId); // пользователь собеседник, я храню его информацию локально чтобы не обращаться к серверу... Поэтому приходится менять ему онлайн ручками
+        const fuser = this.users.find(us => us.companionId === user.dataset.companionId); // пользователь собеседник, я храню его информацию локально чтобы не обращаться к серверу... Поэтому приходится менять ему онлайн ручками
         const statusIndicator = user.querySelector('.status-indicator');
         if (statusIndicator) 
         {
