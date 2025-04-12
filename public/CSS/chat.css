@@ -134,3 +134,18 @@
 .send-button:hover {
   background-color: var(--accent-hover);
 }
+
+.back_chat_button {
+  padding: 6px 12px;
+  background-color: rgba(0, 0, 0, 0.458);
+  font-size: 24px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.back_chat_button:hover {
+  background-color: rgba(0, 0, 0, 0.653);
+}

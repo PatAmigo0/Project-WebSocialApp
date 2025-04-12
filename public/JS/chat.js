@@ -204,6 +204,18 @@ export class ChatManager
             const chatItem = e.target.closest('.chat-item');
             if (chatItem && !chatItem.querySelector('.add-chat-button')) 
             {
+                console.log("///////Arsenii///////");
+                const style = document.createElement('style');
+                style.textContent = `
+                    @media(max-width: 1000px)
+                    {
+                        .chat-container 
+                        {
+                            grid-template-columns: 0px 1fr;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
                 if (chatItem.className.includes('active'))
                 {
                     this.disableActiveChat(); // если дважды тыкнул по активному чату то выключать его

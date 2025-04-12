@@ -6,6 +6,14 @@ import { modalWindowHandler } from "./modal.js";
 
 /////////////////////////////////////////
 
+// if (window.innerWidth > 1000)
+//     {
+//         const button = document.getElementById("Button_back");
+    
+//         button.style.display = "none";
+//     }
+
+/////////////////////////////////////
 let signalThemeReadyFlag = false;
 
 const USER = {

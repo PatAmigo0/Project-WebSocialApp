@@ -20,3 +20,47 @@
   box-sizing: border-box;
   font-family: sans-serif;
 }
+
+/* @media(max-width: 1200px)
+{
+  .chat-container{
+    width: 1000px;
+  }
+}
+
+@media(max-width: 1000px)
+{
+  .chat-container{
+    width: 768px;
+  }
+} */
+
+@media(max-width: 1000px)
+{
+  .chat-container 
+  {
+    grid-template-columns: 1fr 0px;
+  }
+
+  .modal-container 
+  {
+    width: 85%;
+    max-height: 200vh;
+  }
+
+  .settings-panel 
+  {
+    width: 100%;
+    right: -1000px;
+  }
+  
+  .main-chat .chat-header {
+    grid-template-columns: auto 5fr 1fr;
+  }
+}
+
+/* @media(max-width: 480px)
+{
+  .chat-container{
+  }
+} */
