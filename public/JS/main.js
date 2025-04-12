@@ -55,8 +55,8 @@ function onLoginSuccess(userId) {
     console.log(`User id: ${userId}`);
     USER.id = userId;
 
-    loadOnlineUsers(onLoadOnlineUsers);
-    loadAllConversations(onLoadConversations);
+    // loadOnlineUsers(onLoadOnlineUsers);
+    window.chatManager.handleLoading();
     WS_CONNECTOR.register(USER, WS_HANDLERS);
 }
 
@@ -111,7 +111,7 @@ function onLoadConversations(conversations) {
 function onNewUser(user) {
     console.log(`New online user: ${user.name}`);
     modalWindowHandler.handleNewOnlineUser(user)
-    window.chatManager.toggleStatus(user.id, true);
+    window.chatManager.handleNewUser(user);
 }
 
 /**
@@ -122,7 +122,7 @@ function onNewUser(user) {
 function onLeaveUser(user) {
     console.log(`User ${user.name} left`);
     modalWindowHandler.handleUserLeft(user.id);
-    window.chatManager.toggleStatus(user.id, false);
+    window.chatManager.handleLeaveUser(user);
 }
 
 /**
@@ -191,6 +191,11 @@ export function tryLoadConversation(convId, callback = onLoadConversationByIdSuc
     loadConversationById(convId, callback);
 }
 
+export function tryLoadAllConversation()
+{
+    loadAllConversations(onLoadConversations);
+}
+
 /**
  * Функция, вызываемая автоматически после успешной
  * загрузки полной информации о беседе
@@ -226,7 +231,7 @@ function onLoadConversationByIdError(errorText) {
  * @param {String} convId id беседы
  * @param {String} text текст сообщения
  */
-export function sendMessage(convId, text) {
+export function sendMessage(convId, text, callback) {
     WS_CONNECTOR.sendNewMessage({
         convId: convId,
         sender: USER.id,

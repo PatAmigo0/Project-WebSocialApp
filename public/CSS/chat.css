@@ -90,6 +90,12 @@
   will-change: background-color;
 }
 
+.message a
+{
+  outline: none;
+  color: var(--text-primary);
+}
+
 .message.received {
   background-color: var(--bg-message-received);
   justify-self: start;
@@ -156,21 +162,4 @@
 
 .send-button:hover {
   background-color: var(--accent-hover);
-}
-
-.back_chat_button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  transition: color var(--transition-time) ease;
-  will-change: color;
-}
-
-.back_chat_button:hover {
-  background-color: rgba(0, 0, 0, 0.653);
 }

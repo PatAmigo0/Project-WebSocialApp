@@ -8,10 +8,10 @@ import { mobileHandler } from './mobile.js';
 /* из main.js для работы с сервером */
 import { tryLoadConversation } from './main.js';
 import { sendMessage } from './main.js';
+import { tryLoadAllConversation } from './main.js';
 
 ///////////////////////////////////////////////////////
 const MAX_LENGTH = 1500;
-
 
 export class ChatManager 
 {
@@ -19,22 +19,28 @@ export class ChatManager
     {
         /* ЧТОБЫ НЕ ПУТАТЬ: USERS ЭТО ТЕ ЖЕ ЧАТЫ, ПРОСТО СТАРОЕ НАЗВАНИЕ КОТОРОЕ Я НИКАК НЕ ПОМЕНЯЮ */
         this.users = new Array(); // чаты
+        this.usersMem = new Map() // локально зраним всех пользователей чтомы не делать запросы
         this.chats = new Map(); // для хранения html элементов (ключ - convId)
+        this.messages = new Map(); 
         this.unreadChats = new Map(); // для хранения не прочитанных чатов
 
+        // переменные для хранения данных
         this.currentUserId = null;
         this.selectedConservationId = null;
         this.selectedChatElement = null
 
-        this.settingsWereOpened = false;
+        // элементы DOM
         this.chatList = document.querySelector('.chat-list');
         this.chatWindow = document.querySelector('.main-chat');
+        this.searchBox = document.querySelector("#chat-search");
         this.sendButton = document.querySelector(".send-button");
         this.messageInput = document.querySelector(".message-input");
-        this.enabled = false;
-
         this.messagesContainer = document.querySelector(".messages-container");
-        this.searchBox = document.querySelector("#chat-search");
+
+        // булевые значения для оптимизации
+        this.enabled = false;
+        this.inputError = false;
+        this.settingsWereOpened = false;
 
         this.init();
     }
@@ -50,10 +56,40 @@ export class ChatManager
 
     /* handlers для обработки информации с сервера */
 
+    handleLoading()
+    {
+        if (this.users.length == 0)
+            tryLoadAllConversation();
+        else
+        {
+            console.warn("загрузил чаты из куки");
+            this.renderUsers(); // скипаем загрузку из сервера
+        }
+    }
+
+    /**
+     * когда в сети появляется новый пользователь
+     * @param {Object} user 
+     */
+    handleNewUser(user)
+    {
+        this.toggleStatus(user.id, true);
+    }
+
+    /**
+     * когда пользователь выходит из сети
+     * @param {Object} user 
+     */
+    handleLeaveUser(user)
+    {
+        this.toggleStatus(user.id, false);
+    }
+
     /**
      * обработка загруженных чатов
      * @param {Object} conversations - объект чатов
      */ 
+
     handleLoadedConversations(conversations)
     {
         conversations.forEach(conversation =>
@@ -85,19 +121,19 @@ export class ChatManager
      */ 
     handleReceivedMessage(message)
     {
-        //console.log(`новое сообщение: ${message}`);
         
         const targetChat = this.users.find(user => user.id === message.convId); // user.id - id чата, message.convId - id чата в который пришло сообщение
         //console.log(targetChat);
         // обновляем последнее сообщение в чате (для отображения в списке)
         if (targetChat) 
         {
+            this.addMessage(message); // добавляем сообщение в куки
             targetChat.lastMessage = message.text;
             
             // если этот чат сейчас открыт - добавляем сообщение в контейнер
             if (this.selectedConservationId === message.convId 
                 && this.chatWindow.classList.contains('chat-selected'))
-                new Message(message.text, "received", this.messagesContainer, this.messageInput); 
+                new Message(message.text, "received", this.messagesContainer); 
             else 
             {
                 // индикатор непрочитанного сообщения
@@ -114,6 +150,7 @@ export class ChatManager
             tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation, () => 
                 {
                     // добавляем индикатор непроч. сообщения после загрузки
+                    this.messages.set(message.convId, [message]);
                     this._markUnread(message.convId);
                 }));
         }
@@ -126,6 +163,7 @@ export class ChatManager
     // рендер всех пользователей
     renderUsers() 
     {
+        const fragment = document.createDocumentFragment();
         const addChatButton = this.chatList.querySelector('.add-chat-button').parentElement;
         this.chatList.innerHTML = '';
         this.chats.clear();
@@ -139,19 +177,24 @@ export class ChatManager
                 if (this.unreadChats.has(user.id))
                     chatElement.classList.add('unread-message');
                     
-            });
-            // ждем пока из базы данных загрузится чат и получаем последнее сообщение
-            this.getLastMessage(user.id).then(lastMessage => 
+            }, fragment);
+
+            const savedMessages = this.messages.get(user.id);
+            if (savedMessages && savedMessages.length > 0) 
             {
-                user.lastMessage = lastMessage;
-                this.updateLastMessage(user.id, lastMessage);
-            }); 
-            
-            // устанавливаем аватар через AvatarManager DEPRECATED
-            //avatarManager.setAvatar(user.id, null, user.isGroup);
+                user.lastMessage = savedMessages[savedMessages.length - 1].text;
+                this.updateLastMessage(user.id, user.lastMessage);
+            }
+            else // ждем пока из базы данных загрузится чат и получаем последнее сообщение
+                this.getLastMessage(user.id).then(lastMessage => 
+                {
+                    user.lastMessage = lastMessage;
+                    this.updateLastMessage(user.id, lastMessage);
+                }); 
         });
 
-        this.chatList.append(addChatButton);
+        fragment.append(addChatButton);
+        this.chatList.append(fragment);
     }
 
 
@@ -192,10 +235,15 @@ export class ChatManager
             {
                 this.messageInput.value = this.messageInput.value.slice(0, MAX_LENGTH);
                 this.messageInput.classList.add("input-error");
+                this.inputError = true
             } 
             else
             {
-                this.messageInput.classList.remove("input-error");
+                if (this.inputError)
+                {
+                    this.messageInput.classList.remove("input-error");
+                    this.inputError = false;
+                }
                 this._resizeInput();
             }
         });
@@ -290,12 +338,17 @@ export class ChatManager
             if (this.selectedConservationId)
             {
                 this.updateLastMessage(this.selectedConservationId, messageText);
-                sendMessage(this.selectedConservationId, messageText); // функция из main.js не путать с this.sendMessage
-                new Message(messageText, "sent", this.messagesContainer, this.messageInput);
+                sendMessage(this.selectedConservationId, messageText); 
+                new Message(messageText, "sent", this.messagesContainer);
             }
             else
                 console.warn("Не знаю как это произошло, но сообщение отправилось без выбранного чата, ошибка в sendMessage");
         }
+    }
+
+    addMessage(message)
+    {
+        this.messages.get(message.convId).push(message);
     }
 
     /**
@@ -338,7 +391,18 @@ export class ChatManager
     updateChatWindow(user)
     {
         this.messagesContainer.innerHTML = "";
-        tryLoadConversation(user.id, (conservation) => this._onFullConservationLoadSuccess(conservation)); // у стрелочной функции нет сообственного this поэтому он не теряется при передаче функции через него, передавать ТАК!
+        const messages = this.messages.get(user.id);
+        if (!messages)
+            tryLoadConversation(user.id, (conversation) => 
+            {
+                this.messages.set(user.id, conversation.messages);
+                this._onFullConservationLoadSuccess(conversation.messages, conversation.users.length > 2);
+            });
+        else
+        {
+            console.warn("loaded via cooks");
+            this._onFullConservationLoadSuccess(messages, !this.chats.get(user.id).dataset.companionId); // нет компаньена => группа
+        }
     }
 
 
@@ -376,13 +440,6 @@ export class ChatManager
     // функция для безопасного скрытия текущего чата
     disableActiveChat()
     {
-        /* ОПТИМЗИРОВАНО :)
-        // убираем класс active у всех чатов и у окна чата
-        this.chatList.querySelectorAll('.chat-item').forEach(chat => 
-        {
-            chat.classList.remove('active');
-        });
-        */
         if (this.selectedChatElement)
         {
             this.selectedChatElement.classList.remove('active');
@@ -442,7 +499,9 @@ export class ChatManager
     {
         const chatData =
         {
-            unreadChats: this.unreadChats.entries().toArray()
+            unreadChats: this.unreadChats.entries().toArray(),
+            messages: this.messages.entries().toArray(),
+            chats: this.users
         }
         localStorage.setItem(this.currentUserId, JSON.stringify(chatData));
     }
@@ -453,7 +512,9 @@ export class ChatManager
         if (rawChatData)
         {
             const chatData = JSON.parse(rawChatData);
-            this.unreadChats = new Map(chatData.unreadChats)
+            this.unreadChats = new Map(chatData.unreadChats);
+            this.messages = new Map(chatData.messages);
+            this.users = [...chatData.chats];
         }
 
     }
@@ -493,42 +554,57 @@ export class ChatManager
 
 
     /**
+     * loading messages
      * загрузка сообщений из сервера в чат когда входим в чат
      * @param {Object} conversation - объект чата
      */ 
-    _onFullConservationLoadSuccess(conversation)
+    _onFullConservationLoadSuccess(messages, isGroup = false)
     {
         /* TODO: оптимизировать чтобы появлялись не все сообщения (сейчас я не понимаю как это сделать) */
-        if (conversation.users.length > 2)
-            this._handleAsAGroup(conversation)
+        if (isGroup)
+            this._handleAsAGroup(messages)
         else
-            this._hadnleAsUserConversation(conversation);
+            this._hadnleAsUserConversation(messages);
     }
 
     /**
      * обработка группового чата
      * @param {Object} conversation - объект чата
      */ 
-    _handleAsAGroup(conversation)
+    _handleAsAGroup(messages)
     {
+        console.warn("GROUP");
         // TODO: реализовать обработку группового чата
-        conversation.messages.forEach(message => 
+        const fragment = document.createDocumentFragment();
+        messages.forEach(message => 
         {
-            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, this.messagesContainer, this.messageInput);
+            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, fragment, 
+                (messageElement) => 
+                {
+
+                });
         });
+
+        this.messagesContainer.append(fragment);
     }
 
     /**
      * обработка пользовательского чата
      * @param {Object} conversation - объект чата
      */ 
-    _hadnleAsUserConversation(conversation)
+    _hadnleAsUserConversation(messages)
     {
-        conversation.messages.forEach(message =>
+        const fragment = document.createDocumentFragment();
+        messages.forEach(message => 
         {
-            //console.warn(message);
-            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, this.messagesContainer, this.messageInput);
+            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, fragment, 
+                (messageElement) => 
+                {
+
+                });
         });
+
+        this.messagesContainer.append(fragment);
     }
 
     /**

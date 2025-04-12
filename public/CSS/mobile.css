@@ -1,4 +1,24 @@
 
+.back_chat_button {
+  background: none;
+  width: fit-content;
+  border: none;
+  cursor: pointer;
+  border-radius: 20px;
+  padding: 8px;
+  display: flex;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  transition: background-color var(--transition-time) ease;
+  will-change: background-color;
+}
+
+.back_chat_button:hover {
+  background-color: rgba(0, 0, 0, 0.653);
+}
+
+
 @media(max-width: 1000px)
 {
   .chat-container 

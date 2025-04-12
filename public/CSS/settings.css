@@ -1,5 +1,6 @@
 /* панель настроек */
 .settings-panel {
+  display: grid;
   position: fixed;
   right: -100%;
   top: 0;
@@ -12,7 +13,6 @@
     border-color var(--transition-time) ease;
   will-change: right, background-color, border-color;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  display: grid;
   grid-template-rows: auto 1fr;
   gap: 20px;
   z-index: 1000;

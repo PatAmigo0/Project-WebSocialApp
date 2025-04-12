@@ -20,7 +20,7 @@ let settingsHandler;
 
 function init()
 {
-    console.log(document.location.protocol);
+    //console.log(document.location.protocol);
     themeManager = new ThemeManager(elements.root, elements.messagesContainer);
     // загружаем сохраненную тему и градиент
     themeManager.loadTheme();    

@@ -10,7 +10,7 @@ const {
     NewConversation 
 } = require("../model/conversation");
 
-
+const MAX_MESSAGES_MEM = 100; // вместимость памяти
 
 /**
  * 
@@ -148,11 +148,15 @@ module.exports = {
         const sender = userService.getById(message.sender);
 
         if (conv && sender) {
-            conv.messages.push(Message.fromNewMessage(message));
+            if (conv.messages.length >= MAX_MESSAGES_MEM)
+                conv.messages.shift()
             message.sender = sender;
+            const resultM = Message.fromNewMessage(message);
+            conv.messages.push(resultM);
             return true;
         }
 
         return false;
-    }
+    },
+
 }

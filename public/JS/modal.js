@@ -41,8 +41,6 @@ export class ModalWindowHandler
                     (userElement) => this.elements.set(user.id, userElement), 
                     (toggled) => this.handleToggledUser(user.id, toggled)
                 );
-            else
-                console.warn("Пользователь уже в списке на добавление");
         }
     }
 
