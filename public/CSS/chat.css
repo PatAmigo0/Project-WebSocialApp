@@ -73,7 +73,9 @@
 
 /* стили сообщений */
 .message {
+  word-break: break-all;
   width: max-content;
+  min-width: 5%;
   max-width: 65%;
   padding: 8px 12px;
   border-radius: 8px;
