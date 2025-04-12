@@ -21,19 +21,6 @@
   font-family: sans-serif;
 }
 
-/* @media(max-width: 1200px)
-{
-  .chat-container{
-    width: 1000px;
-  }
-}
-
-@media(max-width: 1000px)
-{
-  .chat-container{
-    width: 768px;
-  }
-} */
 
 @media(max-width: 1000px)
 {
@@ -58,9 +45,3 @@
     grid-template-columns: auto 5fr 1fr;
   }
 }
-
-/* @media(max-width: 480px)
-{
-  .chat-container{
-  }
-} */

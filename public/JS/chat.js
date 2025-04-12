@@ -218,8 +218,12 @@ export class ChatManager
                 document.head.appendChild(style);
                 if (chatItem.className.includes('active'))
                 {
-                    this.disableActiveChat(); // если дважды тыкнул по активному чату то выключать его
-                    return;
+                    // провввверка для мобилок
+                    if (window.innerWidth > 1000) 
+                    {
+                        this.disableActiveChat(); // если дважды тыкнул по активному чату то выключать его
+                        return;
+                    }
                 }
 
                 this.selectUser(String(chatItem.dataset.userId));
