@@ -5,6 +5,9 @@
 @import "settings.css";
 @import "chathiden.css";
 @import "modal.css";
+@import "modalhidden.css";
+@import "animations.css";
+@import "mobile.css";
 
 :root {
   --back: rgb(32, 33, 37);
@@ -21,27 +24,3 @@
   font-family: sans-serif;
 }
 
-
-@media(max-width: 1000px)
-{
-  .chat-container 
-  {
-    grid-template-columns: 1fr 0px;
-  }
-
-  .modal-container 
-  {
-    width: 85%;
-    max-height: 200vh;
-  }
-
-  .settings-panel 
-  {
-    width: 100%;
-    right: -1000px;
-  }
-  
-  .main-chat .chat-header {
-    grid-template-columns: auto 5fr 1fr;
-  }
-}
