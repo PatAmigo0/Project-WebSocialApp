@@ -56,6 +56,8 @@
 
 /* контейнер сообщений */
 .messages-container {
+  max-height: 100%;
+  scrollbar-gutter: stable; /* резервируем место для overflow y */
   padding: 20px;
   overflow-y: auto;
   scrollbar-width: none;
@@ -73,10 +75,12 @@
 
 /* стили сообщений */
 .message {
-  word-break: break-all;
-  width: max-content;
-  min-width: 5%;
-  max-width: 65%;
+  overflow-wrap: anywhere; /* перенос слов */
+  white-space: pre-line; /* Улучшенная обработка переносов */
+  word-break: break-word; /* альтернативный перенос на всякий*/
+  max-width: calc(65% - 24px); /* учет padding-ов */
+  width: fit-content; /* аналог max-content но лучше */
+  word-break: keep-all; /* сохраняет целостность слов при переносе */
   padding: 8px 12px;
   border-radius: 8px;
   position: relative;
