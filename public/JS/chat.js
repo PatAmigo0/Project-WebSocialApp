@@ -23,6 +23,7 @@ export class ChatManager
         this.chats = new Map(); // для хранения html элементов (ключ - convId)
         this.messages = new Map(); 
         this.unreadChats = new Map(); // для хранения не прочитанных чатов
+        this.dom = new Map();
 
         // переменные для хранения данных
         this.currentUserId = null;
@@ -176,6 +177,11 @@ export class ChatManager
             {
                 if (this.unreadChats.has(user.id))
                     chatElement.classList.add('unread-message');
+                else if (user.id === this.selectedConservationId)
+                {
+                    this.selectedChatElement = chatElement;
+                    chatElement.classList.add('active');
+                }
                     
             }, fragment);
 
@@ -340,9 +346,27 @@ export class ChatManager
                 this.updateLastMessage(this.selectedConservationId, messageText);
                 sendMessage(this.selectedConservationId, messageText); 
                 new Message(messageText, "sent", this.messagesContainer);
+                this.swap();
             }
             else
                 console.warn("Не знаю как это произошло, но сообщение отправилось без выбранного чата, ошибка в sendMessage");
+        }
+    }
+
+    // меняем местами два элемента
+    swap()
+    {
+        if (!(this.chatList.firstElementChild.dataset.userId === this.selectedConservationId))
+        {
+            const firstEl = this.users.find(us => us.id === this.chatList.firstElementChild.dataset.userId);
+            const currentEl = this.users.find(us => us.id === this.selectedConservationId);
+            const fIndex = this.users.indexOf(firstEl);
+            const cIndex = this.users.indexOf(currentEl);
+            const temp = this.users[fIndex];
+    
+            this.users[fIndex] = currentEl;
+            this.users[cIndex] = temp;
+            this.renderUsers();
         }
     }
 
@@ -514,7 +538,8 @@ export class ChatManager
             const chatData = JSON.parse(rawChatData);
             this.unreadChats = new Map(chatData.unreadChats);
             this.messages = new Map(chatData.messages);
-            this.users = [...chatData.chats];
+            if (chatData.chats)
+                this.users = [...chatData.chats];
         }
 
     }
@@ -560,6 +585,7 @@ export class ChatManager
      */ 
     _onFullConservationLoadSuccess(messages, isGroup = false)
     {
+        console.log(messages);
         /* TODO: оптимизировать чтобы появлялись не все сообщения (сейчас я не понимаю как это сделать) */
         if (isGroup)
             this._handleAsAGroup(messages)

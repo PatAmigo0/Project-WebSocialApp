@@ -33,13 +33,13 @@ const WS_CONNECTOR = new WebSocketConnector();
 window.addEventListener('load', () => 
 {
     // Здесь стартуем или Math.PI...
-    startLogin();
+    startLogin(true);
     // Тут может быть какой-нибудь код, не касающийся работы с сервером
 });
 
-async function startLogin()
+async function startLogin(check = false)
 {
-    USER.name = await loginHandler.handleLogin();
+    USER.name = await loginHandler.handleLogin(check);
     login(USER.name, onLoginSuccess, onLoginError);
 }
 
@@ -50,6 +50,7 @@ async function startLogin()
  */
 function onLoginSuccess(userId) {
     loginHandler.hideLoginWindow();
+    localStorage.setItem("lastLogin", USER.name);
     window.chatManager.setCurrentUser(userId);
     window.chatManager.loadCookies();
     console.log(`User id: ${userId}`);

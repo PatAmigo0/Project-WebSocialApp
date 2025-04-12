@@ -18,6 +18,8 @@ export class SettingsHandler
         this.fontSizeSelector = this.settingsPanel.querySelector('#font-size');
         this.avatarsSelector = this.settingsPanel.querySelector('#avatars-images');
         this.onlineStatusToggle = this.settingsPanel.querySelector('#show-online');
+        this.clearCookiesButton = this.settingsPanel.querySelector('#clearCookies');
+        this.leaveButton = this.settingsPanel.querySelector('#leave');
 
         this.init();
     }
@@ -81,6 +83,20 @@ export class SettingsHandler
             const value = this.onlineStatusToggle.value;
             if (value)
             {}
+        });
+
+        // ОЧИСТКА КУКИ
+        this.clearCookiesButton.addEventListener('click', () => 
+        {
+            localStorage.clear();
+            window.addEventListener('beforeunload', () => localStorage.clear());
+        });
+
+        // ВЫХОД ИЗ АККАУНТА
+        this.leaveButton.addEventListener('click', () => 
+        {
+            localStorage.removeItem("lastLogin");
+            location.reload();
         });
     }
 

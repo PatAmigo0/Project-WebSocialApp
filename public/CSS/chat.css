@@ -110,7 +110,7 @@
 .input-area {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: flex-end; /* выравнивание по нижнему краю */
+  align-items: center;
   gap: 12px;
   padding: 12px;
   background-color: var(--bg-secondary);

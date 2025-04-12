@@ -2,6 +2,7 @@
 .settings-panel {
   display: grid;
   position: fixed;
+  overflow-y: auto;
   right: -100%;
   top: 0;
   width: 300px;
@@ -138,4 +139,19 @@
 .settings-select:focus {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.1);
+}
+
+.setting-item button {
+  padding: 8px 16px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#leave, #clearCookies
+{
+  background-color: rgba(234, 35, 13, 1);
 }

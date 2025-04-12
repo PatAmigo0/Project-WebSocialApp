@@ -166,7 +166,7 @@
 .modal-login {
   overflow: hidden;
   color: black;
-  display: grid;
+  display: none;
   grid-auto-rows: min-content;
   position: fixed;
   z-index: 1;
@@ -177,6 +177,10 @@
   height: 100%;
   background-color: rgb(0, 0, 0); /* затененный фон*/
   z-index: 999;
+}
+
+.modal-login.active {
+  display: grid;
 }
 
 .login-content {

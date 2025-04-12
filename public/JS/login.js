@@ -88,10 +88,21 @@ export class LoginHandler
         this.loginInput.placeholder = errorText;
     }
 
-    async handleLogin()
+    async handleLogin(checkCookies = false)
     {
         return new Promise((res) => 
         {
+            const lastLogin = localStorage.getItem("lastLogin");
+            if (checkCookies && lastLogin)
+            {
+                res(lastLogin);
+                return;
+            }
+            else
+            {
+                localStorage.removeItem("lastLogin");
+                this.mainWindow.classList.add('active'); // включаем окно логина если не нашли запись о входе
+            }
 
             // создаем функции-обработчики которые сможем удалить
             const buttonClickHandler = () => 
