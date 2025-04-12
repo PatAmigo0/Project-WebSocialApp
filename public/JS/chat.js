@@ -3,12 +3,15 @@ import { avatarManager } from './avatars.js';
 import { Message } from './message.js';
 import { User } from './user.js';
 import { modalWindowHandler } from './modal.js';
+import { mobileHandler } from './mobile.js';
 
 /* из main.js для работы с сервером */
 import { tryLoadConversation } from './main.js';
 import { sendMessage } from './main.js';
 
 ///////////////////////////////////////////////////////
+const MAX_LENGTH = 1500;
+
 
 export class ChatManager 
 {
@@ -28,6 +31,8 @@ export class ChatManager
         this.chatWindow = document.querySelector('.main-chat');
         this.sendButton = document.querySelector(".send-button");
         this.messageInput = document.querySelector(".message-input");
+        this.enabled = false;
+
         this.messagesContainer = document.querySelector(".messages-container");
         this.searchBox = document.querySelector("#chat-search");
 
@@ -159,38 +164,41 @@ export class ChatManager
             const chatItem = e.target.closest('.chat-item');
             if (chatItem && !chatItem.querySelector('.add-chat-button')) 
             {
-                console.log("///////Arsenii///////");
-                const style = document.createElement('style');
-                style.textContent = `
-                    @media(max-width: 1000px)
-                    {
-                        .chat-container 
-                        {
-                            grid-template-columns: 0px 1fr;
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
                 if (chatItem.className.includes('active'))
                 {
-                    // провввверка для мобилок
-                    if (window.innerWidth > 1000) 
-                    {
-                        this.disableActiveChat(); // если дважды тыкнул по активному чату то выключать его
-                        return;
-                    }
+                    this.disableActiveChat(); // если дважды тыкнул по активному чату то выключать его
                 }
-
-                this.selectUser(String(chatItem.dataset.userId));
+                else
+                {
+                    this.selectUser(String(chatItem.dataset.userId));
+                    mobileHandler.open();
+                }
             }
             else if (chatItem && chatItem.querySelector('.add-chat-button'))
                 modalWindowHandler.toggleModalWindow(); // открываем модальное окно (для выбора онлайн пользователей)
             else 
-                this.disableActiveChat(); // если попал за пределы конактов и кнопки то закрывать чат
+            {
+                this.disableActiveChat(); // если попал за пределы чатов и кнопки то закрывать чат
+            }
         });
 
         // ОТПРАВКА СООБЩЕНИЯ ПРИ НАЖАТИИ НА КНОПКУ ОТПРАВИТЬ
         this.sendButton.addEventListener('click', () => this.sendMessage());
+
+        // ПОПЫТКА ВВОДА В MESSAGEINPUT
+        this.messageInput.addEventListener('input', () =>
+        {
+            if (this.messageInput.value.length > MAX_LENGTH)
+            {
+                this.messageInput.value = this.messageInput.value.slice(0, MAX_LENGTH);
+                this.messageInput.classList.add("input-error");
+            } 
+            else
+            {
+                this.messageInput.classList.remove("input-error");
+                this._resizeInput();
+            }
+        });
 
         // ОТПРАВКА СООБЩЕНИЯ ПРИ НАЖАТИИ НА ENTER
         this.messageInput.addEventListener('keypress', (e) => 
@@ -278,6 +286,7 @@ export class ChatManager
         const messageText = this.messageInput.value.trim();
         if (messageText) 
         {
+            this._resetChat();
             if (this.selectedConservationId)
             {
                 this.updateLastMessage(this.selectedConservationId, messageText);
@@ -355,6 +364,7 @@ export class ChatManager
     {
         this.disableActiveChat();
         this.selectedChatElement = this.chats.get(userId);
+
         // добавляем класс active выбранному чату
         if (this.selectedChatElement)
         {
@@ -379,9 +389,9 @@ export class ChatManager
             this.selectedChatElement = null;
             this.chatWindow.classList.remove('chat-selected');
             this.currentConservation = null;
+            this._resetChat();
         }
     }
-
 
     /**
      * поиск чатов
@@ -452,14 +462,47 @@ export class ChatManager
 
     /* функции для создания чего либо (или же просто спрятанные функции) */
 
+    _resizeInput()
+    {
+        if (this.messageInput.value.length > 0 && this.enabled == false) this._enableChat();
+        else if (this.messageInput.value.length == 0) this._resetChat();
+
+        this.messageInput.style.height = 'auto'; // ресет
+
+        this.messageInput.style.height = `${Math.min(
+          this.messageInput.scrollHeight, 
+          parseInt(window.getComputedStyle(this.messageInput).maxHeight)
+        )}px`;
+        
+        this.messageInput.style.overflow = "auto";
+    }
+
+    _enableChat()
+    {
+        this.messageInput.innerHTML = `.`; 
+        this.enabled = true;
+    }
+
+    _resetChat()
+    {
+        this.messageInput.classList.remove("input-error");
+        this.messageInput.value = "";
+        this.messageInput.innerHTML = "";
+        this.enabled = false;
+    }
+
+
     /**
-     * загрузка сообщений из сервера в чат
+     * загрузка сообщений из сервера в чат когда входим в чат
      * @param {Object} conversation - объект чата
      */ 
     _onFullConservationLoadSuccess(conversation)
     {
         /* TODO: оптимизировать чтобы появлялись не все сообщения (сейчас я не понимаю как это сделать) */
-        this._hadnleAsUserConversation(conversation);
+        if (conversation.users.length > 2)
+            this._handleAsAGroup(conversation)
+        else
+            this._hadnleAsUserConversation(conversation);
     }
 
     /**
@@ -469,6 +512,10 @@ export class ChatManager
     _handleAsAGroup(conversation)
     {
         // TODO: реализовать обработку группового чата
+        conversation.messages.forEach(message => 
+        {
+            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, this.messagesContainer, this.messageInput);
+        });
     }
 
     /**

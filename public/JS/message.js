@@ -14,8 +14,6 @@ export class Message
         messageElement.textContent = messageText;
         
         messagesContainer.append(messageElement);
-        if (type == "sent")
-            messageInput.value = "";
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }

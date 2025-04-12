@@ -1,7 +1,7 @@
 /* панель настроек */
 .settings-panel {
   position: fixed;
-  right: -300px;
+  right: -100%;
   top: 0;
   width: 300px;
   height: 100%;
@@ -28,6 +28,7 @@
 .settings-panel.active ~ .main-chat {
   transform: translateX(-300px);
 }
+
 
 /* заголовок настроек */
 .settings-header {

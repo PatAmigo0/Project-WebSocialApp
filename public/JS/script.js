@@ -63,22 +63,3 @@ if (document.readyState === 'loading')
     document.addEventListener("DOMContentLoaded", init);
 else 
     init();
-}
-
-const back_chat = () => 
-    {
-        const style = document.createElement('style');
-        style.textContent = `
-            @media(max-width: 1000px)
-            {
-                .chat-container 
-                {
-                    grid-template-columns: 1fr 0px;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    };
-    
-    const button_back = document.getElementById("Button_back");
-    button_back.addEventListener("click", back_chat);

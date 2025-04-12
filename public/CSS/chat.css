@@ -104,6 +104,7 @@
 .input-area {
   display: grid;
   grid-template-columns: 1fr auto;
+  align-items: flex-end; /* выравнивание по нижнему краю */
   gap: 12px;
   padding: 12px;
   background-color: var(--bg-secondary);
@@ -113,17 +114,33 @@
   will-change: background-color, border-color;
 }
 
-.message-input,
-#message-input {
+.message-input:empty {
+  height: 56px !important;
+}
+
+.message-input {
+  min-height: 56px;
+  max-height: 150px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 6px;
+  scrollbar-width: none;
+  resize: none;
   padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  outline: none;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: background-color var(--transition-time) ease,
+  transition: height var(--transition-time) ease,
+    background-color var(--transition-time) ease,
     color var(--transition-time) ease, border-color var(--transition-time) ease;
-  will-change: background-color, color, border-color;
+  will-change: height, background-color, color, border-color;
+}
+
+.message-input.input-error
+{
+  border-color: red;
 }
 
 /* кнопка отправки */
