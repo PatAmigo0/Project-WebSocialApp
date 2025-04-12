@@ -16,8 +16,6 @@ const sessionMiddleware = session({
     saveUninitialized: true
 });
 
-
-
 const app = express();
 const httpServer = http.createServer(app);
 const wsServer = new WebSocket.Server({ server: httpServer });
@@ -50,8 +48,6 @@ app.use(express.static(path.join(__dirname, "public"), {
 
 // Затем API маршруты
 app.use("/api/v1", routes);
-
-
 
 wsServer.on("connection", ws => {
     const user = new User(null, null);

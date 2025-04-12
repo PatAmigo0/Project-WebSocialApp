@@ -14,7 +14,7 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <label for="chat-search" class="visually-hidden">Поиск чатов</label>
-                <input type="text" id="chat-search" name="chat-search" class="search-box" placeholder="Поиск чатов">
+                <input type="text" autocomplete="off" id="chat-search" name="chat-search" class="search-box" placeholder="Поиск чатов">
                 <button class="settings-button">
                     <img class="settings-icon" src="images/settings-icon.png" alt="Настройки">
                 </button>
@@ -134,7 +134,7 @@
                         <span>Включить уведомления</span>
                     </label>
                 </div>
-                <div class="setting-item">
+                <div class="setting-item visually-hidden">
                     <label>
                         <input type="checkbox" id="sound-effects" name="sound-effects" checked> 
                         <span>Включить звуковые эффекты</span>
@@ -144,7 +144,7 @@
 
             <div class="settings-section">
                 <h3>Конфиденциальность</h3>
-                <div class="setting-item">
+                <div class="setting-item visually-hidden">
                     <label>
                         <input type="checkbox" id="mark-as-read" name="mark-as-read"> 
                         <span>Помечать сообщения прочитанными</span>
@@ -164,13 +164,13 @@
             <div class="modal-container">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <label for="chat-name-input" class="visually-hidden">Поиск пользователей</label>
-                        <input type="text" id="chat-name-input" name="chat-name-input" class="search-box" placeholder="Имя вашего чата...">
+                        <label for="user-search" class="visually-hidden">Поиск пользователей</label>
+                        <input type="text" autocomplete="off" id="user-search" name="user-search" class="search-box" placeholder="Поиск чатов">
                         <span class="close-button">&times;</span>
                     </div>
-                    <div class="modal-search">
-                        <label for="user-search" class="visually-hidden">Поиск пользователей</label>
-                        <input type="text" id="user-search" name="user-search" class="search-box" placeholder="Поиск чатов">
+                    <div class="modal-name-input">
+                        <label for="chat-name-input" class="visually-hidden">Название чата</label>
+                        <input type="text" autocomplete="off" id="chat-name-input" name="chat-name-input" class="search-box" placeholder="Имя вашего чата... (если не ввести то будет случайное)">
                     </div>
                     <div class="modal-elements">
                     </div>

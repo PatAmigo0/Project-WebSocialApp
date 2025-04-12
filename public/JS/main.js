@@ -50,20 +50,14 @@ async function startLogin()
  */
 function onLoginSuccess(userId) {
     loginHandler.hideLoginWindow();
-    console.log(window.chatManager);
     window.chatManager.setCurrentUser(userId);
+    window.chatManager.loadCookies();
     console.log(`User id: ${userId}`);
     USER.id = userId;
 
     loadOnlineUsers(onLoadOnlineUsers);
     loadAllConversations(onLoadConversations);
     WS_CONNECTOR.register(USER, WS_HANDLERS);
-
-    // Это для теста (можно удалить)
-    
-    if (USER.name == "admin") {
-        setTimeout(test, 3000);
-    }       
 }
 
 /**
@@ -72,6 +66,7 @@ function onLoginSuccess(userId) {
  */
 export function publicLoadOnlineUsers(callback)
 {
+    console.log("пытаюсь загрузить онлайн пользователей...");
     loadOnlineUsers(callback);
 }
 
@@ -240,15 +235,14 @@ export function sendMessage(convId, text) {
     });
 }
 
-
-
 function test() 
 {
-    console.log("TEST: create conversation with user 500");
+   /* console.log("TEST: create conversation with user 500");
     tryCreateNewConversation({
         name: "TEST",
         usersIds: ["300", "100", "200"]
     });
+    */
 
     console.log("TEST: get full info about conversation 200");
     tryLoadConversation("200");

@@ -12,14 +12,18 @@ import { sendMessage } from './main.js';
 
 export class ChatManager 
 {
-    constructor(users) 
+    constructor() 
     {
         /* ЧТОБЫ НЕ ПУТАТЬ: USERS ЭТО ТЕ ЖЕ ЧАТЫ, ПРОСТО СТАРОЕ НАЗВАНИЕ КОТОРОЕ Я НИКАК НЕ ПОМЕНЯЮ */
-        this.users = users; // чаты
+        this.users = new Array(); // чаты
+        this.chats = new Map(); // для хранения html элементов (ключ - convId)
+        this.unreadChats = new Map(); // для хранения не прочитанных чатов
+
         this.currentUserId = null;
         this.selectedConservationId = null;
-        this.settingsWereOpened = false;
+        this.selectedChatElement = null
 
+        this.settingsWereOpened = false;
         this.chatList = document.querySelector('.chat-list');
         this.chatWindow = document.querySelector('.main-chat');
         this.sendButton = document.querySelector(".send-button");
@@ -59,11 +63,15 @@ export class ChatManager
      * обработка нового чата
      * @param {Object} conversation - объект чата
      */ 
-    handleNewConservation(conversation)
+    handleNewConservation(conversation, callback)
     {
-        this.users.push(this._buildConservation(conversation));
+        const user = this._buildConservation(conversation);
+        this.users.push(user);
         this.searchBox.value = ""; // ресетаем значение searchBox
         this.renderUsers();
+        /* TODO: переделать систему добавление нового чата чтобы не ререндерить раз за разом...*/
+        //new User(user, this.chatList);
+        if (callback) callback()
     }
 
     /**
@@ -88,20 +96,21 @@ export class ChatManager
             else 
             {
                 // индикатор непрочитанного сообщения
-                const chatElement = this.chatList.querySelector(`[data-user-id="${message.convId}"]`);
-                if (chatElement)
-                    chatElement.classList.add('unread-message'); 
-                /* TODO: добавить индикатор непрочитанного сообщения */
+                this._markUnread(message.convId);
             }
             
             // обновляем список чатов
-            this.updateLastMessage(targetChat);
+            this.updateLastMessage(targetChat.id, message.text);
         } 
         else 
         {
-            console.warn("Получено сообщение для неизвестного чата:", message.convId);
+            //console.warn("Получено сообщение для неизвестного чата:", message.convId);
             // нужно загрузить информацию о новом чате
-            tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation));
+            tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation, () => 
+                {
+                    // добавляем индикатор непроч. сообщения после загрузки
+                    this._markUnread(message.convId);
+                }));
         }
     }
 
@@ -114,86 +123,32 @@ export class ChatManager
     {
         const addChatButton = this.chatList.querySelector('.add-chat-button').parentElement;
         this.chatList.innerHTML = '';
+        this.chats.clear();
 
         // тест рендера всех пользователей
         this.users.forEach(user => 
         {
-            this.createUserElement(user);
+            // в этой функции помещается html element чата в словарь
+            this.createUserElement(user, (chatElement) => 
+            {
+                if (this.unreadChats.has(user.id))
+                    chatElement.classList.add('unread-message');
+                    
+            });
             // ждем пока из базы данных загрузится чат и получаем последнее сообщение
             this.getLastMessage(user.id).then(lastMessage => 
             {
                 user.lastMessage = lastMessage;
-                this.updateLastMessage(user);
+                this.updateLastMessage(user.id, lastMessage);
             }); 
             
-            // устанавливаем аватар через AvatarManager
-            avatarManager.setAvatar(user.id, null, user.isGroup);
+            // устанавливаем аватар через AvatarManager DEPRECATED
+            //avatarManager.setAvatar(user.id, null, user.isGroup);
         });
+
         this.chatList.append(addChatButton);
     }
 
-    /**
-     * обновляем последнее сообщение в чате
-     * @param {Object} chat - объект чата
-     */         
-    updateLastMessage(chat)
-    {
-        const chatElement = this.chatList.querySelector(`[data-user-id="${chat.id}"]`);
-        if (chatElement)
-            chatElement.querySelector(".last-message").textContent = chat.lastMessage;
-    }
-
-    /**
-     * обновляем аватары всех пользователей
-     * @param {string} value - значение для аватара
-     */     
-    updateUsersAvatars(value)
-    {
-        avatarManager.changeAvatarsStyle(value);
-        let check = true // для оптимизации чтобы не проверять на активный чат если мы его уже нашли
-
-        this.users.forEach(user => 
-        {
-            if (user.isGroup) 
-                avatarManager.setAvatar(user.id, `${value}/${value}-group.png`, true);
-            else 
-                avatarManager.setAvatar(user.id, `${value}/${value}-avatar.png`);
-
-            // на случай если был октрыт чат (нужно изменить аватар пользователя в заголовке чата)
-            if (check 
-                && this.chatList.querySelector(`[data-user-id="${user.id}"]`).classList.contains("active"))
-            {
-                check = false; // больше не проверять
-                this.updateChatHeader(user);
-            }
-        });
-
-    }
-
-    /**
-     * изменение статуса пользователя
-     * @param {string} userId - ID пользователя
-     * @param {boolean} online - статус пользователя
-     */ 
-    toggleStatus(userId, online)    
-    {
-        const users = this.chatList.querySelectorAll(`[data-companion-id="${userId}"]`);
-        //console.warn(`Найдено чатов с пользователем ${userId}: ${users.length}`);
-        
-        if (users.length > 0)
-            users.forEach(item => this._toggleStatus(item, online));
-        else
-            console.warn(`Пользователь ${userId} не найден в списке чатов`);
-    }
-
-    /**
-     * создание элемента чата (пользователя или группы)
-     * @param {Object} user - объект чата
-     */     
-    createUserElement(user) 
-    {
-        new User(user, this.chatList);
-    }
 
     // установка слушателей событий (удобно для подписывания на события)
     setupEventListeners() 
@@ -235,10 +190,7 @@ export class ChatManager
         });
 
         // ОТПРАВКА СООБЩЕНИЯ ПРИ НАЖАТИИ НА КНОПКУ ОТПРАВИТЬ
-        this.sendButton.addEventListener('click', () => 
-        {
-            this.sendMessage()
-        });
+        this.sendButton.addEventListener('click', () => this.sendMessage());
 
         // ОТПРАВКА СООБЩЕНИЯ ПРИ НАЖАТИИ НА ENTER
         this.messageInput.addEventListener('keypress', (e) => 
@@ -251,9 +203,72 @@ export class ChatManager
         });
 
         // ПОИСК ПОЛЬЗОВАТЕЛЕЙ
-        this.searchBox.addEventListener('input', (e) => 
+        this.searchBox.addEventListener('input', () => this.searchChats(this.searchBox.value));
+    }
+
+    /**
+     * обновляем последнее сообщение в чате
+     * @param {string} chatId - id чата
+     */         
+    updateLastMessage(chatId, text)
+    {
+        const chatElement = this.chats.get(chatId);
+        if (chatElement)
+                chatElement.querySelector(".last-message").textContent = text;
+    }
+
+    /**
+     * обновляем аватары всех пользователей
+     * @param {string} value - значение для аватара
+     */     
+    updateUsersAvatars(value)
+    {
+        avatarManager.changeAvatarsStyle(value);
+        let check = true // для оптимизации чтобы не проверять на активный чат если мы его уже нашли
+
+        this.users.forEach(user => 
         {
-            this.searchChats(e.target.value);
+            if (user.isGroup) 
+                avatarManager.setAvatar(user.id, `${value}/${value}-group.png`, true);
+            else 
+                avatarManager.setAvatar(user.id, `${value}/${value}-avatar.png`);
+
+            // на случай если был октрыт чат (нужно изменить аватар пользователя в заголовке чата)
+            if (check 
+                && this.chats.get(user.id).classList.contains("active"))
+            {
+                check = false; // больше не проверять
+                this.updateChatHeader(user);
+            }
+        });
+    }
+
+    /**
+     * изменение статуса пользователя
+     * @param {string} userId - ID пользователя
+     * @param {boolean} online - статус пользователя
+     */ 
+    toggleStatus(userId, online)    
+    {
+        const users = this.chatList.querySelectorAll(`[data-companion-id="${userId}"]`);
+        //console.warn(`Найдено чатов с пользователем ${userId}: ${users.length}`);
+        
+        if (users.length > 0)
+            users.forEach(item => this._toggleStatus(item, online));
+        else
+            console.warn(`Пользователь ${userId} не найден в списке чатов`);
+    }
+
+    /**
+     * создание элемента чата (пользователя или группы)
+     * @param {Object} user - объект чата
+     */     
+    createUserElement(user, onSuccess, parent = this.chatList) 
+    {
+        new User(user, parent, item => 
+        {
+            this.chats.set(user.id, item);
+            onSuccess(item);
         });
     }
 
@@ -265,7 +280,8 @@ export class ChatManager
         {
             if (this.selectedConservationId)
             {
-                sendMessage(this.selectedConservationId, messageText);
+                this.updateLastMessage(this.selectedConservationId, messageText);
+                sendMessage(this.selectedConservationId, messageText); // функция из main.js не путать с this.sendMessage
                 new Message(messageText, "sent", this.messagesContainer, this.messageInput);
             }
             else
@@ -284,10 +300,25 @@ export class ChatManager
         if (user) 
         {
             this.currentUser = user;
+            this.updateActiveChat(userId); // ЗДЕСЬ СТАВИТЬСЯ this.selectedChatElement
+            this.updateMarked();
+            this.updateReceivedMessageIndicator()
             this.updateChatHeader(user);
-            this.updateActiveChat(userId);
             this.updateChatWindow(user);
             document.querySelector('.main-chat').classList.add('chat-selected');
+        }
+    }
+
+    updateReceivedMessageIndicator()
+    {
+        this.selectedChatElement.classList.remove("unread-message");
+    }
+
+    updateMarked()
+    {
+        if (this.unreadChats.has(this.selectedConservationId))
+        {
+            this.unreadChats.delete(this.selectedConservationId);
         }
     }
 
@@ -323,12 +354,11 @@ export class ChatManager
     updateActiveChat(userId) 
     {
         this.disableActiveChat();
-
+        this.selectedChatElement = this.chats.get(userId);
         // добавляем класс active выбранному чату
-        const selectedChat = this.chatList.querySelector(`[data-user-id="${userId}"]`);
-        if (selectedChat)
+        if (this.selectedChatElement)
         {
-            selectedChat.classList.toggle('active');
+            this.selectedChatElement.classList.toggle('active');
             this.selectedConservationId = userId;
         }
     }
@@ -336,22 +366,22 @@ export class ChatManager
     // функция для безопасного скрытия текущего чата
     disableActiveChat()
     {
+        /* ОПТИМЗИРОВАНО :)
         // убираем класс active у всех чатов и у окна чата
         this.chatList.querySelectorAll('.chat-item').forEach(chat => 
         {
             chat.classList.remove('active');
         });
-
-        this.chatWindow.classList.remove('chat-selected');
-        this.currentConservation = null;
+        */
+        if (this.selectedChatElement)
+        {
+            this.selectedChatElement.classList.remove('active');
+            this.selectedChatElement = null;
+            this.chatWindow.classList.remove('chat-selected');
+            this.currentConservation = null;
+        }
     }
 
-
-    /*TODO: функция для добавления нового пользователя в список чатов */
-    addNewChat() 
-    {
-        // TODO: реализовать добавление нового чата
-    }
 
     /**
      * поиск чатов
@@ -360,7 +390,7 @@ export class ChatManager
     searchChats(query) 
     {
         const searchTerm = query.toLowerCase();
-        document.querySelectorAll('.chat-item:not(:has(.add-chat-button))').forEach(item => 
+        this.chats.forEach(item => 
         {
             const chatName = item.querySelector(".chat-name").textContent.toLowerCase();
             const lastMessage = item.querySelector(".last-message").textContent.toLowerCase();
@@ -395,6 +425,27 @@ export class ChatManager
                     rej("Не получилось получить последнее сообщение");
             });
         });
+    }
+
+    // куку...
+    cook()
+    {
+        const chatData =
+        {
+            unreadChats: this.unreadChats.entries().toArray()
+        }
+        localStorage.setItem(this.currentUserId, JSON.stringify(chatData));
+    }
+
+    loadCookies()
+    {
+        const rawChatData = localStorage.getItem(this.currentUserId);
+        if (rawChatData)
+        {
+            const chatData = JSON.parse(rawChatData);
+            this.unreadChats = new Map(chatData.unreadChats)
+        }
+
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -435,16 +486,18 @@ export class ChatManager
 
     /**
      * изменение статуса пользователя
-     * @param {Object} user - объект чата
+     * @param {HTMLElement} user - dom объект чата
      * @param {boolean} online - статус пользователя
      */ 
     _toggleStatus(user, online = true)
     {
+        const fuser = this.users.find(us => us.companionId === user.dataset.companionId); // пользователь собеседник, я храню его информацию локально чтобы не обращаться к серверу... Поэтому приходится менять ему онлайн ручками
         const statusIndicator = user.querySelector('.status-indicator');
         if (statusIndicator) 
         {
             statusIndicator.classList.remove('online', 'offline');
             statusIndicator.classList.add(online ? 'online' : 'offline');
+            fuser.online = online;
             // console.log(`Статус пользователя изменен на ${online ? 'online' : 'offline'}`);
         }
     }
@@ -458,6 +511,24 @@ export class ChatManager
     }
 
     /**
+     * 
+     * @param {string} convId 
+     */
+    _markUnread(convId)
+    {
+        const chatElement = this.chats.get(convId);
+        if (chatElement) 
+        {
+            chatElement.classList.add("unread-message");
+            
+            // проверяем, если в чате уже были непрочитанные сообщения то прибавляем это значение, иначе инициализируем
+            this.unreadChats.set(convId, this.unreadChats.has(convId) 
+            ? this.unreadChats.get(convId) + 1
+            : 1);
+        } 
+    }
+
+    /**
      * построение объекта чата
      * @param {Object} conversation - объект чата
      * @returns {Object} - объект чата
@@ -467,11 +538,12 @@ export class ChatManager
         const user = 
         {
             id: String(conversation.id),
+            companionId: conversation.users.find(us => us.id != this.currentUserId).id,
             name: conversation.name,
             avatar: "",
             messages: conversation.messages,
             lastMessage: "",
-            time: "12:30",
+            time: "",
             unreadCount: 0,
             isGroup: conversation.users.length > 2 ? true : false,
             online : conversation.users.find(us => us.online == true && us.id != this.currentUserId) ? true : false,
