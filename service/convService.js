@@ -46,7 +46,7 @@ function shortConvToFull(convShort) {
  */
 function shortMessageToFull(message) {
     return new Message(
-        userService.getById(message.sender),
+        userService.getById(message.sender?.id ? message.sender.id : message.sender),
         message.date,
         message.text
     );
@@ -150,6 +150,7 @@ module.exports = {
         if (conv && sender) {
             if (conv.messages.length >= MAX_MESSAGES_MEM)
                 conv.messages.shift()
+
             message.sender = sender;
             const resultM = Message.fromNewMessage(message);
             conv.messages.push(resultM);

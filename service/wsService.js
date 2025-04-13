@@ -101,8 +101,6 @@ function newMessHandler(stream, user, data) {
     }
 }
 
-
-
 module.exports = {
     onMessage: (stream, user, message) => {
         const wsData = WebSocketData.fromJsonString(message);

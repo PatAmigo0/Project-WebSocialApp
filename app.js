@@ -7,7 +7,9 @@ const routes    = require("./route/routes");
 const User      = require("./model/user");
 const wsService = require("./service/wsService");
 const path      = require('path');
+const crypto    = require('crypto');
 
+const SERVER_INSTANCE_TOKEN = crypto.randomUUID();
 const PORT = process.env.PORT || 3000;
 
 const sessionMiddleware = session({
@@ -49,7 +51,17 @@ app.use(express.static(path.join(__dirname, "public"), {
 // Затем API маршруты
 app.use("/api/v1", routes);
 
+app.get('/api/v1/server-token', (req, res) => {
+    res.json({ serverInstanceToken: SERVER_INSTANCE_TOKEN });
+});
+
 wsServer.on("connection", ws => {
+
+    ws.send(JSON.stringify({
+        type: 'server_instance_token',
+        token: SERVER_INSTANCE_TOKEN
+    }));
+
     const user = new User(null, null);
 
     ws.on("message", (message) => {

@@ -59,13 +59,7 @@ export class ChatManager
 
     handleLoading()
     {
-        if (this.users.length == 0)
-            tryLoadAllConversation();
-        else
-        {
-            console.warn("загрузил чаты из куки");
-            this.renderUsers(); // скипаем загрузку из сервера
-        }
+        tryLoadAllConversation();
     }
 
     /**
@@ -93,11 +87,12 @@ export class ChatManager
 
     handleLoadedConversations(conversations)
     {
-        conversations.forEach(conversation =>
-        {
-            /* TODO: оптимизировать чтобы рендер работал на прямую c conservations */
-            this.users.push(this._buildConservation(conversation));
-        });
+        const originalOrder = new Map();
+
+        this.users.forEach((user, index) => originalOrder.set(user.id, index));
+        this.users = conversations.map(conversation => this._buildConservation(conversation));
+        this.users.sort((a, b) => originalOrder.get(a.id) - originalOrder.get(b.id));
+        
         this.renderUsers();
     }
 
@@ -111,8 +106,6 @@ export class ChatManager
         this.users.push(user);
         this.searchBox.value = ""; // ресетаем значение searchBox
         this.renderUsers();
-        /* TODO: переделать систему добавление нового чата чтобы не ререндерить раз за разом...*/
-        //new User(user, this.chatList);
         if (callback) callback()
     }
 
@@ -122,7 +115,7 @@ export class ChatManager
      */ 
     handleReceivedMessage(message)
     {
-        
+        console.log(message);
         const targetChat = this.users.find(user => user.id === message.convId); // user.id - id чата, message.convId - id чата в который пришло сообщение
         //console.log(targetChat);
         // обновляем последнее сообщение в чате (для отображения в списке)
@@ -150,8 +143,10 @@ export class ChatManager
             // нужно загрузить информацию о новом чате
             tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation, () => 
                 {
+                    console.warn("ставлю сообщения...");
+                    console.log(conversation);
                     // добавляем индикатор непроч. сообщения после загрузки
-                    this.messages.set(message.convId, [message]);
+                    this.messages.set(message.convId, [conversation.messages]);
                     this._markUnread(message.convId);
                 }));
         }
@@ -346,7 +341,7 @@ export class ChatManager
                 this.updateLastMessage(this.selectedConservationId, messageText);
                 sendMessage(this.selectedConservationId, messageText); 
                 new Message(messageText, "sent", this.messagesContainer);
-                this.swap();
+                this.pushForward();
             }
             else
                 console.warn("Не знаю как это произошло, но сообщение отправилось без выбранного чата, ошибка в sendMessage");
@@ -354,25 +349,28 @@ export class ChatManager
     }
 
     // меняем местами два элемента
-    swap()
+    pushForward()
     {
         if (!(this.chatList.firstElementChild.dataset.userId === this.selectedConservationId))
         {
-            const firstEl = this.users.find(us => us.id === this.chatList.firstElementChild.dataset.userId);
-            const currentEl = this.users.find(us => us.id === this.selectedConservationId);
-            const fIndex = this.users.indexOf(firstEl);
-            const cIndex = this.users.indexOf(currentEl);
-            const temp = this.users[fIndex];
-    
-            this.users[fIndex] = currentEl;
-            this.users[cIndex] = temp;
+            const currentEl = this.users.findIndex(us => us.id === this.selectedConservationId);
+
+            this.users.unshift(this.users[currentEl]);
+            this.users.splice(currentEl+1, 1);
+
             this.renderUsers();
         }
     }
 
     addMessage(message)
     {
-        this.messages.get(message.convId).push(message);
+        const storage = this.messages.get(message.convId);
+        if (storage) storage.push(message);
+        else 
+        {
+            console.warn("Ставлю сообщение...");
+            this.messages.set(message.convId, [message]);
+        }
     }
 
     /**
@@ -419,12 +417,13 @@ export class ChatManager
         if (!messages)
             tryLoadConversation(user.id, (conversation) => 
             {
+                console.warn("взял сообщения из базы данных");
+                console.log(conversation.messages);
                 this.messages.set(user.id, conversation.messages);
                 this._onFullConservationLoadSuccess(conversation.messages, conversation.users.length > 2);
             });
         else
         {
-            console.warn("loaded via cooks");
             this._onFullConservationLoadSuccess(messages, !this.chats.get(user.id).dataset.companionId); // нет компаньена => группа
         }
     }
@@ -510,6 +509,9 @@ export class ChatManager
         {
             tryLoadConversation(convId, (conversation) => 
             {
+                console.log("Загружаю сообщения");
+                console.log(conversation.messages);
+                this.messages.set(convId, conversation.messages);
                 if (conversation)
                     this._getLastMessage(conversation).then(message => res(message));
                 else
@@ -525,23 +527,30 @@ export class ChatManager
         {
             unreadChats: this.unreadChats.entries().toArray(),
             messages: this.messages.entries().toArray(),
-            chats: this.users
+            chats: this.users,
+            secret_data_token: sessionStorage.getItem("server_super_secret_token")
         }
         localStorage.setItem(this.currentUserId, JSON.stringify(chatData));
     }
 
     loadCookies()
     {
+        const currentToken = sessionStorage.getItem("server_super_secret_token");
         const rawChatData = localStorage.getItem(this.currentUserId);
         if (rawChatData)
         {
             const chatData = JSON.parse(rawChatData);
-            this.unreadChats = new Map(chatData.unreadChats);
-            this.messages = new Map(chatData.messages);
-            if (chatData.chats)
-                this.users = [...chatData.chats];
+            console.log(`${currentToken} =? ${chatData.secret_data_token}`);
+            if (currentToken === chatData.secret_data_token)
+            {
+                this.unreadChats = new Map(chatData.unreadChats);
+                this.messages = new Map(chatData.messages);
+                if (chatData.chats)
+                    this.users = [...chatData.chats];
+            }
+            else
+                console.warn("ВЕРСИИ САЙТОВ НЕ СОВПАДАЮТ!");
         }
-
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -675,6 +684,11 @@ export class ChatManager
             ? this.unreadChats.get(convId) + 1
             : 1);
         } 
+    }
+
+    _loadOnlineStatus(conversation)
+    {
+        console.log(conversation);
     }
 
     /**

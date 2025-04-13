@@ -20,6 +20,10 @@ let settingsHandler;
 
 function init()
 {
+    if (localStorage.getItem("clearCookiesPending"))
+        localStorage.clear();
+
+    console.log(localStorage);
     //console.log(document.location.protocol);
     themeManager = new ThemeManager(elements.root, elements.messagesContainer);
     // загружаем сохраненную тему и градиент

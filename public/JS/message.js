@@ -36,13 +36,11 @@ export class Message
         const messageElement = document.createElement("div");
         messageElement.className = `message ${type}`;
         
-        // Безопасное добавление содержимого
         messageElement.append(parseUrl(messageText));
-        
         messagesContainer.append(messageElement);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
         if (callback)
             callback(messageElement);
     }
-    }
+}

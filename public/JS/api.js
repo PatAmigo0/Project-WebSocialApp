@@ -5,7 +5,10 @@ function login(username, onSuccess, onError) {
         body: JSON.stringify({ username: username })
     }).then(res => {
         if (res.ok) {
-            res.json().then(e => onSuccess(e.id));
+            res.json().then(e => {
+                onSuccess(e.id);
+            });
+
         } else {
             res.json().then(e => onError(e.error));
         }
@@ -88,12 +91,19 @@ class WebSocketConnector {
     
             if (data.type in handlers) {
                 handlers[data.type](data.data);
-            } else {
+            } else if(data.type === 'server_instance_token') 
+            {
+                console.log(`secret token: ${data.token}`);  
+                sessionStorage.setItem("server_super_secret_token", data.token);  
+            }
+            else
+            {
                 console.error(`WS: wrong type: ${data.type}`);
             }
         }
     
         this.#ws.onclose = () => {
+            location.replace("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
             console.log("WebSocket closed");
         };
     }

@@ -98,10 +98,11 @@ function onLoadOnlineUsers(users)
  * бесед для текущего пользователя
  * @param {Array<ConversationMeta>} conversations
  */
-function onLoadConversations(conversations) {
+function onLoadConversations(conversations, callback) {
     console.log("Conversations:")
     console.log(conversations);
     window.chatManager.handleLoadedConversations(conversations);
+        
 }
 
 /**
@@ -192,9 +193,9 @@ export function tryLoadConversation(convId, callback = onLoadConversationByIdSuc
     loadConversationById(convId, callback);
 }
 
-export function tryLoadAllConversation()
+export function tryLoadAllConversation(callback)
 {
-    loadAllConversations(onLoadConversations);
+    loadAllConversations(onLoadConversations, callback);
 }
 
 /**
@@ -232,7 +233,7 @@ function onLoadConversationByIdError(errorText) {
  * @param {String} convId id беседы
  * @param {String} text текст сообщения
  */
-export function sendMessage(convId, text, callback) {
+export function sendMessage(convId, text) {
     WS_CONNECTOR.sendNewMessage({
         convId: convId,
         sender: USER.id,

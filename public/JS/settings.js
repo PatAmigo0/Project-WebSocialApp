@@ -96,6 +96,7 @@ export class SettingsHandler
         this.leaveButton.addEventListener('click', () => 
         {
             localStorage.removeItem("lastLogin");
+            localStorage.setItem("clearCookiesPending", true);
             location.reload();
         });
     }
