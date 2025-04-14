@@ -37,10 +37,10 @@ export class ModalWindowHandler
     // когда новый пользователь входит в сеть
     handleNewOnlineUser(user) 
     {
+        this.onlineUsers.set(user.id, user);
         if (this.modalWindow.classList.contains("active"))
         {
-            if (this.initializedOnlineUsers)
-                this.onlineUsers.set(user.id, user);
+            this.onlineUsers.set(user.id, user);
             if (!this.elements.get(user.id))
                 new modalUser(user, this.modalElements, 
                     (userElement) => this.elements.set(user.id, userElement), 
@@ -51,8 +51,7 @@ export class ModalWindowHandler
 
     handleUserLeft(userId)
     {
-        if (this.initializedOnlineUsers)
-            this.onlineUsers.delete(userId);
+        this.onlineUsers.delete(userId);
         const us = this.elements.get(userId);
         if (us)
         {
@@ -87,8 +86,8 @@ export class ModalWindowHandler
     // инициализация событий
     setupEventListeners()
     {
-       // ЗАКРЫТИЕ МОДАЛЬНОГО ОКНА
-       this.modalCloseButton.addEventListener('click', () => this.toggleModalWindow());
+        // ЗАКРЫТИЕ МОДАЛЬНОГО ОКНА
+        this.modalCloseButton.addEventListener('click', () => this.toggleModalWindow());
 
         this.addButton.addEventListener('click', () => 
         {
@@ -99,6 +98,7 @@ export class ModalWindowHandler
             this.toggleModalWindow();
         });
 
+        // ПОИСК ПОЛЬЗОВАТЕЛЕЙ
         this.searchUsersBox.addEventListener('input', () => this.searchUsers(this.searchUsersBox.value));
 
     }
@@ -106,6 +106,7 @@ export class ModalWindowHandler
     // включение / выключение окна с текущими пользователями
     toggleModalWindow()
     {
+        this.modalElements.classList.add('loading');
         this.modalWindow.classList.toggle('active');
         
         if (this.modalWindow.classList.contains('active'))
@@ -125,12 +126,14 @@ export class ModalWindowHandler
                 this.fetchOnlineUsers(this.onlineUsers.values());
             }
             else
+            {
                 // сначала загружаем из базы данных, а уже потом работаем
                 publicLoadOnlineUsers(users => 
-            {
-                this.initializedOnlineUsers = true; // означает что теперь можно загружать из куки так как мы их инициализировали
-                this.fetchOnlineUsers(users);
-            });
+                {
+                    this.initializedOnlineUsers = true; // означает что теперь можно загружать из куки так как мы их инициализировали
+                    this.fetchOnlineUsers(users);
+                });
+            }
         }
         else 
         {
@@ -147,15 +150,20 @@ export class ModalWindowHandler
     // событие которое запускается автоматически при загрузке пользователей в modalWindowHandler.toggleModalWindow
     fetchOnlineUsers(users)
     {
+        const fragment = document.createDocumentFragment();
         users.forEach(user => 
         {
+            
             this.onlineUsers.set(user.id, user);
             if (user.id != window.chatManager.currentUserId)
-                new modalUser(user, this.modalElements, 
+                new modalUser(user, fragment, 
                     (userElement) => this.elements.set(user.id, userElement), 
                     (toggled) => this.handleToggledUser(user.id, toggled)
                 );
         });
+
+        this.modalElements.append(fragment);
+        this.modalElements.classList.remove('loading');
     }
 
     /**

@@ -33,6 +33,7 @@ export class ChatManager
         this.selectedChatElement = null
 
         // элементы DOM
+        this.loadingScreen = document.querySelector('.loading-screen');
         this.chatList = document.querySelector('.chat-list');
         this.chatWindow = document.querySelector('.main-chat');
         this.searchBox = document.querySelector("#chat-search");
@@ -62,10 +63,14 @@ export class ChatManager
 
     handleLoading()
     {
+        this.loadingScreen.classList.add('active');
+
         if (this.users.length == 0)
             tryLoadAllConversation();
         else
             this.renderUsers();
+
+        this._deleteLoadingScreen();
     }
 
     /**
@@ -709,6 +714,15 @@ export class ChatManager
     _loadOnlineStatus(conversation)
     {
         console.log(conversation);
+    }
+
+    _deleteLoadingScreen()
+    {
+        setTimeout(() => 
+            {
+                this.loadingScreen.classList.add("fade");
+                setTimeout(() => this.loadingScreen.remove(), 600);
+            }, 2200);
     }
 
     /**
