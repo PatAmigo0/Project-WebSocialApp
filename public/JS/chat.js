@@ -429,7 +429,7 @@ export class ChatManager
         conversation.messages.forEach(message =>
         {
             //console.warn(message);
-            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, this.messagesContainer, this.messageInput);
+            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, this.messagesContainer, this.messageInput, message.sender.name);
         });
     }
 
