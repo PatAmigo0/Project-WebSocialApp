@@ -3,6 +3,7 @@
 import { avatarManager } from "./avatars.js";
 import { loginHandler } from "./login.js";
 import { modalWindowHandler } from "./modal.js";
+import { errorHandler } from "./error.js";
 
 /////////////////////////////////////////
 
@@ -182,6 +183,7 @@ function onCreateConversationSuccess(convId) {
  */
 function onCreateConversationError(errorText) {
     console.error(`Create conversation error: ${errorText}`);
+    errorHandler.toggleErrorWindow("ЭТОТ ПОЛЬЗОВАТЕЛЬ ИЛИ ВЫ ПРЕВЫСИЛИ МАКСИМУМ ЧАТОВ (30 чатов).");
 }
 
 /**

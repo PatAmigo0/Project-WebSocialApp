@@ -10,6 +10,7 @@ const {
     NewConversation 
 } = require("../model/conversation");
 
+const MAX_CONVERSATIONS_MEM = 30;
 const MAX_MESSAGES_MEM = 100; // вместимость памяти
 
 /**
@@ -83,6 +84,7 @@ function findById(id) {
     return conversations.find(e => e.id == id);
 }
 
+
 module.exports = {
     /**
      * 
@@ -125,16 +127,17 @@ module.exports = {
      * @returns {String} uuid
      */
     create: (conversation) => {
-        if (isUnique(conversation) && checkUsers(conversation)) {
-            const conv = new ConversationShort(
-                db.generateId(),
-                conversation.name,
-                conversation.usersIds,
-                []
-            );
-            conversations.push(conv);
-            return conv.id;
-        }
+        if (conversations.length < MAX_CONVERSATIONS_MEM)
+            if (isUnique(conversation) && checkUsers(conversation)) {
+                const conv = new ConversationShort(
+                    db.generateId(),
+                    conversation.name,
+                    conversation.usersIds,
+                    []
+                );
+                conversations.push(conv);
+                return conv.id;
+            }
 
         return null;
     },
@@ -160,4 +163,13 @@ module.exports = {
         return false;
     },
 
+    sort: (conv) =>
+    {
+        if (!(conversations[0] == conv))
+        {
+            const index = conversations.indexOf(conv);
+            conversations.unshift(conversations[index]);
+            conversations.splice(index+1, 1);
+        }
+    }
 }

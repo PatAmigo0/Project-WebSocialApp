@@ -234,3 +234,65 @@
   cursor: pointer;
   color: white;
 }
+
+/* окно с ошибкой */
+
+.error-window
+{
+  overflow: hidden;
+  color: black;
+  display: none;
+  grid-auto-rows: min-content;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+
+  width: 100%;
+  height: 100%;
+  background-color: rgba(rgb(62, 27, 27), rgb(12, 161, 12), rgb(55, 55, 193), 0.3); /* затененный фон*/
+  z-index: 999;
+}
+
+.error-window.active
+{
+  display: grid;
+}
+
+.error-window-content
+{
+  display: grid;
+  overflow: visible;
+  position: absolute;
+  left: 405px;
+  top: 101px;
+  scrollbar-width: none;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.767); /* затененный фон*/
+  grid-auto-rows: min-content;
+  padding: 3px;
+  color: red;
+  margin: 15% auto;
+  padding: 20px;
+  width: 40%;
+  max-width: 400px;
+  min-width: 250px;
+  height: auto;
+  max-height: 80vh;
+  border: 1px solid #888;
+  z-index: 10000;
+}
+
+
+.error-window span
+{
+  display: flex;
+  position: absolute;
+  bottom: 50px;
+  right: 9px;
+}
+
+.error-window span:hover
+{
+  cursor: pointer;
+}

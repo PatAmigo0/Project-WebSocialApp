@@ -14,10 +14,10 @@ function parseUrl(text)
             link.textContent = part;
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
-            fragment.appendChild(link);
+            fragment.append(link);
         }
         else 
-            fragment.appendChild(document.createTextNode(part));
+            fragment.append(document.createTextNode(part));
     });
     
     return fragment;

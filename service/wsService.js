@@ -7,8 +7,6 @@ const { ConversationShort, NewMessage } = require("../model/conversation");
 
 const CLIENTS = new Map();
 
-
-
 /**
  * 
  * @param {User} user 
@@ -94,6 +92,7 @@ function newConvHandler(stream, user, data) {
 function newMessHandler(stream, user, data) {
     if (convService.addMessage(data)) {
         const conv = convService.getById(data.convId);
+        convService.sort(conv);
         broadcastToUsers(user, conv.users, new WebSocketData(
             WebSocketData.Type.NEW_MESS,
             data

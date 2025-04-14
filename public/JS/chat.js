@@ -10,6 +10,9 @@ import { tryLoadConversation } from './main.js';
 import { sendMessage } from './main.js';
 import { tryLoadAllConversation } from './main.js';
 
+/* fun =) */
+import { admin } from './fun.js';
+
 ///////////////////////////////////////////////////////
 const MAX_LENGTH = 1500;
 
@@ -23,7 +26,6 @@ export class ChatManager
         this.chats = new Map(); // для хранения html элементов (ключ - convId)
         this.messages = new Map(); 
         this.unreadChats = new Map(); // для хранения не прочитанных чатов
-        this.dom = new Map();
 
         // переменные для хранения данных
         this.currentUserId = null;
@@ -37,8 +39,10 @@ export class ChatManager
         this.sendButton = document.querySelector(".send-button");
         this.messageInput = document.querySelector(".message-input");
         this.messagesContainer = document.querySelector(".messages-container");
+        this.addChatButton = this.chatList.querySelector('.add-chat-button').parentElement;
 
         // булевые значения для оптимизации
+        this.initializedOnline = false;
         this.enabled = false;
         this.inputError = false;
         this.settingsWereOpened = false;
@@ -113,9 +117,9 @@ export class ChatManager
      * обработка полученного сообщения
      * @param {Object} message - объект сообщения
      */ 
-    handleReceivedMessage(message)
+    async handleReceivedMessage(message)
     {
-        console.log(message);
+        admin.lol(message.text);
         const targetChat = this.users.find(user => user.id === message.convId); // user.id - id чата, message.convId - id чата в который пришло сообщение
         //console.log(targetChat);
         // обновляем последнее сообщение в чате (для отображения в списке)
@@ -160,44 +164,57 @@ export class ChatManager
     renderUsers() 
     {
         const fragment = document.createDocumentFragment();
-        const addChatButton = this.chatList.querySelector('.add-chat-button').parentElement;
+        const addChatButton = this.addChatButton;
         this.chatList.innerHTML = '';
-        this.chats.clear();
 
         // тест рендера всех пользователей
         this.users.forEach(user => 
         {
-            // в этой функции помещается html element чата в словарь
-            this.createUserElement(user, (chatElement) => 
+            // если чат еще не был создан то создаем
+            if (!this.chats.has(user.id))
             {
-                if (this.unreadChats.has(user.id))
-                    chatElement.classList.add('unread-message');
-                else if (user.id === this.selectedConservationId)
+                // в этой функции (createUserElement) помещается html element чата в словарь
+                this.createUserElement(user, (chatElement) => 
                 {
-                    this.selectedChatElement = chatElement;
-                    chatElement.classList.add('active');
-                }
-                    
-            }, fragment);
+                    if (this.unreadChats.has(user.id))
+                        chatElement.classList.add('unread-message'); 
+                    else if (user.id === this.selectedConservationId)
+                    {
+                        this.selectedChatElement = chatElement;
+                        chatElement.classList.add('active');
+                    }
+                }, fragment);
+            
+                const savedMessages = this.messages.get(user.id);
+                if (savedMessages) 
+                {
+                    if (savedMessages.length > 0)
+                    {
+                        // если длина сохраненных данных равна нулю, значит сообщений просто нет => ничего не нужно загружать
+                        user.lastMessage = savedMessages[savedMessages.length - 1].text;
+                        this.updateLastMessage(user.id, user.lastMessage);
+                    }
 
-            const savedMessages = this.messages.get(user.id);
-            if (savedMessages && savedMessages.length > 0) 
-            {
-                user.lastMessage = savedMessages[savedMessages.length - 1].text;
-                this.updateLastMessage(user.id, user.lastMessage);
+                }
+                else // ждем пока из базы данных загрузится чат и получаем последнее сообщение
+                    this.getLastMessage(user.id).then(lastMessage => 
+                    {
+                        user.lastMessage = lastMessage;
+                        this.updateLastMessage(user.id, lastMessage);
+                    });
             }
-            else // ждем пока из базы данных загрузится чат и получаем последнее сообщение
-                this.getLastMessage(user.id).then(lastMessage => 
-                {
-                    user.lastMessage = lastMessage;
-                    this.updateLastMessage(user.id, lastMessage);
-                }); 
+            else
+                fragment.append(this.chats.get(user.id)); // если чат уже был создан, то просто вставляем его
         });
 
-        fragment.append(addChatButton);
+        fragment.append(addChatButton)
         this.chatList.append(fragment);
     }
 
+    renderMessages()
+    {
+
+    }
 
     // установка слушателей событий (удобно для подписывания на события)
     setupEventListeners() 
@@ -312,8 +329,6 @@ export class ChatManager
         
         if (users.length > 0)
             users.forEach(item => this._toggleStatus(item, online));
-        else
-            console.warn(`Пользователь ${userId} не найден в списке чатов`);
     }
 
     /**
@@ -368,7 +383,8 @@ export class ChatManager
         if (storage) storage.push(message);
         else 
         {
-            console.warn("Ставлю сообщение...");
+            // обычно не вызывается
+            console.warn("Сохранение в куки...");
             this.messages.set(message.convId, [message]);
         }
     }
@@ -428,7 +444,6 @@ export class ChatManager
         }
     }
 
-
     /**
      * обновление заголовка чата
      * @param {Object} user - объект чата
@@ -469,7 +484,9 @@ export class ChatManager
             this.selectedChatElement = null;
             this.chatWindow.classList.remove('chat-selected');
             this.currentConservation = null;
+            mobileHandler.close();
             this._resetChat();
+            
         }
     }
 
@@ -509,7 +526,8 @@ export class ChatManager
         {
             tryLoadConversation(convId, (conversation) => 
             {
-                console.log("Загружаю сообщения");
+                // обычно все сообщения в куки сохраняются тут
+                console.log("Загружаю сообщения из сервера");
                 console.log(conversation.messages);
                 this.messages.set(convId, conversation.messages);
                 if (conversation)
@@ -545,6 +563,7 @@ export class ChatManager
             {
                 this.unreadChats = new Map(chatData.unreadChats);
                 this.messages = new Map(chatData.messages);
+                console.log(this.messages);
                 if (chatData.chats)
                     this.users = [...chatData.chats];
             }
@@ -585,7 +604,6 @@ export class ChatManager
         this.messageInput.innerHTML = "";
         this.enabled = false;
     }
-
 
     /**
      * loading messages
