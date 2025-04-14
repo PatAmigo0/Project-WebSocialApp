@@ -42,7 +42,6 @@ export class ChatManager
         this.addChatButton = this.chatList.querySelector('.add-chat-button').parentElement;
 
         // булевые значения для оптимизации
-        this.initializedOnline = false;
         this.enabled = false;
         this.inputError = false;
         this.settingsWereOpened = false;
@@ -63,7 +62,10 @@ export class ChatManager
 
     handleLoading()
     {
-        tryLoadAllConversation();
+        if (this.users.length == 0)
+            tryLoadAllConversation();
+        else
+            this.renderUsers();
     }
 
     /**
