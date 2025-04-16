@@ -11,7 +11,7 @@ const {
 } = require("../model/conversation");
 
 const MAX_CONVERSATIONS_MEM = 30;
-const MAX_MESSAGES_MEM = 100; // вместимость памяти
+const MAX_MESSAGES_MEM = 50; // вместимость памяти
 
 /**
  * 

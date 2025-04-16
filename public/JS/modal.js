@@ -92,7 +92,7 @@ export class ModalWindowHandler
         this.addButton.addEventListener('click', () => 
         {
             tryCreateNewConversation({
-                name: this.nameInput.value.length > 0 ? this.nameInput.value : this.generateRandomName(),
+                name: this.nameInput.value.length > 0 ? this.nameInput.value.slice(0, 15) : this.generateRandomName(),
                 usersIds: this.users.values().toArray()
             });
             this.toggleModalWindow();
