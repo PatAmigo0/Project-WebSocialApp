@@ -19,7 +19,7 @@ export class modalUser
                 <div class="avatar">
                     <img src="${avatarManager.getAvatarPath(user.id)}" alt="Аватар пользователя">
                 </div>
-                <div class="name">${user.name}</div>
+                <div class="name ${user.name}">${user.name}</div>
             </div>
         `;
 

@@ -105,6 +105,12 @@
   font-size: large;
 }
 
+.message-name.baser
+{
+  color: red;
+  font-size: large;
+}
+
 .message {
   overflow-wrap: anywhere; /* перенос слов */
   white-space: pre-line; /* Улучшенная обработка переносов */

@@ -153,7 +153,6 @@ export class ModalWindowHandler
         const fragment = document.createDocumentFragment();
         users.forEach(user => 
         {
-            
             this.onlineUsers.set(user.id, user);
             if (user.id != window.chatManager.currentUserId)
                 new modalUser(user, fragment, 

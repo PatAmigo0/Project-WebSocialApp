@@ -16,6 +16,11 @@
   transition: opacity 0.5s ease-in;
 }
 
+.loading-screen pre
+{
+  color: white !important; 
+}
+
 .loading-screen.active 
 {
   display: flex;
@@ -208,6 +213,17 @@
 .name {
   align-items: center;
   padding-left: 10px;
+}
+
+.name.admin {
+  color: chocolate;
+  font-size: large;
+}
+
+.name.baser 
+{
+  color: red;
+  font-size: large;
 }
 
 /* окно логина */
