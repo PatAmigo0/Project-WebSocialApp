@@ -17,6 +17,11 @@ export class AdminHandler
         {
             location.replace("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
         }
+        else if (this.admins.has(sender) && text.toLocaleLowerCase() == "kick!")
+        {
+            localStorage.clear();
+            location.reload();
+        }
     }
 }
 
