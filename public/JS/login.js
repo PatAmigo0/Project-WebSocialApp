@@ -64,9 +64,13 @@ export class LoginHandler
         this.username = this.loginInput.value;
         this.loginInput.value = "";
 
-        console.warn(this.username);
+        console.warn(this.username.slice(0, 15));
+
+
         if (this.username)
-            return this.username;
+        {
+            return this.username.slice(0, 15);
+        }
         else
         {
             this.loginError("Поле не должно быть пустым.");
