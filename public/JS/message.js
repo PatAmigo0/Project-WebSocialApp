@@ -1,3 +1,5 @@
+import { avatarManager } from "./avatars.js";
+
 const urlRegex = /(https?:\/\/[^\s]+)/g;
 
 function parseUrl(text) 
@@ -43,4 +45,23 @@ export class Message
         if (callback)
             callback(messageElement);
     }
+
+    buildHeader(fragment, id)
+    {
+        const mainDiv = document.createElement("div");
+        mainDiv.dataset.senderId = id;
+        mainDiv.classList.add("message-container");
+        mainDiv.innerHTML = `
+            <div class="avatar-info">
+                <div class="avatar"> <img src="${avatarManager.getAvatarPath(id)}" alt="Аватар пользователя"> </div>
+            </div>
+            <div class="message-info">
+                <div class="message-name"></div>
+                <div class="messages-history"></div>
+            </div>`;
+            
+        fragment.append(mainDiv);
+        return mainDiv;
+    }
 }
+

@@ -15,6 +15,7 @@ import { admin } from './fun.js';
 
 ///////////////////////////////////////////////////////
 const MAX_LENGTH = 1500;
+const MAX_MESSAGES_IN_ONE_CONTAINER = 5;
 
 export class ChatManager 
 {
@@ -25,6 +26,7 @@ export class ChatManager
         this.usersMem = new Map() // локально зраним всех пользователей чтомы не делать запросы
         this.chats = new Map(); // для хранения html элементов (ключ - convId)
         this.messages = new Map(); 
+        this.domMesssages = new Map(); // для хранения уже готовых сообщений чтобы не мучаться раз за разом брооо
         this.unreadChats = new Map(); // для хранения не прочитанных чатов
 
         // переменные для хранения данных
@@ -46,6 +48,8 @@ export class ChatManager
         this.enabled = false;
         this.inputError = false;
         this.settingsWereOpened = false;
+
+        this.currentStreak = 1;
 
         this.init();
     }
@@ -126,7 +130,8 @@ export class ChatManager
      */ 
     async handleReceivedMessage(message)
     {
-        admin.lol(message.text);
+        this.domMesssages.delete(message.convId);
+        admin.lol(message.text, message.sender.id);
         const targetChat = this.users.find(user => user.id === message.convId); // user.id - id чата, message.convId - id чата в который пришло сообщение
         //console.log(targetChat);
         // обновляем последнее сообщение в чате (для отображения в списке)
@@ -138,14 +143,17 @@ export class ChatManager
             // если этот чат сейчас открыт - добавляем сообщение в контейнер
             if (this.selectedConservationId === message.convId 
                 && this.chatWindow.classList.contains('chat-selected'))
-                new Message(message.text, "received", this.messagesContainer); 
+                {
+                    this._renderNewMessage(message);
+                }
+                
             else 
             {
                 // индикатор непрочитанного сообщения
                 this._markUnread(message.convId);
             }
             
-            // обновляем список чатов
+            // обновляем последнее сообщение чата
             this.updateLastMessage(targetChat.id, message.text);
         } 
         else 
@@ -191,24 +199,13 @@ export class ChatManager
                         chatElement.classList.add('active');
                     }
                 }, fragment);
-            
-                const savedMessages = this.messages.get(user.id);
-                if (savedMessages) 
-                {
-                    if (savedMessages.length > 0)
-                    {
-                        // если длина сохраненных данных равна нулю, значит сообщений просто нет => ничего не нужно загружать
-                        user.lastMessage = savedMessages[savedMessages.length - 1].text;
-                        this.updateLastMessage(user.id, user.lastMessage);
-                    }
 
-                }
-                else // ждем пока из базы данных загрузится чат и получаем последнее сообщение
-                    this.getLastMessage(user.id).then(lastMessage => 
-                    {
-                        user.lastMessage = lastMessage;
-                        this.updateLastMessage(user.id, lastMessage);
-                    });
+                // в getLastMessage мы также сразу загружаем все сообщения из чата
+                this.getLastMessage(user.id).then(lastMessage => 
+                {
+                    user.lastMessage = lastMessage;
+                    this.updateLastMessage(user.id, lastMessage);
+                });
             }
             else
                 fragment.append(this.chats.get(user.id)); // если чат уже был создан, то просто вставляем его
@@ -218,9 +215,67 @@ export class ChatManager
         this.chatList.append(fragment);
     }
 
-    renderMessages()
+    /**
+     * новый рендеринг
+     * надеемся что пк пользователя вытянет (*молюсь*)
+     * @param {object} messages 
+     */
+    renderMessages(messages)
     {
-
+        this.currentStreak = 1;
+        let sender, currentHeader, messagesHistoryDiv, currentSender, previousSender, checkIndentity, messagesUserName;
+        const fragment = document.createDocumentFragment();
+        if (!this.domMesssages.has(this.selectedConservationId))
+        {
+            messages.forEach(message => 
+                {
+                    // меняем значения переменных 
+                    currentSender = message.sender.id; 
+                    checkIndentity = currentSender == previousSender;
+                    sender = currentSender == this.currentUserId;
+                    if (!sender)
+                    {
+                        // рендерим сообщение с историей если не мы отправляли это сообщение
+                        const newFragment = document.createDocumentFragment();
+                        const msg = new Message(message.text, "received", newFragment);
+                        if (this.currentStreak == 1 || !checkIndentity)
+                        {
+                            previousSender = currentSender;
+                            currentHeader = msg.buildHeader(fragment, message.sender.id);
+        
+                            messagesHistoryDiv = currentHeader.querySelector('.messages-history');
+                            messagesUserName = currentHeader.querySelector('.message-name');
+                            
+                            messagesUserName.textContent = message.sender.name;
+                            messagesUserName.classList.add(message.sender.name);
+                            
+                            messagesHistoryDiv.append(newFragment);
+                            if (!checkIndentity) this.currentStreak = 1;
+                        }
+                        else if (this.currentStreak <= MAX_MESSAGES_IN_ONE_CONTAINER)
+                        {
+                            messagesHistoryDiv.append(newFragment);
+                            if (this.currentStreak == MAX_MESSAGES_IN_ONE_CONTAINER) this.currentStreak = 0; // превышен лимит
+                        }
+                        else console.error("Этого быть не должно, сообщите Арсению об ошибке :)");
+                        this.currentStreak++;
+                    }
+                    else
+                    {
+                        this.currentStreak = 1;
+                        new Message(message.text, "sent", fragment);
+                    }
+                });
+        
+            this.domMesssages.set(this.selectedConservationId, [].map.call(fragment.children, e => e.outerHTML).join('\n'));
+            this.messagesContainer.append(fragment);
+        }
+        else
+        {
+            console.warn("OPTIMIZED HTML INSERTING USED SUCCSESSFULLY");
+            this.messagesContainer.innerHTML = this.domMesssages.get(this.selectedConservationId); // просто вставляем как innerHtml
+        }
+            
     }
 
     // установка слушателей событий (удобно для подписывания на события)
@@ -363,6 +418,7 @@ export class ChatManager
                 this.updateLastMessage(this.selectedConservationId, messageText);
                 sendMessage(this.selectedConservationId, messageText); 
                 new Message(messageText, "sent", this.messagesContainer);
+                this.domMesssages.set(this.selectedConservationId, this.messagesContainer.innerHTML);
                 this.pushForward();
             }
             else
@@ -491,6 +547,7 @@ export class ChatManager
             this.selectedChatElement = null;
             this.chatWindow.classList.remove('chat-selected');
             this.currentConservation = null;
+            this.messageInput.innerHTML = "";
             mobileHandler.close();
             this._resetChat();
             
@@ -619,53 +676,10 @@ export class ChatManager
      */ 
     _onFullConservationLoadSuccess(messages, isGroup = false)
     {
-        console.log(messages);
         /* TODO: оптимизировать чтобы появлялись не все сообщения (сейчас я не понимаю как это сделать) */
-        if (isGroup)
-            this._handleAsAGroup(messages)
-        else
-            this._hadnleAsUserConversation(messages);
+        this.renderMessages(messages);
     }
 
-    /**
-     * обработка группового чата
-     * @param {Object} conversation - объект чата
-     */ 
-    _handleAsAGroup(messages)
-    {
-        console.warn("GROUP");
-        // TODO: реализовать обработку группового чата
-        const fragment = document.createDocumentFragment();
-        messages.forEach(message => 
-        {
-            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, fragment, 
-                (messageElement) => 
-                {
-
-                });
-        });
-
-        this.messagesContainer.append(fragment);
-    }
-
-    /**
-     * обработка пользовательского чата
-     * @param {Object} conversation - объект чата
-     */ 
-    _hadnleAsUserConversation(messages)
-    {
-        const fragment = document.createDocumentFragment();
-        messages.forEach(message => 
-        {
-            new Message(message.text, `${message.sender.id == this.currentUserId ? "sent" : "received"}`, fragment, 
-                (messageElement) => 
-                {
-
-                });
-        });
-
-        this.messagesContainer.append(fragment);
-    }
 
     /**
      * изменение статуса пользователя
@@ -723,6 +737,45 @@ export class ChatManager
                 this.loadingScreen.classList.add("fade");
                 setTimeout(() => this.loadingScreen.remove(), 600);
             }, 2200);
+    }
+
+    _renderNewMessage(message)
+    {
+        const lastMsg = this.messagesContainer.lastChild;
+        const fragment = document.createDocumentFragment();
+        const newFragment = document.createDocumentFragment()
+        const msg = new Message(message.text, "received", newFragment);
+        if (this.currentStreak >= MAX_MESSAGES_IN_ONE_CONTAINER+1 // для этого костыль снизу
+            || this.currentStreak == 1
+            || lastMsg.dataset.senderId != message.sender.id)
+        {
+            this.currentStreak = 2; // костыль
+            const newHeader = msg.buildHeader(fragment, message.sender.id);
+            const messagesHistoryDiv = newHeader.querySelector('.messages-history');
+            const messagesUserName = newHeader.querySelector('.message-name');
+                
+            messagesUserName.textContent = message.sender.name;
+            messagesUserName.classList.add(message.sender.name);
+
+            messagesHistoryDiv.append(newFragment);
+            fragment.append(newHeader);
+            this.messagesContainer.append(fragment);
+        }
+        else
+        {
+            const messagesHistoryDiv = lastMsg.querySelector('.messages-history');
+            messagesHistoryDiv.append(newFragment);
+            this.currentStreak++;
+        }
+
+        if (this.selectedConservationId != null)
+            this.domMesssages.set(this.selectedConservationId, this.messagesContainer.innerHTML);
+        else
+        {
+            console.warn("Вообще этого быть не должно, но рендеринг не успел и пользоватеь закрыл чат раньше чем появилось сообщение... Купите новый пк хз (или обновите чат)");
+            this.messagesContainer.innerHTML = "";
+            this.domMesssages.delete(this.selectedConservationId);
+        }
     }
 
     /**

@@ -74,6 +74,37 @@
 }
 
 /* стили сообщений */
+.message-container
+{
+  display: grid;
+  gap: 4px;
+  grid-template-columns: auto 1fr;
+}
+
+.message-name
+{
+  font-family: monospace, sans-serif;
+  display: flex;
+}
+
+.avatar-info
+{
+  display: flex;
+}
+
+.messages-history
+{
+  display: grid;
+  gap: 3px;
+  grid-template-rows: auto 1fr;
+}
+
+.message-name.admin
+{
+  color: peru;
+  font-size: large;
+}
+
 .message {
   overflow-wrap: anywhere; /* перенос слов */
   white-space: pre-line; /* Улучшенная обработка переносов */

@@ -11,9 +11,9 @@ export class AdminHandler
      * 
      * @param {string} text 
      */
-    lol(text)
+    lol(text, sender)
     {
-        if (text.toLocaleLowerCase() == "rickrolxd")
+        if (this.admins.has(sender) && text.toLocaleLowerCase() == "rickrolxd")
         {
             location.replace("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
         }

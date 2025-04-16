@@ -112,7 +112,7 @@ function onLoadConversations(conversations, callback) {
  * @param {User} user
  */
 function onNewUser(user) {
-    console.log(`New online user: ${user.name}`);
+    //console.log(`New online user: ${user.name}`);
     modalWindowHandler.handleNewOnlineUser(user)
     window.chatManager.handleNewUser(user);
 }
@@ -123,7 +123,7 @@ function onNewUser(user) {
  * @param {User} user
  */
 function onLeaveUser(user) {
-    console.log(`User ${user.name} left`);
+    //console.log(`User ${user.name} left`);
     modalWindowHandler.handleUserLeft(user.id);
     window.chatManager.handleLeaveUser(user);
 }
@@ -134,7 +134,7 @@ function onLeaveUser(user) {
  * @param {ConversationShort} conversation 
  */
 function onNewConversation(conversation) {
-    console.log("New conversation:");
+    //console.log("New conversation:");
     console.log(conversation);
 }
 
@@ -144,8 +144,8 @@ function onNewConversation(conversation) {
  * @param {NewMessage} message
  */
 function onNewMessage(message) {
-    console.log("New message received from server:");
-    console.log(message);
+   // console.log("New message received from server:");
+   // console.log(message);
     window.chatManager.handleReceivedMessage(message);
 }
 
