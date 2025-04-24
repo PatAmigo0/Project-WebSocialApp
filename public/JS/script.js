@@ -92,3 +92,22 @@ const back_chat = () =>
     
     const button_back = document.getElementById("Button_back");
     button_back.addEventListener("click", back_chat);
+
+
+
+// Это скрипт для панели информации
+const panel = document.getElementById('panel');
+const toggleButton = document.getElementById('toggle-button');
+const closeButton = document.getElementById('close-button');
+
+toggleButton.addEventListener('click', () => {
+    panel.style.right = panel.style.right === '0px' ? '-300px' : '0px';
+});
+
+closeButton.addEventListener('click', () => {
+    if (window.matchMedia('(max-width: 1000px)').matches) {
+        panel.style.right = '-1000px';
+    } else {
+        panel.style.right = '-300px';
+    }
+});

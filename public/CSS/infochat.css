@@ -1,0 +1,96 @@
+/* #panel {
+  position: fixed;
+  top: 0;
+  right: -300px; 
+  width: 250px;
+  height: 100%;
+  background-color: #333;
+  color: white;
+  transition: right 0.3s ease;
+  padding: 20px;
+} */
+
+#panel 
+{
+  position: fixed;
+  right: -300px;
+  top: 0;
+  width: 300px;
+  height: 100%;
+  background-color: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
+  padding: 20px;
+  transition: right 0.3s ease, background-color var(--transition-time) ease,
+    border-color var(--transition-time) ease;
+  will-change: right, background-color, border-color;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 20px;
+  z-index: 999;
+}
+
+#panel.active {
+  scrollbar-width: none;
+  overflow-y: auto;
+  right: 0;
+}
+
+#panel.active ~ .main-chat {
+  transform: translateX(-300px);
+}
+
+#panel h2 {
+  color: var(--text-primary);
+  font-size: 1.2em;
+  transition: color var(--transition-time) ease;
+  will-change: color;
+}
+
+.panel-header
+{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color var(--transition-time) ease;
+  will-change: border-color;
+}
+
+
+#close-button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  transition: color var(--transition-time) ease;
+  will-change: color;
+}
+
+#close-button:hover {
+  color: var(--close-button-color-hover);
+  opacity: 0.8;
+}
+
+.toggle-button
+{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  transition: color var(--transition-time) ease;
+  will-change: color;
+}
+
+.toggle-button:hover {
+  background-color: rgba(0, 0, 0, 0.653);
+}
