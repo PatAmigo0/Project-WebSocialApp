@@ -18,10 +18,6 @@
     width: 100%;
     right: -1000px;
   }
-  
-  .main-chat .chat-header {
-    grid-template-columns: auto 5fr 1fr 1fr;
-  }
 
   #panel 
   {
@@ -29,4 +25,9 @@
     width: 100%;
     right: -1000px;
   }
+  
+  .main-chat .chat-header {
+    grid-template-columns: auto 5fr auto auto;
+  }
+
 }

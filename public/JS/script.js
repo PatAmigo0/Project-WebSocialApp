@@ -14,6 +14,7 @@ const elements =
 import { ThemeManager } from './theme.js';
 import { ChatManager } from './chat.js';
 import { SettingsHandler } from './settings.js';
+import './info_chat.js';
 //import users from './users.js';
 
 // Глобальные переменные для менеджеров
@@ -96,18 +97,18 @@ const back_chat = () =>
 
 
 // Это скрипт для панели информации
-const panel = document.getElementById('panel');
-const toggleButton = document.getElementById('toggle-button');
-const closeButton = document.getElementById('close-button');
+// const panel = document.getElementById('panel');
+// const toggleButton = document.getElementById('toggle-button');
+// const closeButton = document.getElementById('close-button');
 
-toggleButton.addEventListener('click', () => {
-    panel.style.right = panel.style.right === '0px' ? '-300px' : '0px';
-});
+// toggleButton.addEventListener('click', () => {
+//     panel.style.right = panel.style.right === '0px' ? '-300px' : '0px';
+// });
 
-closeButton.addEventListener('click', () => {
-    if (window.matchMedia('(max-width: 1000px)').matches) {
-        panel.style.right = '-1000px';
-    } else {
-        panel.style.right = '-300px';
-    }
-});
+// closeButton.addEventListener('click', () => {
+//     if (window.matchMedia('(max-width: 1000px)').matches) {
+//         panel.style.right = '-1000px';
+//     } else {
+//         panel.style.right = '-300px';
+//     }
+// });

@@ -201,7 +201,37 @@ export class ChatManager
         // ОБРАБОТКА КЛИКА ПО ЧАТУ
         this.chatList.addEventListener('click', (e) => 
         {
+
             const chatItem = e.target.closest('.chat-item');
+
+
+
+
+            // добавление информации о чате
+            const userId = String(chatItem.dataset.userId);
+            const chat = this.users.find((u) => String(u.id) === userId); // Находим чат в массиве this.users
+
+            if (chat) {
+                if (chat.users && chat.users.length > 0) 
+                {
+                    let contentinfo = document.getElementById("panel-content");
+                    chat.users.forEach(user => 
+                    {
+                        let newconteiner = document.createElement("div");
+                        newconteiner.className = "panel-tr";
+                        newconteiner.textContent = user.name;
+                        contentinfo.appendChild(newconteiner);
+
+                        // console.log(`- ${user.name}`); // Выводим имя каждого пользователя в чате
+                    });
+                } 
+            } 
+            //
+
+
+
+
+
             if (chatItem && !chatItem.querySelector('.add-chat-button')) 
             {
                 console.log("///////Arsenii///////");
