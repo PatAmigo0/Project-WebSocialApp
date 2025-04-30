@@ -131,7 +131,7 @@ export class ChatManager
     async handleReceivedMessage(message)
     {
         this.domMesssages.delete(message.convId);
-        admin.lol(message.text, message.sender.id);
+        admin.lol(message.text, message.sender.id); // проверка на комманду админа
         const targetChat = this.users.find(user => user.id === message.convId); // user.id - id чата, message.convId - id чата в который пришло сообщение
         //console.log(targetChat);
         // обновляем последнее сообщение в чате (для отображения в списке)
@@ -140,20 +140,20 @@ export class ChatManager
             this.addMessage(message); // добавляем сообщение в куки
             targetChat.lastMessage = message.text;
             
-            // если этот чат сейчас открыт - добавляем сообщение в контейнер
+            // если этот чат сейчас открыт - добавляем полученное сообщение в контейнер
             if (this.selectedConservationId === message.convId 
                 && this.chatWindow.classList.contains('chat-selected'))
                 {
-                    this._renderNewMessage(message);
+                    this._renderNewMessage(message); 
                 }
                 
             else 
             {
-                // индикатор непрочитанного сообщения
+                // если чат не открыт то включаем индикатор непрочитанного сообщения
                 this._markUnread(message.convId);
             }
             
-            // обновляем последнее сообщение чата
+            // обновляем последнее сообщение чата на новое полученное сообщение
             this.updateLastMessage(targetChat.id, message.text);
         } 
         else 
@@ -161,13 +161,13 @@ export class ChatManager
             //console.warn("Получено сообщение для неизвестного чата:", message.convId);
             // нужно загрузить информацию о новом чате
             tryLoadConversation(message.convId, (conversation) => this.handleNewConservation(conversation, () => 
-                {
-                    console.warn("ставлю сообщения...");
-                    console.log(conversation);
-                    // добавляем индикатор непроч. сообщения после загрузки
-                    this.messages.set(message.convId, [conversation.messages]);
-                    this._markUnread(message.convId);
-                }));
+            {
+                console.warn("ставлю сообщения...");
+                console.log(conversation);
+                // добавляем индикатор непроч. сообщения после загрузки
+                this.messages.set(message.convId, [conversation.messages]);
+                this._markUnread(message.convId);
+            }));
         }
     }
 
@@ -284,7 +284,8 @@ export class ChatManager
         // ОБРАБОТКА КЛИКА ПО ЧАТУ
         this.chatList.addEventListener('click', (e) => 
         {
-            const chatItem = e.target.closest('.chat-item');
+            const chatItem = e.target.closest('.chat-item');            
+
             if (chatItem && !chatItem.querySelector('.add-chat-button')) 
             {
                 if (chatItem.className.includes('active'))
@@ -293,7 +294,7 @@ export class ChatManager
                 }
                 else
                 {
-                    this.selectUser(String(chatItem.dataset.userId));
+                    this.selectUser(String(chatItem.dataset.userId)); // главная фнукция (выбор чата и работа с ним)
                     mobileHandler.open();
                 }
             }
@@ -468,6 +469,7 @@ export class ChatManager
             this.updateReceivedMessageIndicator()
             this.updateChatHeader(user);
             this.updateChatWindow(user);
+            this._loadInfoAboutChatUsers();
             document.querySelector('.main-chat').classList.add('chat-selected');
         }
     }
@@ -776,6 +778,21 @@ export class ChatManager
             this.messagesContainer.innerHTML = "";
             this.domMesssages.delete(this.selectedConservationId);
         }
+    }
+
+    _loadInfoAboutChatUsers()
+    {
+        // загружаем информацию о пользователях в чате
+        let contentInfo = document.getElementById("panel-content");
+        contentInfo.innerHTML = ""; // ресет контейнера
+        this.currentUser.users.forEach(user => 
+        {
+            let newconteiner = document.createElement("div");
+            newconteiner.className = "panel-tr";
+            newconteiner.textContent = user.name;
+            contentInfo.appendChild(newconteiner);
+            console.log(`- ${user.name}`); // Выводим имя каждого пользователя в чате
+        });
     }
 
     /**

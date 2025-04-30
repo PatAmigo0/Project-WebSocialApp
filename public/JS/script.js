@@ -10,6 +10,8 @@ const elements =
 import { ThemeManager } from './theme.js';
 import { ChatManager } from './chat.js';
 import { SettingsHandler } from './settings.js';
+import './chatInfo.js';
+//import users from './users.js';
 
 
 // глобальные переменные для менеджеров
