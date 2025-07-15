@@ -1,6 +1,4 @@
 /* ИМПОРТЫ */
-
-import { avatarManager } from "./avatars.js";
 import { loginHandler } from "./login.js";
 import { modalWindowHandler } from "./modal.js";
 import { errorHandler } from "./error.js";
@@ -15,7 +13,6 @@ import { errorHandler } from "./error.js";
 //     }
 
 /////////////////////////////////////
-let signalThemeReadyFlag = false;
 
 const USER = {
     id: "",

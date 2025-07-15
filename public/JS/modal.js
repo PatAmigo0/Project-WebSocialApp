@@ -148,21 +148,32 @@ export class ModalWindowHandler
     }
 
     // событие которое запускается автоматически при загрузке пользователей в modalWindowHandler.toggleModalWindow
-    fetchOnlineUsers(users)
+    async fetchOnlineUsers(users)
     {
-        const fragment = document.createDocumentFragment();
-        users.forEach(user => 
+        return new Promise((res, rej) => 
         {
-            this.onlineUsers.set(user.id, user);
-            if (user.id != window.chatManager.currentUserId)
-                new modalUser(user, fragment, 
-                    (userElement) => this.elements.set(user.id, userElement), 
-                    (toggled) => this.handleToggledUser(user.id, toggled)
-                );
-        });
+            try
+            {
+                const fragment = document.createDocumentFragment();
+                users.forEach(user => 
+                {
+                    this.onlineUsers.set(user.id, user);
+                    if (user.id != window.chatManager.currentUserId)
+                        new modalUser(user, fragment, 
+                            (userElement) => this.elements.set(user.id, userElement), 
+                            (toggled) => this.handleToggledUser(user.id, toggled)
+                        );
+                });
 
-        this.modalElements.append(fragment);
-        this.modalElements.classList.remove('loading');
+                this.modalElements.append(fragment);
+                this.modalElements.classList.remove('loading');
+                res()
+            }
+            catch
+            {
+                rej()
+            }
+        })
     }
 
     /**

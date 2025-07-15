@@ -142,6 +142,18 @@ module.exports = {
         return null;
     },
 
+    delete: (conversation) => 
+    {
+        const targetIndex = conversations.indexOf(conversation);
+        if (targetChat)
+        {
+            conversations.splice(targetIndex, 1);
+            return true;
+        }
+
+        return null;
+    },
+
     /**
      * @param {String} convId
      * @param {NewMessage} message 
