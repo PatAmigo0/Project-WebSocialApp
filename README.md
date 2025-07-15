@@ -33,7 +33,7 @@ A simple real-time chat application built with Node.js, Express, and WebSockets,
 
 1.  Clone the repository:
     ```bash
-    git clone <your-repository-link>
+    git clone https://github.com/PatAmigo0/Project-WebSocialApp
     ```
 2.  Navigate to the project directory:
     ```bash
