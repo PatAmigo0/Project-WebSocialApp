@@ -48,6 +48,7 @@ export class ChatManager
         this.enabled = false;
         this.inputError = false;
         this.settingsWereOpened = false;
+        this.avatarsUpdated = false;
 
         this.currentStreak = 1;
 
@@ -225,6 +226,13 @@ export class ChatManager
         this.currentStreak = 1;
         let sender, currentHeader, messagesHistoryDiv, currentSender, previousSender, checkIndentity, messagesUserName;
         const fragment = document.createDocumentFragment();
+
+        if (this.avatarsUpdated) 
+        {
+            this.avatarsUpdated = false;
+            this.domMesssages.clear();
+        }
+
         if (!this.domMesssages.has(this.selectedConservationId))
         {
             messages.forEach(message => 
@@ -360,8 +368,9 @@ export class ChatManager
      */     
     updateUsersAvatars(value)
     {
+        this.avatarsUpdated = true;
         avatarManager.changeAvatarsStyle(value);
-        let check = true // для оптимизации чтобы не проверять на активный чат если мы его уже нашли
+        let check = true; // для оптимизации чтобы не проверять на активный чат если мы его уже нашли
 
         this.users.forEach(user => 
         {
@@ -378,6 +387,14 @@ export class ChatManager
                 this.updateChatHeader(user);
             }
         });
+
+        let imgagesToChange = this.messagesContainer.querySelectorAll("div.message-container");
+        imgagesToChange.forEach(userElement => 
+        {
+            let userAvatar = userElement.querySelector("img");
+            userAvatar.src = avatarManager.getAvatarPath(`${userElement.getAttribute("data-sender-id")}`);
+        });
+
     }
 
     /**
