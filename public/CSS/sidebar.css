@@ -69,9 +69,9 @@
   gap: 12px;
   padding: 12px;
   cursor: pointer;
-  transition: background-color var(--transition-time),
-    border-color var(--transition-time);
-  will-change: background-color, border-color;
+  transition: background-color var(--transition-time) ease,
+    border-color var(--transition-time) ease;
+  will-change: background-color, border-color, background-position;
 }
 
 .chat-item:hover {

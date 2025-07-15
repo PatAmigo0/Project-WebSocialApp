@@ -1,13 +1,18 @@
 import { publicLoadOnlineUsers } from "./main.js";
 import { tryCreateNewConversation } from "./main.js";
 import { modalUser } from "./modalUser.js";
-import { words } from "./words.js";
+
+/* Слова */
+import { wordsFirst } from "./words.js";
+import { wordsSecond } from "./words.js";
 
 export class ModalWindowHandler
 {
     constructor()
     {   
-        this.users = new Array();
+        this.users = new Set();
+        this.elements = new Map();
+        this.onlineUsers = new Map();
 
         this.modalWindow = document.querySelector('.modal-window')
         this.modalContent = this.modalWindow.querySelector('.modal-content');
@@ -16,9 +21,10 @@ export class ModalWindowHandler
         this.settingsPanel = document.querySelector('#settingsPanel');
 
         this.addButton = this.modalWindow.querySelector(".add-user-button");
-        this.nameInput = this.modalContent.querySelector("#chatNameInput");
+        this.nameInput = this.modalContent.querySelector("#chat-name-input");
         this.searchUsersBox = this.modalContent.querySelector("#user-search");
-        console.log(this.searchUsersBox);
+
+        this.initializedOnlineUsers = false;
 
         this.init()
     }
@@ -31,23 +37,29 @@ export class ModalWindowHandler
     // когда новый пользователь входит в сеть
     handleNewOnlineUser(user) 
     {
+        this.onlineUsers.set(user.id, user);
         if (this.modalWindow.classList.contains("active"))
         {
-            if (!this.modalElements.querySelector(`[data-user-id="${user.id}"]`))
-                new modalUser(user, this.modalElements, (toggled) => this.handleToggledUser(user.id, toggled));
-            else
-                console.warn("Пользователь уже в списке на добавление");
+            this.onlineUsers.set(user.id, user);
+            if (!this.elements.get(user.id))
+                new modalUser(user, this.modalElements, 
+                    (userElement) => this.elements.set(user.id, userElement), 
+                    (toggled) => this.handleToggledUser(user.id, toggled)
+                );
         }
     }
 
     handleUserLeft(userId)
     {
-        this.modalElements.querySelector(`[data-user-id="${userId}"]`)?.remove();
-        const indexToDelete = this.users.indexOf(userId);
-            if (indexToDelete != -1)
-                this.users.splice(indexToDelete, 1);
+        this.onlineUsers.delete(userId);
+        const us = this.elements.get(userId);
+        if (us)
+        {
+            us.remove();
+            this.elements.delete(userId);
+        }
 
-        if (this.users.length > 0)
+        if (this.users.size > 0)
             this.addButton.classList.add("active");
         else
             this.addButton.classList.remove("active");
@@ -61,15 +73,11 @@ export class ModalWindowHandler
     handleToggledUser(userId, toggled)
     {
         if (toggled)
-            this.users.push(userId);
+            this.users.add(userId);
         else
-        {
-            const indexToDelete = this.users.indexOf(userId);
-            if (indexToDelete != -1)
-                this.users.splice(indexToDelete, 1);
-        }
+            this.users.delete(userId);
 
-        if (this.users.length > 0)
+        if (this.users.size > 0)
             this.addButton.classList.add("active");
         else
             this.addButton.classList.remove("active");
@@ -78,31 +86,27 @@ export class ModalWindowHandler
     // инициализация событий
     setupEventListeners()
     {
-       // ЗАКРЫТИЕ МОДАЛЬНОГО ОКНА
-       this.modalCloseButton.addEventListener('click', () => 
-        {
-            this.toggleModalWindow();
-        });
+        // ЗАКРЫТИЕ МОДАЛЬНОГО ОКНА
+        this.modalCloseButton.addEventListener('click', () => this.toggleModalWindow());
 
         this.addButton.addEventListener('click', () => 
         {
             tryCreateNewConversation({
-                name: this.nameInput.value.length > 0 ? this.nameInput.value : this.generateRandomName(),
-                usersIds: this.users
+                name: this.nameInput.value.length > 0 ? this.nameInput.value.slice(0, 15) : this.generateRandomName(),
+                usersIds: this.users.values().toArray()
             });
             this.toggleModalWindow();
         });
 
-        this.searchUsersBox.addEventListener('input', (e) => 
-        {
-            this.searchUsers(e.target.value);
-        });
+        // ПОИСК ПОЛЬЗОВАТЕЛЕЙ
+        this.searchUsersBox.addEventListener('input', () => this.searchUsers(this.searchUsersBox.value));
 
     }
 
     // включение / выключение окна с текущими пользователями
     toggleModalWindow()
     {
+        this.modalElements.classList.add('loading');
         this.modalWindow.classList.toggle('active');
         
         if (this.modalWindow.classList.contains('active'))
@@ -115,7 +119,21 @@ export class ModalWindowHandler
             }
                 
             document.body.style.overflow = "hidden";
-            publicLoadOnlineUsers(users => this.fetchOnlineUsers(users));
+
+            if (this.initializedOnlineUsers)
+            {
+                // сразу показываем пользователей
+                this.fetchOnlineUsers(this.onlineUsers.values());
+            }
+            else
+            {
+                // сначала загружаем из базы данных, а уже потом работаем
+                publicLoadOnlineUsers(users => 
+                {
+                    this.initializedOnlineUsers = true; // означает что теперь можно загружать из куки так как мы их инициализировали
+                    this.fetchOnlineUsers(users);
+                });
+            }
         }
         else 
         {
@@ -130,14 +148,32 @@ export class ModalWindowHandler
     }
 
     // событие которое запускается автоматически при загрузке пользователей в modalWindowHandler.toggleModalWindow
-    fetchOnlineUsers(users)
+    async fetchOnlineUsers(users)
     {
-        console.log(users);
-        users.forEach(user => 
+        return new Promise((res, rej) => 
         {
-            if (user.id != window.chatManager.currentUserId)
-                new modalUser(user, this.modalElements, (toggled) => this.handleToggledUser(user.id, toggled));
-        });
+            try
+            {
+                const fragment = document.createDocumentFragment();
+                users.forEach(user => 
+                {
+                    this.onlineUsers.set(user.id, user);
+                    if (user.id != window.chatManager.currentUserId)
+                        new modalUser(user, fragment, 
+                            (userElement) => this.elements.set(user.id, userElement), 
+                            (toggled) => this.handleToggledUser(user.id, toggled)
+                        );
+                });
+
+                this.modalElements.append(fragment);
+                this.modalElements.classList.remove('loading');
+                res()
+            }
+            catch
+            {
+                rej()
+            }
+        })
     }
 
     /**
@@ -160,19 +196,10 @@ export class ModalWindowHandler
 
     generateRandomName()
     {
-        const count = Math.floor(Math.random() * 2) + 1;
-        const shuffled = [...words].sort(() => Math.random() - 0.5);
+        const firstWord = wordsFirst[Math.floor(Math.random() * wordsFirst.length)];
+        const secondWord = wordsSecond[Math.floor(Math.random() * wordsSecond.length)];
 
-        return shuffled.slice(0, count).join(' ');
-    }
-
-    /**
-     * @param {string} text 
-     *  функция которая будет проверять есть ли что-то в списке
-     * */
-    _handleList(text = "В данный момент никто не в сети... :(")
-    {
-        console.log(this.modalElements.childNodes.length);
+        return `${firstWord} ${secondWord}`;
     }
 
     _reset()
@@ -180,7 +207,8 @@ export class ModalWindowHandler
         this.nameInput.value = "";
         this.modalElements.innerHTML = ""; // ресетаем
         this.addButton.classList.remove("active");
-        this.users = new Array();
+        this.users.clear();
+        this.elements.clear();
     }
 }
 

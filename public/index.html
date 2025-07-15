@@ -8,6 +8,12 @@
     <script src="JS/api.js"></script>
 </head>
 <body>
+
+    <div class="loading-screen">
+        <pre>происходит магия...    </pre>
+        <div class="spinner"></div>
+    </div>
+
     <div class="chat-container">
 
         <!-- Боковая панель-->
@@ -39,15 +45,17 @@
                 <div class="chat-name">
                     <p>admin</p>
                 </div>
+                <button id="toggle-button" class="toggle-button">|||</button>
+                <button id="Button_back" class="back_chat_button"><=</button>
             </div>
 
             <div class="messages-container">
-                
             </div>
 
             <div class="input-area">
-                <label for="message-input" class="visually-hidden">Введите сообщение</label>
-                <input type="text" autocomplete="off" id="message-input" name="message-input" class="message-input" placeholder="Сюда можно писать :)">
+                <textarea id="message-input" name="message-input" 
+                class="message-input" 
+                placeholder="Сюда можно писать :)"></textarea>
                 <button class="send-button">Пнуть</button>
             </div>
 
@@ -134,7 +142,7 @@
                         <span>Включить уведомления</span>
                     </label>
                 </div>
-                <div class="setting-item">
+                <div class="setting-item visually-hidden">
                     <label>
                         <input type="checkbox" id="sound-effects" name="sound-effects" checked> 
                         <span>Включить звуковые эффекты</span>
@@ -144,7 +152,7 @@
 
             <div class="settings-section">
                 <h3>Конфиденциальность</h3>
-                <div class="setting-item">
+                <div class="setting-item visually-hidden">
                     <label>
                         <input type="checkbox" id="mark-as-read" name="mark-as-read"> 
                         <span>Помечать сообщения прочитанными</span>
@@ -157,6 +165,29 @@
                     </label>
                 </div>
             </div>
+
+            <div class="settings-section">
+                <h3>Аккаунт</h3>
+                <div class="setting-item">
+                    <button id="clearCookies">Очистить куки</button>
+                </div>
+                <div class="setting-item">
+                    <button id="leave">Выйти с аккаунта</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Панель информации о чате -->
+        <div id="panel" class="panel">
+            <div id="panel-header" class="panel-header">
+                <h2>Информации о чате</h2>
+                <span id="close-button" class="close-button">
+                    &times;
+                </span>
+            </div>
+
+            <div id="panel-content" class="panel-content">
+            </div>
         </div>
 
         <!-- Окно поиска онлайн пользователей -->
@@ -164,13 +195,13 @@
             <div class="modal-container">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <label for="chatNameInput" class="visually-hidden">Ввод имени чата</label>
-                        <input type="text" autocomplete="off" id="chatNameInput" name="chatNameInput" class="search-box" placeholder="Имя вашего чата...">
-                        <span class="close-button">&times;</span>
-                    </div>
-                    <div class="modal-search">
                         <label for="user-search" class="visually-hidden">Поиск пользователей</label>
                         <input type="text" autocomplete="off" id="user-search" name="user-search" class="search-box" placeholder="Поиск чатов">
+                        <span class="close-button">&times;</span>
+                    </div>
+                    <div class="modal-name-input">
+                        <label for="chat-name-input" class="visually-hidden">Название чата</label>
+                        <input type="text" autocomplete="off" id="chat-name-input" name="chat-name-input" class="search-box" placeholder="Имя вашего чата... (если не ввести то будет случайное)">
                     </div>
                     <div class="modal-elements">
                     </div>
@@ -189,6 +220,14 @@
                 <button id="loginButton">Вход</button>
             </div>
         </div>
+
+        <div class="error-window">
+            <div class="error-window-content">
+                HELLO!
+                <span id="closeErrorWindow">X</span>
+            </div>
+        </div>
+
     </div>
 
     <!-- Сначала загружаем script.js, затем main.js -->

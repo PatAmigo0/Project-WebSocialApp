@@ -1,7 +1,7 @@
 /* основная область чата */
 .main-chat {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr 3fr;
   transition: transform 0.3s ease, background-color var(--transition-time) ease;
   position: relative;
   background-color: var(--bg-secondary);
@@ -31,7 +31,7 @@
 /* Заголовок чата в самом чате */
 .main-chat .chat-header {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   gap: 12px;
   padding: 12px;
   align-items: center;
@@ -56,11 +56,14 @@
 
 /* контейнер сообщений */
 .messages-container {
+  max-height: 100%;
+  scrollbar-gutter: stable; /* резервируем место для overflow y */
   padding: 20px;
   overflow-y: auto;
   scrollbar-width: none;
   display: grid;
   grid-auto-rows: min-content;
+  grid-template-rows: auto auto;
   gap: 8px;
   align-content: start;
   background-color: var(--bg-primary);
@@ -72,9 +75,50 @@
 }
 
 /* стили сообщений */
+.message-container
+{
+  display: grid;
+  gap: 4px;
+  grid-template-columns: auto 1fr;
+}
+
+.message-name
+{
+  font-family: monospace, sans-serif;
+  display: flex;
+}
+
+.avatar-info
+{
+  display: flex;
+}
+
+.messages-history
+{
+  display: grid;
+  gap: 3px;
+  grid-template-rows: auto 1fr;
+}
+
+.message-name.admin
+{
+  color: peru;
+  font-size: large;
+}
+
+.message-name.baser
+{
+  color: red;
+  font-size: large;
+}
+
 .message {
-  width: max-content;
-  max-width: 65%;
+  overflow-wrap: anywhere; /* перенос слов */
+  white-space: pre-line; /* Улучшенная обработка переносов */
+  word-break: break-word; /* альтернативный перенос на всякий*/
+  max-width: calc(65% - 24px); /* учет padding-ов */
+  width: fit-content; /* аналог max-content но лучше */
+  word-break: keep-all; /* сохраняет целостность слов при переносе */
   padding: 8px 12px;
   border-radius: 8px;
   position: relative;
@@ -84,9 +128,20 @@
   will-change: background-color;
 }
 
+.message a
+{
+  outline: none;
+  color: var(--text-primary);
+}
+
 .message.received {
   background-color: var(--bg-message-received);
   justify-self: start;
+}
+
+.messege-received_name
+{
+  color: black;
 }
 
 .message.sent {
@@ -98,6 +153,7 @@
 .input-area {
   display: grid;
   grid-template-columns: 1fr auto;
+  align-items: center;
   gap: 12px;
   padding: 12px;
   background-color: var(--bg-secondary);
@@ -107,17 +163,33 @@
   will-change: background-color, border-color;
 }
 
-.message-input,
-#message-input {
+.message-input:empty {
+  height: 56px !important;
+}
+
+.message-input {
+  min-height: 56px;
+  max-height: 150px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 6px;
+  scrollbar-width: none;
+  resize: none;
   padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  outline: none;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: background-color var(--transition-time) ease,
+  transition: height var(--transition-time) ease,
+    background-color var(--transition-time) ease,
     color var(--transition-time) ease, border-color var(--transition-time) ease;
-  will-change: background-color, color, border-color;
+  will-change: height, background-color, color, border-color;
+}
+
+.message-input.input-error
+{
+  border-color: red;
 }
 
 /* кнопка отправки */

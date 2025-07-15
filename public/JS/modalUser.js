@@ -1,3 +1,5 @@
+import { avatarManager } from "./avatars.js";
+
 export class modalUser 
 {
     /**
@@ -5,7 +7,7 @@ export class modalUser
      * @param {Array} user 
      * @param {HTMLElement} list 
      */
-    constructor(user, list, callback) 
+    constructor(user, list, onSuccess, callback) 
     {
         const newUser = document.createElement('div');
         this.toggled = false;
@@ -15,9 +17,9 @@ export class modalUser
         newUser.innerHTML = `
             <div class="modal-profile-info"> 
                 <div class="avatar">
-                    <img src="images/avatars/default/default-avatar.png" alt="Аватар пользователя">
+                    <img src="${avatarManager.getAvatarPath(user.id)}" alt="Аватар пользователя">
                 </div>
-                <div class="name">${user.name}</div>
+                <div class="name ${user.name}">${user.name}</div>
             </div>
         `;
 
@@ -29,5 +31,6 @@ export class modalUser
         }
 
         list.append(newUser);
+        onSuccess(newUser);
     }
 }

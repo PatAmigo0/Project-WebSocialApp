@@ -1,0 +1,16 @@
+.modal-elements:not(:has(.modal-element)) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.modal-elements.loading::after
+{
+    content: "Идет загрузка онлайн пользователей..." !important; 
+}
+
+.modal-elements:not(:has(.modal-element))::after {
+    content: "К сожалению мы никого не нашли... :(";
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}

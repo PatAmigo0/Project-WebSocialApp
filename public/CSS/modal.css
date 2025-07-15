@@ -1,3 +1,57 @@
+/* окно загрузки */
+
+.loading-screen
+{
+  background-color: rgb(0, 0, 0);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: 100000;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s ease-in;
+}
+
+.loading-screen pre
+{
+  color: white !important; 
+}
+
+.loading-screen.active 
+{
+  display: flex;
+}
+
+.loading-screen.fade 
+{
+  opacity: 0;
+}
+
+.spinner 
+{
+  border: 6px solid white;
+  border-color: white transparent white transparent;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  opacity: 1;
+  animation: rotate 1.3s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* добавление новых чатов */
 .modal-window.active {
   display: flex;
   flex-direction: column;
@@ -54,24 +108,23 @@
   align-items: center;
 }
 
-#chatNameInput {
-  height: 30px;
-  box-sizing: border-box;
-}
-
 .modal-header * {
   margin: 9px;
 }
 
-.modal-search {
+.modal-name-input {
   height: 55px;
 }
 
-.modal-search input {
+#chat-name-input {
   height: 55px;
   width: 100%;
   padding: 0 10px;
   box-sizing: border-box;
+}
+
+#user-search {
+  border-radius: 20px;
 }
 
 .modal-elements {
@@ -162,12 +215,23 @@
   padding-left: 10px;
 }
 
+.name.admin {
+  color: chocolate;
+  font-size: large;
+}
+
+.name.baser 
+{
+  color: red;
+  font-size: large;
+}
+
 /* окно логина */
 
 .modal-login {
   overflow: hidden;
   color: black;
-  display: grid;
+  display: none;
   grid-auto-rows: min-content;
   position: fixed;
   z-index: 1;
@@ -178,6 +242,10 @@
   height: 100%;
   background-color: rgb(0, 0, 0); /* затененный фон*/
   z-index: 999;
+}
+
+.modal-login.active {
+  display: grid;
 }
 
 .login-content {
@@ -232,40 +300,64 @@
   color: white;
 }
 
-/* Медиа-запросы для адаптивности на маленьких экранах */
-@media (max-width: 768px) {
-  .login-content {
-    width: 85%;
-    margin: 10% auto;
-    padding: 15px;
-  }
+/* окно с ошибкой */
 
-  .login-input {
-    padding: 15px;
-  }
+.error-window
+{
+  overflow: hidden;
+  color: black;
+  display: none;
+  grid-auto-rows: min-content;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
 
-  .login-content button {
-    padding: 15px;
-  }
+  width: 100%;
+  height: 100%;
+  background-color: rgba(rgb(62, 27, 27), rgb(12, 161, 12), rgb(55, 55, 193), 0.3); /* затененный фон*/
+  z-index: 999;
 }
 
-@media (max-width: 480px) {
-  .login-content {
-    width: 90%;
-    margin: 5% auto;
-    padding: 10px;
-  }
+.error-window.active
+{
+  display: grid;
+}
 
-  .login-content h2 {
-    padding-bottom: 20px;
-    font-size: 1.5em;
-  }
+.error-window-content
+{
+  display: grid;
+  overflow: visible;
+  position: absolute;
+  left: 405px;
+  top: 101px;
+  scrollbar-width: none;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.767); /* затененный фон*/
+  grid-auto-rows: min-content;
+  padding: 3px;
+  color: red;
+  margin: 15% auto;
+  padding: 20px;
+  width: 40%;
+  max-width: 400px;
+  min-width: 250px;
+  height: auto;
+  max-height: 80vh;
+  border: 1px solid #888;
+  z-index: 10000;
+}
 
-  .login-input {
-    padding: 10px;
-  }
 
-  .login-content button {
-    padding: 10px;
-  }
+.error-window span
+{
+  display: flex;
+  position: absolute;
+  bottom: 50px;
+  right: 9px;
+}
+
+.error-window span:hover
+{
+  cursor: pointer;
 }

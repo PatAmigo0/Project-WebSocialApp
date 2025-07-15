@@ -1,0 +1,53 @@
+
+.back_chat_button {
+  background: none;
+  width: fit-content;
+  border: none;
+  cursor: pointer;
+  border-radius: 20px;
+  padding: 8px;
+  display: flex;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  transition: background-color var(--transition-time) ease;
+  will-change: background-color;
+}
+
+.back_chat_button:hover {
+  background-color: rgba(0, 0, 0, 0.653);
+}
+
+
+@media(max-width: 1000px)
+{
+  .chat-container 
+  {
+    grid-template-columns: 1fr 0px;
+  }
+
+  .modal-container 
+  {
+    width: 85%;
+    max-height: 200vh;
+  }
+
+  .settings-panel 
+  {
+    transition: right 0.5s ease;
+    width: 100%;
+    right: -1000px;
+  }
+
+  #panel 
+  {
+    transition: right 0.5s ease;
+    width: 100%;
+    right: -1000px;
+  }
+  
+  .main-chat .chat-header {
+    grid-template-columns: auto 5fr auto auto;
+  }
+
+}

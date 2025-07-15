@@ -12,11 +12,14 @@ export class SettingsHandler
 
         this.settingsPanel = document.getElementById("settingsPanel");
         this.settingsButton = document.querySelector('.settings-button');
-        this.settingsCloseButton = document.querySelector('.settings-close');
-        this.notificationToggle = document.getElementById('notifications');
-        this.themeRadios = document.querySelectorAll(".theme-radio");
-        this.fontSizeSelector = document.getElementById('font-size');
-        this.avatarsSelector = document.getElementById('avatars-images');
+        this.settingsCloseButton = this.settingsPanel.querySelector('.settings-close');
+        this.notificationToggle = this.settingsPanel.querySelector('#notifications');
+        this.themeRadios = this.settingsPanel.querySelectorAll(".theme-radio");
+        this.fontSizeSelector = this.settingsPanel.querySelector('#font-size');
+        this.avatarsSelector = this.settingsPanel.querySelector('#avatars-images');
+        this.onlineStatusToggle = this.settingsPanel.querySelector('#show-online');
+        this.clearCookiesButton = this.settingsPanel.querySelector('#clearCookies');
+        this.leaveButton = this.settingsPanel.querySelector('#leave');
 
         this.init();
     }
@@ -72,6 +75,29 @@ export class SettingsHandler
             else
                 console.warn("chatManager еще не загружен, попробуйте позже");
             
+        });
+
+        // ИЗМЕНЕИЕ СТАТУСА В СЕТИ
+        this.onlineStatusToggle?.addEventListener('change', () => 
+        {
+            const value = this.onlineStatusToggle.value;
+            if (value)
+            {}
+        });
+
+        // ОЧИСТКА КУКИ
+        this.clearCookiesButton.addEventListener('click', () => 
+        {
+            localStorage.clear();
+            window.addEventListener('beforeunload', () => localStorage.clear());
+        });
+
+        // ВЫХОД ИЗ АККАУНТА
+        this.leaveButton.addEventListener('click', () => 
+        {
+            localStorage.removeItem("lastLogin");
+            localStorage.setItem("clearCookiesPending", true);
+            location.reload();
         });
     }
 

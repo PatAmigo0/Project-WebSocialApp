@@ -5,6 +5,10 @@
 @import "settings.css";
 @import "chathiden.css";
 @import "modal.css";
+@import "modalhidden.css";
+@import "animations.css";
+@import "chatinfo.css";
+@import "mobile.css";
 
 :root {
   --back: rgb(32, 33, 37);
@@ -20,3 +24,4 @@
   box-sizing: border-box;
   font-family: sans-serif;
 }
+

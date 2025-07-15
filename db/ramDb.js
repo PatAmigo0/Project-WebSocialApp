@@ -7,6 +7,9 @@ const { ConversationShort, Message } = require('../model/conversation');
 const USERS = [];    // User
 const CONVS = [];    // ConversationShort
 
+/* поменять базу данных на более эффективную по времени */
+const USERS_MAP = new Map();
+const CONVS_MAP = new Map();
 
 function readJsonFile(filename) {
     const filePath = path.join(__dirname, filename);

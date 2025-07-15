@@ -64,9 +64,13 @@ export class LoginHandler
         this.username = this.loginInput.value;
         this.loginInput.value = "";
 
-        console.warn(this.username);
+        console.warn(this.username.slice(0, 15));
+
+
         if (this.username)
-            return this.username;
+        {
+            return this.username.slice(0, 15);
+        }
         else
         {
             this.loginError("Поле не должно быть пустым.");
@@ -88,10 +92,21 @@ export class LoginHandler
         this.loginInput.placeholder = errorText;
     }
 
-    async handleLogin()
+    async handleLogin(checkCookies = false)
     {
         return new Promise((res) => 
         {
+            const lastLogin = localStorage.getItem("lastLogin");
+            if (checkCookies && lastLogin)
+            {
+                res(lastLogin);
+                return;
+            }
+            else
+            {
+                localStorage.removeItem("lastLogin");
+                this.mainWindow.classList.add('active'); // включаем окно логина если не нашли запись о входе
+            }
 
             // создаем функции-обработчики которые сможем удалить
             const buttonClickHandler = () => 

@@ -14,7 +14,7 @@ export class ThemeManager
         this.gradientPatternSelector = document.getElementById("gradient-pattern");
         this.avatarsSelector = document.getElementById('avatars-images');
 
-        this.currentPattern = 'blue'; // значение по умолчанию
+        this.currentPattern = 'light'; // значение по умолчанию
         this.currentAvatarsStyle = 'default';
         this.themes = 
         {
