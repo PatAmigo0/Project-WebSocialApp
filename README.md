@@ -37,7 +37,7 @@ A simple real-time chat application built with Node.js, Express, and WebSockets,
     ```
 2.  Navigate to the project directory:
     ```bash
-    cd Maket
+    cd Project-WebSocialApp
     ```
 3.  Install the dependencies:
     ```bash
@@ -48,7 +48,7 @@ A simple real-time chat application built with Node.js, Express, and WebSockets,
 
 1.  Start the server:
     ```bash
-    npm start
+    node app.js
     ```
 2.  Open your browser and navigate to `http://localhost:3000`.
 
