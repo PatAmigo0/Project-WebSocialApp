@@ -6,8 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
-  "author": "Yastrebov A.",
-  "license": "ISC",
+  "author": "Kuskov A.A.",
+  "license": "UNLICENSED",
   "description": "",
   "dependencies": {
     "express": "^4.21.2",
